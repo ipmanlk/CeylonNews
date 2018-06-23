@@ -67,7 +67,7 @@ function loadPost() {
     $("#title").text(title);
     $("#post").html(post);
     $('#dateTime').text(dateTime);
-    $('#postSource').html('Source : <b>' + source + '</b> - ' + '<a href="' + link + '">Original Post</a>');
+    $('#postSource').html('Source : <b>' + source + '</b> - ' + '<a onclick="goToPost();">Original Post</a>');
 }
 
 //navigation for menus
@@ -84,4 +84,8 @@ function navigate(action) {
             window.plugins.socialsharing.share(title + " - Read @", null, null, link);
             break;
     }
+}
+
+function goToPost() {
+    cordova.InAppBrowser.open(link, '_system', 'location=yes');
 }
