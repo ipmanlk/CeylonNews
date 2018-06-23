@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+    <link rel="stylesheet" href="css/custom.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery.mobile-1.4.5.min.js"></script>
+    <script src="cordova.js"></script>
+    <title>Home</title>
+</head>
+
+<body>
+    <!-- main page -->
+    <div data-role="page" id="index">
+        <!-- header -->
+        <div data-role="header" style="overflow:hidden;" data-position="fixed" data-theme="b">
+            <a href="#" onclick="navigate('home');" data-icon="back" data-iconpos="notext" data-role="button"></a>
+            <h1 id="source"> </h1>
+        </div>
+
+        <!-- content -->
+        <div id="content" class="sinhala news-post" data-role="content">
+            <!-- title shows here -->
+            <h3 id="title"> </h3>
+
+            <!-- date and time shows here -->
+            <span id="dateTime" class="date-time"></span>
+
+            <hr>
+
+            <!-- post shows here -->
+            <div id="post">
+
+            </div>
+            <hr>
+
+            <!-- post source shows here -->
+            <span id="postSource" class="postSource"> </span>
+
+        </div>
+
+        <!-- footer -->
+        <div data-role="footer" style="overflow:hidden;" data-position="fixed" data-theme="b">
+            <div data-role="navbar" data-iconpos="bottom">
+                <ul>
+                    <li>
+                        <a href="#" onclick="navigate('refresh')" data-icon="refresh"></a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="navigate('home')" data-icon="home"></a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="navigate('share')" data-icon="action"></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- additional javascript files -->
+    <script src="js/show.js"></script>
+    <script src="js/common.js"></script>
+</body>
+
+</html>

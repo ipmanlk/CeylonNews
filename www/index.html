@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+    <link rel="stylesheet" href="css/custom.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery.mobile-1.4.5.min.js"></script>
+    <script src="cordova.js"></script>
+    <title>Home</title>
+</head>
+
+<body>
+
+    <!-- main page -->
+    <div data-role="page" id="index">
+
+        <!-- side menu -->
+        <div data-role="panel" id="sideMenu" data-display="overlay" data-theme="b">
+            <ul data-role="listview">
+                <li data-icon="bars">
+                    <a href="sources.html">Sources</a>
+                </li>
+                <li data-icon="info">
+                    <a href="about.html">About</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- header -->
+        <div data-role="header" style="overflow:hidden;" data-position="fixed" data-theme="b">
+            <h1>Ceylon News</h1>
+            <a href="#sideMenu" data-icon="bars" data-iconpos="notext left" data-role="button"></a>
+            <a href="#" onclick="refresh();" data-icon="refresh" data-iconpos="notext right" data-role="button"></a>
+            <div data-role="navbar">
+                <ul>
+                    <li>
+                        <a id="newsDataInfo" href="#">Latest News</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- post list shows in here -->
+        <div data-role="content" class="no-padding-margin">
+
+            <!-- post list -->
+            <ul id="newsList" data-role="listview" data-inset="true" class="news-list no-padding-margin">
+
+            </ul>
+        </div>
+    </div>
+
+    <!-- additional javascript files -->
+    <script src="js/moment.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/index.js"></script>
+
+</body>
+
+</html>
