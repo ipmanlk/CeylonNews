@@ -27,7 +27,7 @@ document.addEventListener("deviceready", onDeviceReady, false);
 
 //when device is ready
 function onDeviceReady() {
-    
+
     //show disclaimer
     showNotice();
 
@@ -63,9 +63,9 @@ function loadNewsOnline() {
         //https://ceylon-news.navinda.xyz/newsData.php
         $.ajax({
             type: 'post',
-            url: 'https://ceylon-news.navinda.xyz/newsData.php',
+            url: '',
             dataType: 'json',
-            timeout: 50000, //50s
+            timeout: 500000, //50s
 
             success: function (response) {
 
@@ -110,7 +110,7 @@ function getOnlineNews(response) {
     var id = 0;
 
     //variables
-    var source, dateTime, title, post, link, img, updatedTime;
+    var source, dateTime, title, post, link, img;
 
     //iterate trough json response from php
     for (item in response) {
@@ -120,10 +120,14 @@ function getOnlineNews(response) {
         title = response[item].title;
         post = response[item].post;
         link = response[item].link;
+
+        //strip slashes 
+        link = link.replace(new RegExp("\\\\", "g"), "");
+
         img = extractImg(post, source);
 
         //dynamically add list items to list view
-        $("#newsList").append('<li><a href="#" class="sinhala" onclick="goToNewsPost(' + id + ');"><img src="' + img + '"><h2 class="full-text">' + title + '</h2><p> ' + source + ' - ' + dateTime + ' </p></a></li>').listview('refresh');
+        $("#newsList").append('<li id="' + item + '"><a href="#" class="sinhala" onclick="goToNewsPost(' + id + ');"><img src="' + img + '"><h2 class="full-text">' + title + '</h2><p> ' + source + ' - ' + dateTime + ' </p></a></li>').listview('refresh');
 
         //add items to offline news object
         newsData[id] = { 'dateTime': dateTime, 'source': source, 'title': title, 'post': post, 'link': link, 'img': img };
@@ -157,7 +161,7 @@ function loadNewsOffline() {
 
     //iterate through newsData object and add items dynamically to listview
     for (item in newsData) {
-        $("#newsList").append('<li><a href="#" class="sinhala" onclick="goToNewsPost(' + item + ');"><img src="' + newsData[item]['img'] + '"><h2 class="full-text">' + newsData[item]['title'] + '</h2><p> ' + newsData[item]['source'] + ' - ' + newsData[item]['dateTime'] + ' </p></a></li>').listview('refresh');
+        $("#newsList").append('<li id="' + item + '"><a href="#" class="sinhala" onclick="goToNewsPost(' + item + ');"><img src="' + newsData[item]['img'] + '"><h2 class="full-text">' + newsData[item]['title'] + '</h2><p> ' + newsData[item]['source'] + ' - ' + newsData[item]['dateTime'] + ' </p></a></li>').listview('refresh');
     }
 
     //get news updated date time
@@ -173,6 +177,11 @@ function loadNewsOffline() {
     $("#newsList").fadeIn();
 
     showLoading(false);
+
+    //scroll to last position
+    var scrollPosition = parseFloat(localStorage.getItem('scrollPosition'));
+    $.mobile.silentScroll(scrollPosition);
+    localStorage.setItem('scrollPosition', (0));
 }
 
 //extract img src values from news article html strings
@@ -209,8 +218,12 @@ function extractImg(html, source) {
 
 //load selected news post
 function goToNewsPost(id) {
+    //remember scrolled position
+    localStorage.setItem('scrollPosition', ($('#' + id).offset().top) - 80);
+    //load post
     showLoading(true);
     location.replace("show.html?id=" + id);
+
 }
 
 //refresh
@@ -245,11 +258,10 @@ function showNotice() {
     if (localStorage.getItem('showNotice') === null) {
         var msg = "The content of this app comes from publicly available feeds of news sites and they retain all copyrights.\n\nThus, this app is not to be held responsible for any of the content displayed.\n\nThe owners of these sites can exclude their feeds with or without reason from this app by sending an email to me.";
         navigator.notification.confirm(
-             msg, 
-             onConfirm,           
-            'Disclaimer',           
-            ['I UNDERSTAND','EXIT']     
+            msg,
+            onConfirm,
+            'Disclaimer',
+            ['I UNDERSTAND', 'EXIT']
         );
     }
 }
-
