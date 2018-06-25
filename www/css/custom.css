@@ -10,7 +10,6 @@
     
 }
 
-
 .no-padding-margin {
     margin: 0px !important; 
     padding: 0px !important;
@@ -37,6 +36,9 @@
     font-size: 12px !important;
 }
 
-.news-post img {
-    width: 100%;
+.news-list li a img{
+    position:absolute;
+    top:0;
+    bottom:0;
+    margin:auto;
 }
