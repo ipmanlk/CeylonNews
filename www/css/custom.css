@@ -31,14 +31,18 @@
     width: 100%;
 }
 
-.news-post .date-time, .postSource{
+.news-post .date-time, .postSource {
     font-family: Arial, Helvetica, sans-serif !important;
     font-size: 12px !important;
 }
 
-.news-list li a img{
+.news-list li a img {
     position:absolute;
     top:0;
     bottom:0;
     margin:auto;
+}
+
+.post-source {
+    font-size: 16px;
 }
