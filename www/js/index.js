@@ -31,9 +31,6 @@ function onDeviceReady() {
     //show disclaimer
     showNotice();
 
-    //focus latest news bar
-    $('#newsDataInfo').click();
-
     //loading spinner
     showLoading(true);
 
@@ -59,7 +56,7 @@ function loadNewsOnline() {
         //hide news list
         $("#newsList").hide();
 
-        //ajax request to online php file 
+        //ajax request to online php file
         //https://ceylon-news.navinda.xyz/newsData.php
         $.ajax({
             type: 'post',
@@ -121,7 +118,7 @@ function getOnlineNews(response) {
         post = response[item].post;
         link = response[item].link;
 
-        //strip slashes 
+        //strip slashes
         link = link.replace(new RegExp("\\\\", "g"), "");
 
         img = extractImg(post, source);
@@ -138,9 +135,9 @@ function getOnlineNews(response) {
 
     //store news data object in local storage
     localStorage.setItem('newsData', JSON.stringify(newsData));
-    /* 
+    /*
         store load online false on local storage
-        when loading this index.html next time, 
+        when loading this index.html next time,
         data will be loaded from the local storage
     */
     localStorage.setItem('loadOnline', false);
