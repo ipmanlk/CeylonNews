@@ -63,7 +63,7 @@ function loadNewsOnline() {
     //https://ceylon-news.navinda.xyz/newsData.php
     $.ajax({
       type: 'post',
-      url: '',
+      url: 'https://pk.navinda.xyz/api/ceylon_news/getNews.php',
       dataType: 'json',
       timeout: 500000, //50s
 
@@ -157,7 +157,7 @@ function loadNewsOffline() {
   //hide news list
   $("#newsList").hide();
 
-  var newsData = JSON.parse(localStorage.getItem('newsData'));
+  var newsData = getNewsData();
 
   //iterate through newsData object and add items dynamically to listview
   for (item in newsData) {
@@ -267,18 +267,29 @@ function showNotice() {
 }
 
 //auto check for new news
-function checkUpdates() {
+function checkUpdates(reqType="null") {
 
   var lastUpdated = (getNewsData())[0]['dateTime'];
   var lastDBupdated;
 
   $.get("https://pk.navinda.xyz/api/ceylon_news/checkNews.php", function (data, status) {
-    lastDBupdated = (JSON.parse(data))["dateTime"];
+    lastDBupdated = (JSON.parse(data)).dateTime
+
   }).done(function() {
+
     if  (lastUpdated !== lastDBupdated) {
       refresh();
+    } else {
+      if (reqType == "refresh") {
+        navigator.notification.alert("No new articles are available at the moment!", null, "Sorry!", "Ok");
+      }
     }
   });
 
   setTimeout(checkUpdates, 900000); //check every 15 min
+}
+
+//return news data
+function getNewsData() {
+  return(JSON.parse(localStorage.getItem('newsData')));
 }

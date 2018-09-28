@@ -17,3 +17,5 @@ typings/
 
 # other
 /server_side
+*.jks
+*.bat
