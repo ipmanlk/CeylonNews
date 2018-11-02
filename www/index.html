@@ -20,7 +20,7 @@
       <ons-page>
         <img src="https://tinyurl.com/y9rod7ud" style="width:100%">
         <ons-list>
-          <ons-list-item onclick="fn.load('newsList.html')" tappable>
+          <ons-list-item onclick="fn.load('newsList.html');getNewsList('null', 'null');" tappable>
             Home
           </ons-list-item>
           <ons-list-item onclick="fn.load('about.html')" tappable>
@@ -58,7 +58,7 @@
     <ons-page>
       <ons-toolbar>
         <div class="left">
-          <span class="toolbar-button toolbar-button--outline" onclick="fn.load('newsList.html')">Back</span>
+          <span class="toolbar-button toolbar-button--outline" onclick="fn.load('newsList.html');getNewsList('null', 'null');">Back</span>
         </div>
         <div class="center">
           <span id="post-source">Hiru News</span>
@@ -68,23 +68,26 @@
       <div class="card card--material">
         <div class="post-data">
           <div class="card__title card--material__title">
-            <span id="post-title" class="sinhala justify">මුහුදට කඩා වැටුණු ගුවන් යානයේ කළු පෙට්ටිය හමුවෙයි</span>
+            <span id="post-title" class="sinhala justify">
+
+            </span>
           </div>
-          <span id="post-datetime">2018-11-01 8:15 PM</span>
+          <span id="post-datetime">
+
+          </span>
           <hr>
           <div class="card__content card--material__content">
-            <img id="post-img" src="https://tinyurl.com/y9rod7ud" style="width:100%">
+            <!-- <img id="post-img" src="https://tinyurl.com/y9rod7ud" style="width:100%" onerror="imgError(this);"> -->
+
             <div id="post-content" class="sinhala justify" style="font-size:17px; color:#000000">
-              ඉන්දුනීසියාවේ ජාකර්තා සිට පියාසර කරමින් සිටියදී මුහුදට කඩා වැටුණු Lion Air ගුවන් යානයේ කළු පෙට්ටිය මුහුදු පතුලේ තිබී සොයාගෙන තිබේ.
 
-              189 දෙනෙකු රැගත් එම ගුවන් යානය ජාකර්තා ගුවන් තොටුපොළෙන් ගුවන්ගත වී සුළු මොහොතකින් මුහුදට කඩා වැටුණේ, පසුගිය සඳුදා දිනයේදීය.
+              <!--  post content load here -->
 
-              එම ගුවන් අනතුරෙන් කිසිවෙකුගේ දිවි බේරා ගැනීමට නොහැකි වූ අතර, Boeing 737 ගුවන් යානයේ බඳ පවා සොයා ගත නොහැකි විය.
             </div>
           </div>
           <hr>
           <div class="card--material__footer" style="">
-            <span>Source: <span id="post-source">Hiru News</span> - <a id="post-link" href="#">Original Post</a></span>
+            <span>Source: <span id="post-source-bottom">Hiru News</span> - <a id="post-link" href="#">Original Post</a></span>
           </div>
         </div>
       </div>

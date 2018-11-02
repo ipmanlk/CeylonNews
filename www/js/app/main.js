@@ -37,7 +37,8 @@ function getNewListItem(post) {
   return(html);
 }
 
-function loadPost(id) {
+function loadPost(postID) {
+  fn.load('post.html');
   $.ajax({
     type: 'post',
     data: {
@@ -48,24 +49,22 @@ function loadPost(id) {
     dataType: 'json',
     timeout: 60000, //60s
     success: function (data) {
-      showPost(id, data);
+      showPost(postID, data);
     }
   });
 }
 
-function showPost(id, data) {
+function showPost(postID, data) {
   var source,datetime,title,mainImg, content, link;
-  source = newsList[id].source;
-  datetime = newsList[id].datetime;
-  title = newsList[id].title;
-  mainImg = newsList[id].mainImg;
+  source = newsList[postID].source;
+  datetime = newsList[postID].datetime;
+  title = newsList[postID].title;
   content = data.post;
   link = data.link;
-  $('#post-source').text(source);
-  $('#post-title').html(title);
+  $('#post-source, #post-source-bottom').text(source);
+  $('#post-title').text(title);
   $('#post-datetime').text(datetime);
-  $('#post-img').attr("src",mainImg);
-  $('#post-content').html();
+  $('#post-content').html(content);
   $('#post-link').attr("href", link);
 }
 
