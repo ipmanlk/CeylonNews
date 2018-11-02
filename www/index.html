@@ -7,10 +7,14 @@
 <link rel="stylesheet" href="./css/onsenui.min.css">
 <link rel="stylesheet" href="./css/custom.css">
 <link id="styleshhet" rel="stylesheet" href="./css/onsen-css-components.min.css">
-<script src="./js/onsenui.min.js"></script>
-<script src="./js/jquery.min.js"></script>
-<body>
+<!--  libs -->
+<script src="./js/lib/onsenui.min.js"></script>
+<script src="./js/lib/jquery.min.js"></script>
+<script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
 
+<!--  app -->
+<script src="./js/app/main.js" charset="utf-8"></script>
+<body>
   <ons-splitter>
     <ons-splitter-side id="menu" side="left" width="220px" collapse swipeable>
       <ons-page>
@@ -43,29 +47,7 @@
 
       </ons-toolbar>
 
-      <ul class="list">
-
-        <li class="list-item">
-          <div class="list-item__left">
-            <img class="list-item__thumbnail" src="https://ichef.bbci.co.uk/news/624/cpsprodpb/3248/production/_104127821_computer.jpg" alt="Cute kitten">
-          </div>
-          <div class="list-item__center" onclick="fn.load('post.html')">
-            <div class="list-item__title sinhala">මුහුදට කඩා වැටුණු ගුවන් යානයේ කළු පෙට්ටිය හමුවෙයි</div>
-            <div class="list-item__subtitle" style="margin-top:5px;">Hiru News - 2018-11-01 8:15 PM</div>
-          </div>
-        </li>
-
-
-        <li class="list-item">
-          <div class="list-item__left">
-            <img class="list-item__thumbnail" src="https://ichef.bbci.co.uk/news/624/cpsprodpb/3248/production/_104127821_computer.jpg" alt="Cute kitten">
-          </div>
-          <div class="list-item__center" onclick="fn.load('post.html')">
-            <div class="list-item__title sinhala">මුහුදට කඩා වැටුණු ගුවන් යානයේ කළු පෙට්ටිය හමුවෙයි</div>
-            <div class="list-item__subtitle" style="margin-top:5px;">Hiru News - 2018-11-01 8:15 PM</div>
-          </div>
-        </li>
-
+      <ul id="newsList" class="list">
 
       </ul>
 
@@ -152,25 +134,5 @@
       </ons-toolbar>
     </ons-page>
   </template>
-
-  <script type="text/javascript">
-  window.fn = {};
-
-  window.fn.open = function() {
-    var menu = document.getElementById('menu');
-    menu.open();
-  };
-
-  window.fn.load = function(page) {
-    var content = document.getElementById('content');
-    var menu = document.getElementById('menu');
-    content.load(page)
-    .then(menu.close.bind(menu));
-  };
-
-  $(document).ready(function() {
-
-  });
-</script>
 </body>
 </html>
