@@ -21,11 +21,24 @@ function getNewsList(postID, source_id) {
         $('#newsList').append(getNewListItem(data[item]));
         newsList[(data[item].id)] = data[item];
       }
+      outputToast.hide();
+      // scroll to last position
+      if (localStorage.getItem('scrollPosition') !== null) {
+        var scrollPosition = parseFloat(localStorage.getItem('scrollPosition'));
+        $('.page__content').scrollTop(scrollPosition);
+      }
     }
   });
 }
 
+function goToNewsList() {
+  fn.load('newsList.html');
+  getNewsList('null', 'null');
+}
+
 function loadMoreNews() {
+  $('#outputToastMsg').text("Loading more posts...");
+  outputToast.toggle()
   var keys = Object.keys(newsList);
   var oldestID = keys[0];
   getNewsList(oldestID, "null");
@@ -38,7 +51,7 @@ function getNewListItem(post) {
   datetime = post.datetime;
   title = post.title;
   mainImg = post.mainImg;
-  var html = '<li class="list-item"><div class="list-item__left"><img class="list-item__thumbnail" src="' + mainImg + '" alt="mainImg"  onerror="imgError(this);"></div><div class="list-item__center" onclick="loadPost(' + "'" + id + "'" + ')"><div class="list-item__title sinhala">' + title + '</div><div class="list-item__subtitle" style="margin-top:5px;">' + source + " - " + datetime + '</div></div></li>'
+  var html = '<li id="' + id + '" class="list-item"><div class="list-item__left"><img class="list-item__thumbnail" src="' + mainImg + '" alt="mainImg"  onerror="imgError(this);"></div><div class="list-item__center" onclick="loadPost(' + "'" + id + "'" + ')"><div class="list-item__title sinhala">' + title + '</div><div class="list-item__subtitle" style="margin-top:5px;">' + source + " - " + datetime + '</div></div></li>'
   return(html);
 }
 
@@ -57,6 +70,8 @@ function loadPost(postID) {
       showPost(postID, data);
     }
   });
+  // save last scroll position
+  localStorage.setItem('scrollPosition', ($('#' + postID).offset().top) - 70);
 }
 
 function showPost(postID, data) {
@@ -74,8 +89,8 @@ function showPost(postID, data) {
 }
 
 function imgError(image) {
-    image.src = "https://image.freepik.com/free-icon/news-logo_318-38132.jpg";
-    return true;
+  image.src = "https://image.freepik.com/free-icon/news-logo_318-38132.jpg";
+  return true;
 }
 
 
