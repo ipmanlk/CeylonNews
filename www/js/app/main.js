@@ -21,7 +21,7 @@ function getNewsList(postID, source_id) {
         $('#newsList').append(getNewListItem(data[item]));
         newsList[(data[item].id)] = data[item];
       }
-      outputToast.hide();
+      toast(null, "hide");
       // scroll to last position
       if (localStorage.getItem('scrollPosition') !== null) {
         var scrollPosition = parseFloat(localStorage.getItem('scrollPosition'));
@@ -37,8 +37,7 @@ function goToNewsList() {
 }
 
 function loadMoreNews() {
-  $('#outputToastMsg').text("Loading more posts...");
-  outputToast.toggle()
+  toast("Loading more posts...", "show");
   var keys = Object.keys(newsList);
   var oldestID = keys[0];
   getNewsList(oldestID, "null");
@@ -56,6 +55,7 @@ function getNewListItem(post) {
 }
 
 function loadPost(postID) {
+  toast("Loading post...", "show");
   fn.load('post.html');
   $.ajax({
     type: 'post',
@@ -68,6 +68,7 @@ function loadPost(postID) {
     timeout: 60000, //60s
     success: function (data) {
       showPost(postID, data);
+      toast(null, "hide");
     }
   });
   // save last scroll position
@@ -93,6 +94,14 @@ function imgError(image) {
   return true;
 }
 
+function toast(msg, action) {
+  if (action == "show") {
+    $('#outputToastMsg').text(msg);
+    outputToast.toggle();
+  } else {
+    outputToast.hide();
+  }
+}
 
 // handle slide menu
 window.fn = {};
