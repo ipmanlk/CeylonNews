@@ -1,7 +1,9 @@
+// store news list temp
+var newsList = {}
+
 $(document).ready(function() {
   getNewsList("null", "null");
 });
-
 
 function getNewsList(postID, source_id) {
   $.ajax({
@@ -17,6 +19,7 @@ function getNewsList(postID, source_id) {
     success: function (data) {
       for (item in data) {
         $('#newsList').append(getNewListItem(data[item]));
+        newsList[(data[item].id)] = data[item];
       }
     }
   });
@@ -39,20 +42,32 @@ function loadPost(id) {
     type: 'post',
     data: {
       code:"4a2204811369",
-      post_id:postID,
-      source_id:source_id
+      post_id:postID
     },
-    url: "https://pk.navinda.xyz/api/ceylon_news/v2.0/getNewsList.php",
+    url: "https://pk.navinda.xyz/api/ceylon_news/v2.0/getNewsPost.php",
     dataType: 'json',
     timeout: 60000, //60s
     success: function (data) {
-      for (item in data) {
-        $('#newsList').append(getNewListItem(data[item]));
-      }
+      showPost(id, data);
     }
   });
 }
 
+function showPost(id, data) {
+  var source,datetime,title,mainImg, content, link;
+  source = newsList[id].source;
+  datetime = newsList[id].datetime;
+  title = newsList[id].title;
+  mainImg = newsList[id].mainImg;
+  content = data.post;
+  link = data.link;
+  $('#post-source').text(source);
+  $('#post-title').html(title);
+  $('#post-datetime').text(datetime);
+  $('#post-img').attr("src",mainImg);
+  $('#post-content').html();
+  $('#post-link').attr("href", link);
+}
 
 function imgError(image) {
     image.onerror = "";
