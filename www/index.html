@@ -1,63 +1,176 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en" dir="ltr">
 <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
-    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
-    <link rel="stylesheet" href="css/custom.css">
-    <script src="js/jquery.min.js"></script>
-    <script src="js/jquery.mobile-1.4.5.min.js"></script>
-    <script src="cordova.js"></script>
-    <title>Home</title>
+  <meta charset="utf-8">
+  <title></title>
 </head>
-
+<link rel="stylesheet" href="./css/onsenui.min.css">
+<link rel="stylesheet" href="./css/custom.css">
+<link id="styleshhet" rel="stylesheet" href="./css/onsen-css-components.min.css">
+<script src="./js/onsenui.min.js"></script>
+<script src="./js/jquery.min.js"></script>
 <body>
 
-    <!-- main page -->
-    <div data-role="page" id="index">
+  <ons-splitter>
+    <ons-splitter-side id="menu" side="left" width="220px" collapse swipeable>
+      <ons-page>
+        <img src="https://tinyurl.com/y9rod7ud" style="width:100%">
+        <ons-list>
+          <ons-list-item onclick="fn.load('newsList.html')" tappable>
+            Home
+          </ons-list-item>
+          <ons-list-item onclick="fn.load('about.html')" tappable>
+            About
+          </ons-list-item>
+        </ons-list>
+      </ons-page>
+    </ons-splitter-side>
+    <ons-splitter-content id="content" page="newsList.html"></ons-splitter-content>
+  </ons-splitter>
 
-        <!-- side menu -->
-        <div data-role="panel" id="sideMenu" data-display="overlay" data-theme="b">
-            <ul data-role="listview">
-                <li data-icon="bars">
-                    <a href="sources.html">Sources</a>
-                </li>
-                <li data-icon="info">
-                    <a href="about.html">About</a>
-                </li>
-            </ul>
+  <template id="newsList.html">
+    <ons-page>
+      <ons-toolbar>
+        <div class="left">
+          <ons-toolbar-button onclick="fn.open()">
+            <ons-icon icon="md-menu"></ons-icon>
+          </ons-toolbar-button>
         </div>
 
-        <!-- header -->
-        <div data-role="header" style="overflow:hidden;" data-position="fixed" data-theme="b" data-tap-toggle="false">
-            <h1>Ceylon News</h1>
-            <a href="#sideMenu" data-icon="bars" data-iconpos="notext left" data-role="button"></a>
-            <a href="#" onclick="checkUpdates('refresh');" data-icon="refresh" data-iconpos="notext right" data-role="button"></a>
-            <div data-role="navbar">
-                <ul>
-                    <li>
-                        <a id="newsDataInfo" href="#" class="ui-btn-active">Latest News</a>
-                    </li>
-                </ul>
+        <div class="center">
+          Ceylon News
+        </div>
+
+      </ons-toolbar>
+
+      <ul class="list">
+
+        <li class="list-item">
+          <div class="list-item__left">
+            <img class="list-item__thumbnail" src="https://ichef.bbci.co.uk/news/624/cpsprodpb/3248/production/_104127821_computer.jpg" alt="Cute kitten">
+          </div>
+          <div class="list-item__center" onclick="fn.load('post.html')">
+            <div class="list-item__title sinhala">මුහුදට කඩා වැටුණු ගුවන් යානයේ කළු පෙට්ටිය හමුවෙයි</div>
+            <div class="list-item__subtitle" style="margin-top:5px;">Hiru News - 2018-11-01 8:15 PM</div>
+          </div>
+        </li>
+
+
+        <li class="list-item">
+          <div class="list-item__left">
+            <img class="list-item__thumbnail" src="https://ichef.bbci.co.uk/news/624/cpsprodpb/3248/production/_104127821_computer.jpg" alt="Cute kitten">
+          </div>
+          <div class="list-item__center" onclick="fn.load('post.html')">
+            <div class="list-item__title sinhala">මුහුදට කඩා වැටුණු ගුවන් යානයේ කළු පෙට්ටිය හමුවෙයි</div>
+            <div class="list-item__subtitle" style="margin-top:5px;">Hiru News - 2018-11-01 8:15 PM</div>
+          </div>
+        </li>
+
+
+      </ul>
+
+    </ons-page>
+  </template>
+
+  <template id="post.html">
+    <ons-page>
+      <ons-toolbar>
+        <div class="left">
+          <span class="toolbar-button toolbar-button--outline" onclick="fn.load('newsList.html')">Back</span>
+        </div>
+        <div class="center">
+          Hiru News
+        </div>
+      </ons-toolbar>
+
+      <div class="card card--material">
+        <div class="post-data">
+          <div class="card__title card--material__title">
+            <span id="post-title" class="sinhala justify">මුහුදට කඩා වැටුණු ගුවන් යානයේ කළු පෙට්ටිය හමුවෙයි</span>
+          </div>
+          <span id="post-datetime">2018-11-01 8:15 PM</span>
+          <hr>
+          <div class="card__content card--material__content">
+            <img id="post-img" src="https://tinyurl.com/y9rod7ud" style="width:100%">
+            <div id="post-content" class="sinhala justify" style="font-size:17px; color:#000000">
+              ඉන්දුනීසියාවේ ජාකර්තා සිට පියාසර කරමින් සිටියදී මුහුදට කඩා වැටුණු Lion Air ගුවන් යානයේ කළු පෙට්ටිය මුහුදු පතුලේ තිබී සොයාගෙන තිබේ.
+
+              189 දෙනෙකු රැගත් එම ගුවන් යානය ජාකර්තා ගුවන් තොටුපොළෙන් ගුවන්ගත වී සුළු මොහොතකින් මුහුදට කඩා වැටුණේ, පසුගිය සඳුදා දිනයේදීය.
+
+              එම ගුවන් අනතුරෙන් කිසිවෙකුගේ දිවි බේරා ගැනීමට නොහැකි වූ අතර, Boeing 737 ගුවන් යානයේ බඳ පවා සොයා ගත නොහැකි විය.
             </div>
+          </div>
+          <hr>
+          <div class="card--material__footer" style="">
+            <span>Source: <span id="post-source">Hiru News</span> - <a id="post-link" href="#">Original Post</a></span>
+          </div>
         </div>
+      </div>
 
-        <!-- post list shows in here -->
-        <div data-role="content" class="no-padding-margin">
 
-            <!-- post list -->
-            <ul id="newsList" data-role="listview" data-inset="true" class="news-list no-padding-margin">
+      <ons-bottom-toolbar>
+        <div class="tabbar">
+          <label class="tabbar__item">
+            <input type="radio" name="tabbar-a">
+            <button class="tabbar__button">
+              <i class="tabbar__icon ion-refresh"></i>
+              <div class="tabbar__label">Reload</div>
+            </button>
+          </label>
 
-            </ul>
+          <label class="tabbar__item">
+            <input type="radio" name="tabbar-a">
+            <button class="tabbar__button">
+              <i class="tabbar__icon ion-home"></i>
+              <div class="tabbar__label">Home</div>
+            </button>
+          </label>
+
+          <label class="tabbar__item">
+            <input type="radio" name="tabbar-a">
+            <button class="tabbar__button">
+              <i class="tabbar__icon ion-share"></i>
+              <div class="tabbar__label">Share</div>
+            </button>
+          </label>
         </div>
-    </div>
+      </ons-bottom-toolbar>
+    </ons-page>
+  </template>
 
-    <!-- additional javascript files -->
-    <script src="js/moment.js"></script>
-    <script src="js/common.js"></script>
-    <script src="js/index.js"></script>
+  <template id="about.html">
+    <ons-page>
+      <ons-toolbar>
+        <div class="left">
+          <ons-toolbar-button onclick="fn.open()">
+            <ons-icon icon="md-menu"></ons-icon>
+          </ons-toolbar-button>
+        </div>
+        <div class="center">
+          About
+        </div>
+      </ons-toolbar>
+    </ons-page>
+  </template>
 
+  <script type="text/javascript">
+  window.fn = {};
+
+  window.fn.open = function() {
+    var menu = document.getElementById('menu');
+    menu.open();
+  };
+
+  window.fn.load = function(page) {
+    var content = document.getElementById('content');
+    var menu = document.getElementById('menu');
+    content.load(page)
+    .then(menu.close.bind(menu));
+  };
+
+  $(document).ready(function() {
+
+  });
+</script>
 </body>
-
 </html>
