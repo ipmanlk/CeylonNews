@@ -25,6 +25,11 @@ function getNewsList(postID, source_id) {
   });
 }
 
+function loadMoreNews() {
+  var keys = Object.keys(newsList);
+  var oldestID = keys[0];
+  getNewsList(oldestID, "null");
+}
 
 function getNewListItem(post) {
   var id,source,datetime,title,mainImg;
@@ -69,7 +74,6 @@ function showPost(postID, data) {
 }
 
 function imgError(image) {
-    image.onerror = "";
     image.src = "https://image.freepik.com/free-icon/news-logo_318-38132.jpg";
     return true;
 }
