@@ -17,3 +17,7 @@
     margin: 0px !important;
     padding: 0px !important;
 }
+
+.post-content img {
+  width: 100% !important;
+}

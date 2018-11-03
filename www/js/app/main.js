@@ -25,6 +25,7 @@ function getNewsList(postID, source_id) {
       // scroll to last position
       if (localStorage.getItem('scrollPosition') !== null) {
         var scrollPosition = parseFloat(localStorage.getItem('scrollPosition'));
+        console.log(scrollPosition);
         $('.page__content').scrollTop(scrollPosition);
       }
     }
@@ -87,6 +88,7 @@ function showPost(postID, data) {
   $('#post-datetime').text(datetime);
   $('#post-content').html(content);
   $('#post-link').attr("href", link);
+  fixElementSizes();
 }
 
 function imgError(image) {
@@ -101,6 +103,10 @@ function toast(msg, action) {
   } else {
     outputToast.hide();
   }
+}
+
+function fixElementSizes() {
+  $("iframe").width('100%');
 }
 
 // handle slide menu
