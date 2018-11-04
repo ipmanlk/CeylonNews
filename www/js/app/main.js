@@ -87,7 +87,7 @@ function showPost(postID, data) {
   $('#post-datetime').text(datetime);
   $('#post-content').html(content);
   $('#post-link').attr("href", link);
-  fixElementSizes();
+  fixElements();
 
   $('#news-list').hide();
   showPostToolbar();
@@ -121,8 +121,16 @@ function toast(msg, action) {
   }
 }
 
-function fixElementSizes() {
+function fixElements() {
   $("iframe").width('100%');
+  $('img').attr('onerror', 'imgError(this);');
+
+  $("a").each(function(){
+    var href = $(this).attr('href');
+    if (href.indexOf("fivefilters") >= 0) {
+      $(this).hide();
+    }
+  });
 }
 
 // handle slide menu
