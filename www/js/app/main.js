@@ -1,7 +1,12 @@
 // store news list temp
 var newsList = {}
+// current location in app
+var currentPage = "news-list";
 
-$(document).ready(function() {
+ons.ready(function() {
+  // disable built in back button handler of onsen
+  ons.disableDeviceBackButtonHandler();
+  // get news list
   getNewsList("null", "null","normal");
   // check for new articles
   setTimeout(checkNewPosts, 10000);
@@ -49,6 +54,7 @@ function goToNewsList() {
   showMainToolbar();
   $('#post').hide();
   $('#news-list').fadeIn();
+  currentPage = "news-list";
 }
 
 function loadMoreNews() {
@@ -89,7 +95,7 @@ function loadPost(postID) {
       hideToast();
     }
   });
-
+  currentPage = "post";
 }
 
 function showPost(postID, data) {
@@ -135,7 +141,7 @@ function showMainToolbar() {
 
 function imgError(image) {
   // when image error happen, set default img
-  image.src = "../../../img/sources/default.png";
+  image.src = "./img/sources/default.png";
   return true;
 }
 

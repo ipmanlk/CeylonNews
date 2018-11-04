@@ -8,6 +8,8 @@
 <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
 <link rel="stylesheet" href="./css/custom.css">
 
+<script src="cordova.js"></script>
+
 <!--  libs -->
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 
@@ -15,15 +17,14 @@
 
 <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
 
-<!--  app -->
-<script src="./js/app/main.js" charset="utf-8"></script>
+
 <body>
   <ons-splitter>
     <ons-splitter-side id="menu" side="left" width="220px" collapse swipeable>
       <ons-page>
         <img src="https://tinyurl.com/y9rod7ud" style="width:100%">
         <ons-list>
-          <ons-list-item onclick="fn.load('main.html');getNewsList('null', 'null');" tappable>
+          <ons-list-item onclick="fn.load('main.html');getNewsList('null', 'null', 'normal');" tappable>
             Home
           </ons-list-item>
           <ons-list-item onclick="fn.load('about.html')" tappable>
@@ -49,7 +50,7 @@
         </div>
 
         <div class="center">
-          <span id="toolbar-title">Hiru News</span>
+          <span id="toolbar-title">Ceylon News</span>
         </div>
 
         <div class="right">
@@ -68,7 +69,7 @@
 
         </ul>
 
-        <div style="margin:10px 10px 0px 10px">
+        <div style="margin:10px 10px 20px 10px">
           <button class="button--large button--outline" onclick="loadMoreNews();">Load More</button>
         </div>
       </div>
@@ -120,7 +121,37 @@
           About
         </div>
       </ons-toolbar>
+
+
+      <div>
+        <div class="card">
+          <div class="card__content">
+            <center>
+              <img src="img/logo.png" style="margin-top:15px" width="40%">
+              <div class="about-label-title">
+                <h5>Developed By</h5>
+              </div>
+              <h4 class="about-label-text">Navinda Dissanayake</h4>
+              <div class="about-label-title">
+                <h5>Website</h5>
+              </div>
+              <h4 class="about-label-text">
+                <a href="http://www.navinda.xyz">www.navinda.xyz</a>
+              </h4>
+              <div class="about-label-title">
+                <h5>E-Mail</h5>
+              </div>
+              <h4 class="about-label-text">navilk@zoho.com</h4>
+            </center>
+          </div>
+        </div>
+      </div>
+
     </ons-page>
   </template>
+
+  <!--  app -->
+  <script src="./js/app/main.js" charset="utf-8"></script>
+  <script src="./js/app/common.js" charset="utf-8"></script>
 </body>
 </html>

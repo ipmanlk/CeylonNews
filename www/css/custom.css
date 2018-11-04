@@ -1,12 +1,12 @@
 @font-face {
-    font-family: "Malithi-Web";
-    src: url(../fonts/malithi_web.ttf);
-    font-weight: normal !important;
+  font-family: "Malithi-Web";
+  src: url(../fonts/malithi_web.ttf);
+  font-weight: normal !important;
 
-  }
+}
 
 .sinhala {
-    font-family: "Malithi-Web" !important;
+  font-family: "Malithi-Web" !important;
 }
 
 .justify {
@@ -14,10 +14,21 @@
 }
 
 .no-padding-margin {
-    margin: 0px !important;
-    padding: 0px !important;
+  margin: 0px !important;
+  padding: 0px !important;
 }
 
 .post-content img {
   width: 100% !important;
+}
+
+.about-label-title {
+  background-color:#000000;
+  border-radius:10px;
+  color:#FFFFFF;
+}
+
+.about-label-text {
+  color:#000000;
+  margin-bottom: 15px !important;
 }
