@@ -6,6 +6,7 @@ $(document).ready(function() {
 });
 
 function getNewsList(postID, source_id) {
+  // get news list from server
   $.ajax({
     type: 'post',
     data: {
@@ -32,12 +33,14 @@ function getNewsList(postID, source_id) {
 }
 
 function goToNewsList() {
+  // go back to news list
   showMainToolbar();
   $('#post').hide();
   $('#news-list').fadeIn();
 }
 
 function loadMoreNews() {
+  // load more posts
   toast("Loading more posts...", "show");
   var keys = Object.keys(newsList);
   var oldestID = keys[0];
@@ -45,6 +48,7 @@ function loadMoreNews() {
 }
 
 function getNewListItem(post) {
+  // generate li element for list
   var id,source,datetime,title,mainImg;
   id = post.id;
   source = post.source;
@@ -56,6 +60,7 @@ function getNewListItem(post) {
 }
 
 function loadPost(postID) {
+  // get full post from server
   toast("Loading post...", "show");
   $.ajax({
     type: 'post',
@@ -76,6 +81,7 @@ function loadPost(postID) {
 }
 
 function showPost(postID, data) {
+  // set element values on post
   var source,datetime,title,mainImg, content, link;
   source = newsList[postID].source;
   datetime = newsList[postID].datetime;
@@ -87,12 +93,16 @@ function showPost(postID, data) {
   $('#post-datetime').text(datetime);
   $('#post-content').html(content);
   $('#post-link').attr("href", link);
+
+  // fix element issus on post
   fixElements();
 
+  // hide news list & show post
   $('#news-list').hide();
   showPostToolbar();
   $('#post').fadeIn();
 
+  // scroll to top of page
   $('.page__content').scrollTop(0);
 }
 
@@ -108,6 +118,7 @@ function showMainToolbar() {
 }
 
 function imgError(image) {
+  // when image error happen, set default img
   image.src = "https://image.freepik.com/free-icon/news-logo_318-38132.jpg";
   return true;
 }
@@ -122,18 +133,21 @@ function toast(msg, action) {
 }
 
 function fixElements() {
+  // fix broken elements of page & remove useless ones
   $("iframe").width('100%');
   $('img').attr('onerror', 'imgError(this);');
 
-  $("a").each(function(){
-    var href = $(this).attr('href');
-    if (href.indexOf("fivefilters") >= 0) {
-      $(this).hide();
+  $("a, p").each(function(){
+    var val = $(this).attr('href');
+    if (val == null) {val=$(this).text()}
+    if (val == null) {val="null"}
+    if (val.indexOf("fivefilters") >= 0 || val.indexOf("Viewers") >= 0) {
+      $(this).remove();
     }
   });
 }
 
-// handle slide menu
+// handle slide menu (code from onsen ui)
 window.fn = {};
 
 window.fn.open = function() {
