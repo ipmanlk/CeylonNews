@@ -7,7 +7,9 @@ ons.ready(function() {
   // disable built in back button handler of onsen
   ons.disableDeviceBackButtonHandler();
   // get news list
+  showToast("Loading posts...");
   getNewsList("null", "null","normal");
+  hideToast();
   // check for new articles
   setTimeout(checkNewPosts, 10000);
 });
@@ -44,7 +46,8 @@ function getNewsList(postID, source_id, mode) {
           setTimeout(hideToast, 4000);
         }
       }
-
+      // show load more button
+      $('#load-more-btn').show();
     }
   });
 }
