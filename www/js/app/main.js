@@ -86,6 +86,20 @@ function getNewListItem(post) {
 }
 
 function loadPost(postID) {
+  if (postID in newsPosts) {
+    loadPostOffline(postID);
+  } else {
+    loadPostOnline(postID);
+  }
+  currentPage = "post";
+  currentPostID = postID;
+}
+
+function loadPostOffline(postID) {
+  showPost(postID, newsPosts[postID]);
+}
+
+function loadPostOnline(postID) {
   // get full post from server
   showToast("Loading post...");
   $.ajax({
@@ -103,8 +117,7 @@ function loadPost(postID) {
       hideToast();
     }
   });
-  currentPage = "post";
-  currentPostID = postID;
+
 }
 
 function showPost(postID, data) {
