@@ -2,32 +2,44 @@
 var newsList = {}
 
 $(document).ready(function() {
-  getNewsList("null", "null");
+  getNewsList("null", "null","normal");
+  // check for new articles
+  setTimeout(checkNewPosts, 10000);
 });
 
-function getNewsList(postID, source_id) {
+function getNewsList(postID, source_id, mode) {
   // get news list from server
   $.ajax({
     type: 'post',
     data: {
       code:"4a2204811369",
       post_id:postID,
-      source_id:source_id
+      source_id:source_id,
+      mode:mode
     },
     url: "https://pk.navinda.xyz/api/ceylon_news/v2.0/getNewsList.php",
     dataType: 'json',
     timeout: 60000, //60s
     success: function (data) {
-      for (item in data) {
-        $('#news-list-content').append(getNewListItem(data[item]));
-        newsList[(data[item].id)] = data[item];
+      if (data.length !== 0) {
+        for (item in data) {
+          newsList[(data[item].id)] = data[item];
+
+          if (mode == "normal") {
+            $('#news-list-content').append(getNewListItem(data[item]));
+          }
+
+          if (mode == "check") {
+            $('#news-list-content').prepend(getNewListItem(data[item]));
+          }
+        }
+
+        if (mode == "check") {
+          showToast("New articles are available!");
+          setTimeout(hideToast, 4000);
+        }
       }
-      toast(null, "hide");
-      // scroll to last position
-      if (localStorage.getItem('scrollPosition') !== null) {
-        var scrollPosition = parseFloat(localStorage.getItem('scrollPosition'));
-        $('.page__content').scrollTop(scrollPosition);
-      }
+
     }
   });
 }
@@ -41,10 +53,11 @@ function goToNewsList() {
 
 function loadMoreNews() {
   // load more posts
-  toast("Loading more posts...", "show");
+  showToast("Loading more posts...");
   var keys = Object.keys(newsList);
   var oldestID = keys[0];
-  getNewsList(oldestID, "null");
+  getNewsList(oldestID, "null", "normal");
+  hideToast();
 }
 
 function getNewListItem(post) {
@@ -61,7 +74,7 @@ function getNewListItem(post) {
 
 function loadPost(postID) {
   // get full post from server
-  toast("Loading post...", "show");
+  showToast("Loading post...");
   $.ajax({
     type: 'post',
     data: {
@@ -73,11 +86,10 @@ function loadPost(postID) {
     timeout: 60000, //60s
     success: function (data) {
       showPost(postID, data);
-      toast(null, "hide");
+      hideToast();
     }
   });
-  // save last scroll position
-  localStorage.setItem('scrollPosition', ($('#' + postID).offset().top) - 70);
+
 }
 
 function showPost(postID, data) {
@@ -109,27 +121,31 @@ function showPost(postID, data) {
 function showPostToolbar() {
   $('#toolbar-menu-toggler').hide();
   $('#toolbar-back').fadeIn();
+  $('#toolbar-share').fadeIn();
+  $('#toolbar-web').fadeIn();
 }
 
 function showMainToolbar() {
   $('#toolbar-back').hide();
+  $('#toolbar-web').hide();
+  $('#toolbar-share').hide();
   $('#toolbar-menu-toggler').fadeIn();
   $('#toolbar-title').text("Ceylon News");
 }
 
 function imgError(image) {
   // when image error happen, set default img
-  image.src = "https://image.freepik.com/free-icon/news-logo_318-38132.jpg";
+  image.src = "../../../img/sources/default.png";
   return true;
 }
 
-function toast(msg, action) {
-  if (action == "show") {
-    $('#outputToastMsg').text(msg);
-    outputToast.toggle();
-  } else {
-    outputToast.hide();
-  }
+function showToast(msg, action) {
+  $('#outputToastMsg').text(msg);
+  outputToast.toggle();
+}
+
+function hideToast() {
+  outputToast.hide();
 }
 
 function fixElements() {
@@ -145,6 +161,13 @@ function fixElements() {
       $(this).remove();
     }
   });
+}
+
+function checkNewPosts() {
+  var keys = Object.keys(newsList);
+  var newestID = keys[keys.length - 1];
+  getNewsList(newestID, "null", "check");
+  setTimeout(checkNewPosts, 900000);
 }
 
 // handle slide menu (code from onsen ui)

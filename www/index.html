@@ -42,11 +42,24 @@
           <ons-toolbar-button onclick="fn.open()" id="toolbar-menu-toggler">
             <ons-icon icon="md-menu"></ons-icon>
           </ons-toolbar-button>
-          <span id="toolbar-back" class="toolbar-button toolbar-button--outline" onclick="goToNewsList();" style="display:none">Back</span>
+
+          <ons-toolbar-button onclick="goToNewsList();" id="toolbar-back" style="display:none">
+            <ons-icon icon="md-arrow-back"></ons-icon>
+          </ons-toolbar-button>
         </div>
 
         <div class="center">
           <span id="toolbar-title">Hiru News</span>
+        </div>
+
+        <div class="right">
+          <ons-toolbar-button onclick="" id="toolbar-web" style="display:none">
+            <ons-icon icon="md-link"></ons-icon>
+          </ons-toolbar-button>
+
+          <ons-toolbar-button onclick="" id="toolbar-share" style="display:none">
+            <ons-icon icon="md-share"></ons-icon>
+          </ons-toolbar-button>
         </div>
       </ons-toolbar>
 
@@ -94,50 +107,6 @@
   <ons-toast id="outputToast" animation="ascend">
     <span id="outputToastMsg"></span>
   </ons-toast>
-
-  <template id="post.html">
-    <ons-page>
-      <ons-toolbar>
-        <div class="left">
-          <span class="toolbar-button toolbar-button--outline" onclick="goToNewsList();">Back</span>
-        </div>
-        <div class="center">
-          <span id="post-source">Hiru News</span>
-        </div>
-      </ons-toolbar>
-
-
-
-
-      <ons-bottom-toolbar>
-        <div class="tabbar">
-          <label class="tabbar__item">
-            <input type="radio" name="tabbar-a">
-            <button class="tabbar__button">
-              <i class="tabbar__icon ion-refresh"></i>
-              <div class="tabbar__label">Reload</div>
-            </button>
-          </label>
-
-          <label class="tabbar__item">
-            <input type="radio" name="tabbar-a">
-            <button class="tabbar__button">
-              <i class="tabbar__icon ion-home"></i>
-              <div class="tabbar__label">Home</div>
-            </button>
-          </label>
-
-          <label class="tabbar__item">
-            <input type="radio" name="tabbar-a">
-            <button class="tabbar__button">
-              <i class="tabbar__icon ion-share"></i>
-              <div class="tabbar__label">Share</div>
-            </button>
-          </label>
-        </div>
-      </ons-bottom-toolbar>
-    </ons-page>
-  </template>
 
   <template id="about.html">
     <ons-page>
