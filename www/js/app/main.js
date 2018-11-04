@@ -1,7 +1,11 @@
-// store news list temp
-var newsList = {}
+// store news list, posts temp
+var newsList = {};
+var newsPosts = {};
+
 // current location in app
 var currentPage = "news-list";
+// current reading post
+var currentPostID;
 
 ons.ready(function() {
   // disable built in back button handler of onsen
@@ -94,11 +98,13 @@ function loadPost(postID) {
     dataType: 'json',
     timeout: 60000, //60s
     success: function (data) {
+      newsPosts[data.id] = data;
       showPost(postID, data);
       hideToast();
     }
   });
   currentPage = "post";
+  currentPostID = postID;
 }
 
 function showPost(postID, data) {
@@ -177,6 +183,15 @@ function checkNewPosts() {
   var newestID = keys[keys.length - 1];
   getNewsList(newestID, "null", "check");
   setTimeout(checkNewPosts, 900000);
+}
+
+function sharePost() {
+
+}
+
+function openSourceURL() {
+  var url = newsPosts[currentPostID].link;
+  window.open(url, '_blank');
 }
 
 // handle slide menu (code from onsen ui)
