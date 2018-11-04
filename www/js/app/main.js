@@ -18,14 +18,13 @@ function getNewsList(postID, source_id) {
     timeout: 60000, //60s
     success: function (data) {
       for (item in data) {
-        $('#newsList').append(getNewListItem(data[item]));
+        $('#news-list-content').append(getNewListItem(data[item]));
         newsList[(data[item].id)] = data[item];
       }
       toast(null, "hide");
       // scroll to last position
       if (localStorage.getItem('scrollPosition') !== null) {
         var scrollPosition = parseFloat(localStorage.getItem('scrollPosition'));
-        console.log(scrollPosition);
         $('.page__content').scrollTop(scrollPosition);
       }
     }
@@ -33,8 +32,9 @@ function getNewsList(postID, source_id) {
 }
 
 function goToNewsList() {
-  fn.load('newsList.html');
-  getNewsList('null', 'null');
+  showMainToolbar();
+  $('#post').hide();
+  $('#news-list').fadeIn();
 }
 
 function loadMoreNews() {
@@ -57,7 +57,6 @@ function getNewListItem(post) {
 
 function loadPost(postID) {
   toast("Loading post...", "show");
-  fn.load('post.html');
   $.ajax({
     type: 'post',
     data: {
@@ -83,12 +82,29 @@ function showPost(postID, data) {
   title = newsList[postID].title;
   content = data.post;
   link = data.link;
-  $('#post-source, #post-source-bottom').text(source);
+  $('#post-source, #post-source-bottom, #toolbar-title').text(source);
   $('#post-title').text(title);
   $('#post-datetime').text(datetime);
   $('#post-content').html(content);
   $('#post-link').attr("href", link);
   fixElementSizes();
+
+  $('#news-list').hide();
+  showPostToolbar();
+  $('#post').fadeIn();
+
+  $('.page__content').scrollTop(0);
+}
+
+function showPostToolbar() {
+  $('#toolbar-menu-toggler').hide();
+  $('#toolbar-back').fadeIn();
+}
+
+function showMainToolbar() {
+  $('#toolbar-back').hide();
+  $('#toolbar-menu-toggler').fadeIn();
+  $('#toolbar-title').text("Ceylon News");
 }
 
 function imgError(image) {

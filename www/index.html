@@ -23,7 +23,7 @@
       <ons-page>
         <img src="https://tinyurl.com/y9rod7ud" style="width:100%">
         <ons-list>
-          <ons-list-item onclick="fn.load('newsList.html');getNewsList('null', 'null');" tappable>
+          <ons-list-item onclick="fn.load('main.html');getNewsList('null', 'null');" tappable>
             Home
           </ons-list-item>
           <ons-list-item onclick="fn.load('about.html')" tappable>
@@ -32,51 +32,36 @@
         </ons-list>
       </ons-page>
     </ons-splitter-side>
-    <ons-splitter-content id="content" page="newsList.html"></ons-splitter-content>
+    <ons-splitter-content id="content" page="main.html"></ons-splitter-content>
   </ons-splitter>
 
-  <template id="newsList.html">
+  <template id="main.html">
     <ons-page>
       <ons-toolbar>
         <div class="left">
-          <ons-toolbar-button onclick="fn.open()">
+          <ons-toolbar-button onclick="fn.open()" id="toolbar-menu-toggler">
             <ons-icon icon="md-menu"></ons-icon>
           </ons-toolbar-button>
+          <span id="toolbar-back" class="toolbar-button toolbar-button--outline" onclick="goToNewsList();" style="display:none">Back</span>
         </div>
 
         <div class="center">
-          Ceylon News
+          <span id="toolbar-title">Hiru News</span>
         </div>
-
       </ons-toolbar>
 
-      <ul id="newsList" class="list">
+      <div id="news-list">
+        <ul id="news-list-content" class="list">
 
-      </ul>
+        </ul>
 
-      <div style="margin:10px 10px 0px 10px">
-        <button class="button--large button--outline" onclick="loadMoreNews();">Load More</button>
+        <div style="margin:10px 10px 0px 10px">
+          <button class="button--large button--outline" onclick="loadMoreNews();">Load More</button>
+        </div>
       </div>
 
-    </ons-page>
-  </template>
 
-  <ons-toast id="outputToast" animation="ascend">
-    <span id="outputToastMsg"></span>
-  </ons-toast>
-
-  <template id="post.html">
-    <ons-page>
-      <ons-toolbar>
-        <div class="left">
-          <span class="toolbar-button toolbar-button--outline" onclick="goToNewsList();">Back</span>
-        </div>
-        <div class="center">
-          <span id="post-source">Hiru News</span>
-        </div>
-      </ons-toolbar>
-
-      <div class="card card--material">
+      <div id="post" class="card card--material" style="display:none">
         <div class="post-data">
           <div class="card__title card--material__title">
             <span id="post-title" class="sinhala justify">
@@ -102,6 +87,26 @@
           </div>
         </div>
       </div>
+
+    </ons-page>
+  </template>
+
+  <ons-toast id="outputToast" animation="ascend">
+    <span id="outputToastMsg"></span>
+  </ons-toast>
+
+  <template id="post.html">
+    <ons-page>
+      <ons-toolbar>
+        <div class="left">
+          <span class="toolbar-button toolbar-button--outline" onclick="goToNewsList();">Back</span>
+        </div>
+        <div class="center">
+          <span id="post-source">Hiru News</span>
+        </div>
+      </ons-toolbar>
+
+
 
 
       <ons-bottom-toolbar>
