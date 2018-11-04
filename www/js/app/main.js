@@ -199,7 +199,7 @@ function checkNewPosts() {
 }
 
 function sharePost() {
-
+  window.plugins.socialsharing.share(newsList[currentPostID].title, null, null, " - Readmore @ " + newsPosts[currentPostID].link);
 }
 
 function openSourceURL() {
