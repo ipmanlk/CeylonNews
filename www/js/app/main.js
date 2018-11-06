@@ -13,7 +13,6 @@ ons.ready(function() {
   // get news list
   showToast("Loading posts...");
   getNewsList("null", "null","normal");
-  hideToast();
   // check for new articles
   setTimeout(checkNewPosts, 10000);
 });
@@ -48,6 +47,10 @@ function getNewsList(postID, source_id, mode) {
         if (mode == "check") {
           showToast("New articles are available!");
           setTimeout(hideToast, 4000);
+        }
+
+        if (mode == "normal") {
+          hideToast();
         }
       }
       // show load more button
