@@ -8,6 +8,10 @@ var currentPage = "news-list";
 var currentPostID;
 
 ons.ready(function() {
+  // check disclamer notice
+  if (!localStorage.getItem('showNotice')) {
+    showNotice();
+  }
   // disable built in back button handler of onsen
   ons.disableDeviceBackButtonHandler();
   // get news list
@@ -57,6 +61,9 @@ function getNewsList(postID, source_id, mode) {
       }
       // show load more button
       $('#load-more-btn').fadeIn();
+    },
+    error: function () {
+      ons.notification.alert("Unable to read feeds!");
     }
   });
 }
@@ -235,6 +242,18 @@ function onOffline() {
   }
 }
 
+function showNotice() {
+ var msg = "The content of this app comes from publicly available feeds of news sites and they retain all copyrights.\n\nThus, this app is not to be held responsible for any of the content displayed.\n\nThe owners of these sites can exclude their feeds with or without reason from this app by sending an email to me.";
+
+ ons.notification.confirm(msg)
+ .then(function(index) {
+   if (index === 1) {
+     localStorage.setItem('showNotice', true);
+   } else {
+     exitApp();
+   }
+ });
+}
 
 // handle slide menu (code from onsen ui)
 window.fn = {};
