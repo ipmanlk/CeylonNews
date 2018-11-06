@@ -217,12 +217,24 @@ function openSourceURL() {
 
 function revertEscapedHtml(text) {
   return text
-      .replace("&amp;", "&")
-      .replace("&lt;", "<" )
-      .replace("&gt;", ">")
-      .replace("&quot;", '"')
-      .replace("&#039;", "'");
+  .replace("&amp;", "&")
+  .replace("&lt;", "<" )
+  .replace("&gt;", ">")
+  .replace("&quot;", '"')
+  .replace("&#039;", "'");
 }
+
+document.addEventListener("offline", onOffline, false);
+function onOffline() {
+  if (Object.keys(newsList).length == 0) {
+    ons.notification.alert("You are offline!. Please connect to the internet.").then(function() {
+      exitApp();
+    });
+  } else {
+    ons.notification.alert("You are offline!. Some assets will not load properly.");
+  }
+}
+
 
 // handle slide menu (code from onsen ui)
 window.fn = {};
