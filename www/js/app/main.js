@@ -191,7 +191,7 @@ function hideToast() {
 function fixElements() {
   // fix broken elements of page & remove useless ones
   $("#post iframe").width('100%');
-  $("#post iframe").height('auto');
+  // $("#post iframe").height('auto');
   $("#post img").width('100%');
   $("#post img").height('auto');
   $('img').attr('onerror', 'imgError(this);');
