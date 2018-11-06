@@ -84,7 +84,7 @@ function getNewListItem(post) {
   id = post.id;
   source = post.source;
   datetime = post.datetime;
-  title = post.title;
+  title = revertEscapedHtml(post.title);
   mainImg = post.mainImg;
   var html = '<li id="' + id + '" class="list-item"><div class="list-item__left"><img class="list-item__thumbnail" src="' + mainImg + '" alt="mainImg"  onerror="imgError(this);"></div><div class="list-item__center" onclick="loadPost(' + "'" + id + "'" + ')"><div class="list-item__title sinhala">' + title + '</div><div class="list-item__subtitle" style="margin-top:5px;">' + source + " - " + datetime + '</div></div></li>'
   return(html);
