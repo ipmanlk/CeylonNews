@@ -130,8 +130,8 @@ function showPost(postID, data) {
   var source,datetime,title,mainImg, content, link;
   source = newsList[postID].source;
   datetime = newsList[postID].datetime;
-  title = escapeHtml(newsList[postID].title);
-  content = escapeHtml(data.post);
+  title = revertEscapedHtml(newsList[postID].title);
+  content = revertEscapedHtml(data.post);
   link = data.link;
   $('#post-source, #post-source-bottom, #toolbar-title').text(source);
   $('#post-title').text(title);
@@ -212,13 +212,13 @@ function openSourceURL() {
   window.open(url, '_blank');
 }
 
-function escapeHtml(text) {
+function revertEscapedHtml(text) {
   return text
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
+      .replace("&amp;", "&")
+      .replace("&lt;", "<" )
+      .replace("&gt;", ">")
+      .replace("&quot;", '"')
+      .replace("&#039;", "'");
 }
 
 // handle slide menu (code from onsen ui)
