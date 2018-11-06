@@ -52,9 +52,11 @@ function getNewsList(postID, source_id, mode) {
         if (mode == "normal") {
           hideToast();
         }
+      } else {
+        $('#load-more-btn').hide();
       }
       // show load more button
-      $('#load-more-btn').show();
+      $('#load-more-btn').fadeIn();
     }
   });
 }
@@ -69,11 +71,11 @@ function goToNewsList() {
 
 function loadMoreNews() {
   // load more posts
+  $('#load-more-btn').hide();
   showToast("Loading more posts...");
   var keys = Object.keys(newsList);
   var oldestID = keys[0];
   getNewsList(oldestID, "null", "normal");
-  hideToast();
 }
 
 function getNewListItem(post) {
