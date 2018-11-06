@@ -183,12 +183,13 @@ function hideToast() {
 
 function fixElements() {
   // fix broken elements of page & remove useless ones
-  $("iframe").width('100%');
-  $("img").width('100%');
-  $("img").height('auto');
+  $("#post iframe").width('100%');
+  $("#post iframe").height('auto');
+  $("#post img").width('100%');
+  $("#post img").height('auto');
   $('img').attr('onerror', 'imgError(this);');
 
-  $("a, p").each(function(){
+  $("#post a, #post p").each(function(){
     var val = $(this).attr('href');
     if (val == null) {val=$(this).text()}
     if (val == null) {val="null"}
