@@ -3,6 +3,8 @@ var sc = "FFF";
 var newsList = {};
 var newsPosts = {};
 var newsSources = {};
+var selectedSource = "null";
+
 // current location in app
 var currentPage = "news-list";
 // current reading post
@@ -89,7 +91,7 @@ function loadMoreNews() {
   showToast("Loading more posts...");
   var keys = Object.keys(newsList);
   var oldestID = keys[0];
-  getNewsList(oldestID, "null", "normal");
+  getNewsList(oldestID, selectedSource, "normal");
 }
 
 function getNewListItem(post) {
@@ -185,7 +187,14 @@ function getSources() {
 }
 
 function loadSource(sourceID) {
-
+  var sourceName = newsSources[sourceID];
+  selectedSource = sourceID;
+  showToast("Loading posts...");
+  $('#load-more-btn').hide();
+  $('#news-list-content').empty();
+  getNewsList("null", sourceID,"normal");
+  $('#toolbar-title').text(sourceName);
+  menu.close();
 }
 
 
