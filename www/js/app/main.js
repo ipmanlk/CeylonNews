@@ -1,7 +1,8 @@
+var sc = "FFF";
 // store news list, posts temp
 var newsList = {};
 var newsPosts = {};
-
+var newsSources = {};
 // current location in app
 var currentPage = "news-list";
 // current reading post
@@ -26,12 +27,13 @@ function getNewsList(postID, source_id, mode) {
   $.ajax({
     type: 'post',
     data: {
-      code:"4a2204811369",
+      code:sc,
+      news_li:0,
       post_id:postID,
       source_id:source_id,
       mode:mode
     },
-    url: "https://pk.navinda.xyz/api/ceylon_news/v2.0/getNewsList.php",
+    url: "https://pk.navinda.xyz/api/ceylon_news/v2.1/a.php",
     dataType: 'json',
     timeout: 60000, //60s
     success: function (data) {
@@ -61,6 +63,11 @@ function getNewsList(postID, source_id, mode) {
       }
       // show load more button
       $('#load-more-btn').fadeIn();
+
+      // get sources
+      if (newsSources[0] == null) {
+        getSources();
+      }
     },
     error: function () {
       ons.notification.alert("Unable to read feeds!");
@@ -117,10 +124,11 @@ function loadPostOnline(postID) {
   $.ajax({
     type: 'post',
     data: {
-      code:"4a2204811369",
+      news_pst:0,
+      code:sc,
       post_id:postID
     },
-    url: "https://pk.navinda.xyz/api/ceylon_news/v2.0/getNewsPost.php",
+    url: "https://pk.navinda.xyz/api/ceylon_news/v2.1/a.php",
     dataType: 'json',
     timeout: 60000, //60s
     success: function (data) {
@@ -157,6 +165,23 @@ function showPost(postID, data) {
   // scroll to top of page
   $('.page__content').scrollTop(0);
 }
+
+function getSources() {
+  // get sources and append them to menu
+  $.post("https://pk.navinda.xyz/api/ceylon_news/v2.1/a.php",
+  {
+    code: sc,
+    news_s: 0
+  },
+  function(data){
+    var JSONdata = JSON.parse(data);
+    for (item in JSONdata) {
+      $('#menu-sources').append('<ons-list-item tappable onclick="loadSource(\'' + JSONdata[item].id + '\');">' + JSONdata[item].source + '</ons-list-item>');
+    }
+  });
+}
+
+
 
 function showPostToolbar() {
   $('#toolbar-menu-toggler').hide();
@@ -243,16 +268,16 @@ function onOffline() {
 }
 
 function showNotice() {
- var msg = "The content of this app comes from publicly available feeds of news sites and they retain all copyrights.\n\nThus, this app is not to be held responsible for any of the content displayed.\n\nThe owners of these sites can exclude their feeds with or without reason from this app by sending an email to me.";
+  var msg = "The content of this app comes from publicly available feeds of news sites and they retain all copyrights.\n\nThus, this app is not to be held responsible for any of the content displayed.\n\nThe owners of these sites can exclude their feeds with or without reason from this app by sending an email to me.";
 
- ons.notification.confirm(msg)
- .then(function(index) {
-   if (index === 1) {
-     localStorage.setItem('showNotice', true);
-   } else {
-     exitApp();
-   }
- });
+  ons.notification.confirm(msg)
+  .then(function(index) {
+    if (index === 1) {
+      localStorage.setItem('showNotice', true);
+    } else {
+      exitApp();
+    }
+  });
 }
 
 // handle slide menu (code from onsen ui)
