@@ -65,7 +65,7 @@ function getNewsList(postID, source_id, mode) {
       $('#load-more-btn').fadeIn();
 
       // get sources
-      if (newsSources[0] == null) {
+      if (Object.keys(newsSources).length == 0) {
         getSources();
       }
     },
@@ -177,10 +177,16 @@ function getSources() {
     var JSONdata = JSON.parse(data);
     for (item in JSONdata) {
       $('#menu-sources').append('<ons-list-item tappable onclick="loadSource(\'' + JSONdata[item].id + '\');">' + JSONdata[item].source + '</ons-list-item>');
+
+      // add to object for later use
+      newsSources[JSONdata[item].id] = JSONdata[item].source;
     }
   });
 }
 
+function loadSource(sourceID) {
+
+}
 
 
 function showPostToolbar() {
