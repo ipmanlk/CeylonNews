@@ -236,11 +236,14 @@ function fixElements() {
   $("#post img").height('auto');
   $('img').attr('onerror', 'imgError(this);');
 
-  $("#post a, #post p").each(function(){
+  $("#post a, #post p, #post div").each(function(){
     var val = $(this).attr('href');
     if (val == null) {val=$(this).text()}
     if (val == null) {val="null"}
     if (val.indexOf("fivefilters") >= 0 || val.indexOf("Viewers") >= 0) {
+      $(this).remove();
+    }
+    if($(this).attr('style') == "display: block; float: right; margin: 5px 5px 5px 20px;") {
       $(this).remove();
     }
   });
