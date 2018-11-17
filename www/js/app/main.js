@@ -15,13 +15,37 @@ ons.ready(function() {
   if (!localStorage.getItem('showNotice')) {
     showNotice();
   }
+
   // disable built in back button handler of onsen
   ons.disableDeviceBackButtonHandler();
+
   // get news list
   showToast("Loading posts...");
   getNewsList("null", "null","normal");
   // check for new articles
   setTimeout(checkNewPosts, 10000);
+
+  var pullHook = document.getElementById('pull-hook');
+
+  pullHook.addEventListener('changestate', function(event) {
+    var message = '';
+
+    switch (event.state) {
+      case 'initial':
+        message = 'Pull to refresh';
+        break;
+      case 'action':
+        message = 'Refreshing...';
+        refreshData();
+        break;
+    }
+
+    pullHook.innerHTML = message;
+  });
+
+  pullHook.onAction = function(done) {
+    setTimeout(done, 200);
+  };
 });
 
 function getNewsList(postID, source_id, mode) {
@@ -293,6 +317,17 @@ function showNotice() {
       exitApp();
     }
   });
+}
+
+function refreshData() {
+  if (currentPage == "news-list") {
+    $('#load-more-btn').hide();
+    $('#news-list-content').empty();
+    showToast("Loading posts...");
+    getNewsList("null", "null","normal");
+  } else if (currentPage == "post") {
+    loadPostOnline(currentPostID);
+  }
 }
 
 // handle slide menu (code from onsen ui)
