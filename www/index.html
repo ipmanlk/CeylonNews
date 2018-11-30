@@ -2,167 +2,24 @@
 <html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8">
-  <title></title>
+  <title>Loader</title>
 </head>
-<link rel="stylesheet" href="https://cdn.navinda.xyz/OnsenUI-dist-2.10.5/css/onsenui.min.css">
-<link rel="stylesheet" href="https://cdn.navinda.xyz/OnsenUI-dist-2.10.5/css/onsen-css-components.min.css">
-<link rel="stylesheet" href="./css/custom.css">
-
 <script src="cordova.js"></script>
-
-<!--  libs -->
-<script src="https://cdn.navinda.xyz/jquery/jquery-3.3.1.min.js"></script>
-
-<script src="https://cdn.navinda.xyz/OnsenUI-dist-2.10.5/js/onsenui.min.js"></script>
-
-<script src="https://cdn.navinda.xyz/imagesloaded-4.1.4/imagesloaded.pkgd.min.js"></script>
-
-
+<script src="./js/app/common.js" charset="utf-8"></script>
 <body>
-  <ons-splitter>
-    <ons-splitter-side id="menu" side="left" width="220px" collapse swipeable>
-      <ons-page>
-        <img src="./img/cover.jpg" style="width:100%">
-        <ons-list>
-          <ons-list-item onclick="fn.load('main.html');getNewsList('null', 'null', 'normal');selectedSource='null'" tappable>
-            Home
-          </ons-list-item>
-          <ons-list-item expandable>
-            Sources
-            <div class="expandable-content">
-              <ons-list id="menu-sources">
+  <script type="text/javascript">
+    document.addEventListener("online", onOnline, false);
+    function onOnline() {
+      document.addEventListener("deviceready", function() {
+        window.location = "./main.html";
+      }, false);
+    }
 
-              </ons-list>
-            </div>
-          </ons-list-item>
-          <ons-list-item onclick="fn.load('about.html')" tappable>
-            About
-          </ons-list-item>
-        </ons-list>
-      </ons-page>
-    </ons-splitter-side>
-    <ons-splitter-content id="content" page="main.html"></ons-splitter-content>
-  </ons-splitter>
-
-  <template id="main.html">
-    <ons-page>
-      <ons-pull-hook id="pull-hook">
-        Pull to refresh
-      </ons-pull-hook>
-      <ons-toolbar>
-        <div class="left">
-          <ons-toolbar-button onclick="fn.open()" id="toolbar-menu-toggler">
-            <ons-icon icon="md-menu"></ons-icon>
-          </ons-toolbar-button>
-
-          <ons-toolbar-button onclick="goToNewsList();" id="toolbar-back" style="display:none">
-            <ons-icon icon="md-arrow-back"></ons-icon>
-          </ons-toolbar-button>
-        </div>
-
-        <div class="center">
-          <span id="toolbar-title">Ceylon News</span>
-        </div>
-
-        <div class="right">
-          <ons-toolbar-button onclick="openSourceURL();" id="toolbar-web" style="display:none">
-            <ons-icon icon="md-link"></ons-icon>
-          </ons-toolbar-button>
-
-          <ons-toolbar-button onclick="sharePost()" id="toolbar-share" style="display:none">
-            <ons-icon icon="md-share"></ons-icon>
-          </ons-toolbar-button>
-        </div>
-      </ons-toolbar>
-
-      <div id="news-list">
-        <ul id="news-list-content" class="list">
-
-        </ul>
-
-        <div style="margin:10px 10px 20px 10px">
-          <button id="load-more-btn" class="button--large button--outline" onclick="loadMoreNews();" style="display:none">Load More</button>
-        </div>
-      </div>
-
-
-      <div id="post" class="card card--material" style="display:none">
-        <div class="post-data">
-          <div class="card__title card--material__title">
-            <span id="post-title" class="sinhala justify">
-
-            </span>
-          </div>
-          <span id="post-datetime">
-
-          </span>
-          <hr>
-          <div class="card__content card--material__content">
-            <!-- <img id="post-img" src="https://tinyurl.com/y9rod7ud" style="width:100%" onerror="imgError(this);"> -->
-
-            <div id="post-content" class="sinhala justify post-content" style="font-size:17px; color:#000000">
-
-              <!--  post content load here -->
-
-            </div>
-          </div>
-          <hr>
-          <div class="card--material__footer" style="">
-            <span>Source: <span id="post-source-bottom">Hiru News</span> - <a id="post-link" href="#">Original Post</a></span>
-          </div>
-        </div>
-      </div>
-
-    </ons-page>
-  </template>
-
-  <ons-toast id="outputToast" animation="ascend">
-    <span id="outputToastMsg"></span>
-  </ons-toast>
-
-  <template id="about.html">
-    <ons-page>
-      <ons-toolbar>
-        <div class="left">
-          <ons-toolbar-button onclick="fn.open()">
-            <ons-icon icon="md-menu"></ons-icon>
-          </ons-toolbar-button>
-        </div>
-        <div class="center">
-          About
-        </div>
-      </ons-toolbar>
-
-
-      <div>
-        <div class="card">
-          <div class="card__content">
-            <center>
-              <img src="img/logo.png" style="margin-top:15px" width="40%">
-              <div class="about-label-title">
-                <h5>Developed By</h5>
-              </div>
-              <h4 class="about-label-text">Navinda Dissanayake</h4>
-              <div class="about-label-title">
-                <h5>Website</h5>
-              </div>
-              <h4 class="about-label-text">
-                <a href="http://www.navinda.xyz">www.navinda.xyz</a>
-              </h4>
-              <div class="about-label-title">
-                <h5>E-Mail</h5>
-              </div>
-              <h4 class="about-label-text">navilk@zoho.com</h4>
-            </center>
-          </div>
-        </div>
-      </div>
-
-    </ons-page>
-  </template>
-
-  <!--  app -->
-  <script src="./js/app/main.js" charset="utf-8"></script>
-  <script src="./js/app/common.js" charset="utf-8"></script>
+    document.addEventListener("offline", onOffline, false);
+    function onOffline() {
+      alert("You are offline!");
+      exitApp();
+    }
+  </script>
 </body>
 </html>
