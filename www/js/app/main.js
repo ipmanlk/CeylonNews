@@ -282,6 +282,17 @@ function onOffline() {
   }
 }
 
+function refreshData() {
+  if (currentPage == "news-list") {
+    $('#load-more-btn').hide();
+    $('#news-list-content').empty();
+    showToast("Loading posts...");
+    getNewsList("null", "null","normal");
+  } else if (currentPage == "post") {
+    loadPostOnline(currentPostID);
+  }
+}
+
 function showNotice() {
   var msg = "The content of this app comes from publicly available feeds of news sites and they retain all copyrights.\n\nThus, this app is not to be held responsible for any of the content displayed.\n\nThe owners of these sites can exclude their feeds with or without reason from this app by sending an email to me.";
 
