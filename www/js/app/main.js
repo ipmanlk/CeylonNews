@@ -21,7 +21,7 @@ ons.ready(function () {
   showToast("Loading posts...");
   getNewsList("null", "null", "normal");
   // check for new articles
-  setInterval(checkNewPosts, 30000);
+  setInterval(checkNewPosts, 60000);
 });
 
 function getNewsList(postID, source_id, mode) {
@@ -252,21 +252,7 @@ function checkNewPosts() {
   getNewsList(newestID, "null", "check");
 
   if (!localStorage.getItem('rated')) {
-    ons.notification.confirm("Do you like Ceylon News?")
-      .then(function (index) {
-        if (index === 1) {
-          showRateDialog();
-        } else {
-          localStorage.setItem('rated', 'false');
-          alert("Don't use this app if you don't like it!");
-          exitApp();
-        }
-      });
-  } else {
-    if (localStorage.getItem('rated') == 'false') {
-      alert("Don't use this app if you don't like it!");
-      exitApp();
-    }
+    showRateDialog();
   }
 }
 
@@ -328,12 +314,13 @@ function showRateDialog() {
     displayAppName: 'Ceylon News',
     promptAgainForEachNewVersion: false,
     simpleMode:true,
+    usesUntilPrompt: 4,
     storeAppURL: {
       android: 'market://details?id=xyz.navinda.ceylonnews'
     },
     customLocale: {
       title: "Would you mind rating %@?",
-      message: "It won’t take more than a minute and helps to promote our app. Thanks for your support!",
+      message: "It won’t take more than a minute and helps to promote my app. Thanks for your support!",
       cancelButtonLabel: "No, Thanks",
       laterButtonLabel: "Remind Me Later",
       rateButtonLabel: "Rate It Now",
@@ -348,7 +335,7 @@ function showRateDialog() {
         callback(1)
       },
       onButtonClicked: function (buttonIndex) {
-        if (buttonIndex == 3) {
+        if (buttonIndex == 3 || buttonIndex == 1) {
           localStorage.setItem('rated', true);
         }
       }
