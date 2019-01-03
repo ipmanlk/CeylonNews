@@ -1,25 +1,32 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+
 <head>
   <meta charset="utf-8">
   <title>Loader</title>
 </head>
 <script src="cordova.js"></script>
 <script src="./js/app/common.js" charset="utf-8"></script>
+
 <body>
   <script type="text/javascript">
-    document.addEventListener("online", onOnline, false);
-    function onOnline() {
-      document.addEventListener("deviceready", function() {
-        window.location = "./main.html";
-      }, false);
-    }
-
-    document.addEventListener("offline", onOffline, false);
-    function onOffline() {
-      alert("You are offline!");
-      exitApp();
-    }
+  // this checks if device is online
+    document.addEventListener("deviceready", function () {
+      var networkState = navigator.connection.type;
+      var isOffline = (networkState == Connection.NONE) || (networkState == Connection.UNKNOWN);
+      if (isOffline) {
+        alert("You are offline!");
+        exitApp();
+      } else {
+        try {
+          window.location = "./main.html";
+        } catch (error) {
+          alert("Something went wrong!");
+          exitApp();
+        }
+      }
+    }, true);
   </script>
 </body>
+
 </html>

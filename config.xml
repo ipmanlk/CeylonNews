@@ -33,9 +33,10 @@
         <allow-intent href="itms-apps:*" />
     </platform>
     <plugin name="cordova-plugin-x-socialsharing" spec="^5.4.1" />
-    <plugin name="cordova-plugin-network-information" spec="^2.0.1" />
     <plugin name="cordova-plugin-splashscreen" spec="^5.0.2" />
     <plugin name="cordova-plugin-device" spec="^2.0.2" />
+    <plugin name="cordova-plugin-network-information" spec="^2.0.1" />
+    <plugin name="cordova-plugin-apprate" spec="^1.4.0" />
     <engine name="browser" spec="^5.0.4" />
-    <engine name="android" spec="^7.1.2" />
+    <engine name="android" spec="^7.1.4" />
 </widget>
