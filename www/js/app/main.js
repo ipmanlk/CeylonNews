@@ -1,4 +1,4 @@
-var sc = "4ace5d18543";
+var api = "https://pk.navinda.xyz/api/ceylon_news/v2.2/";
 // store news list, posts temp
 var newsList = {};
 var newsPosts = {};
@@ -8,7 +8,7 @@ var selectedSource = "null";
 // current location in app
 var currentPage = "news-list";
 // current reading post
-var currentPostID;
+var currentPostId;
 
 ons.ready(function () {
   // check disclamer notice
@@ -21,60 +21,45 @@ ons.ready(function () {
   showToast("Loading posts...");
   getNewsList("null", "null", "normal");
   // check for new articles
-  setInterval(checkNewPosts, 30000);
+  setInterval(checkNewPosts, 60000);
 });
 
-function getNewsList(postID, source_id, mode) {
-  // get news list from server
-  $.ajax({
-    type: 'post',
-    data: {
-      code: sc,
-      news_li: 0,
-      post_id: postID,
-      source_id: source_id,
-      mode: mode
-    },
-    url: "https://pk.navinda.xyz/api/ceylon_news/v2.1/a.php",
-    dataType: 'json',
-    timeout: 60000, //60s
-    success: function (data) {
-      if (data.length !== 0) {
-        for (item in data) {
-          newsList[(data[item].id)] = data[item];
-
-          if (mode == "normal") {
-            $('#news-list-content').append(getNewListItem(data[item]));
-          }
-
-          if (mode == "check") {
-            $('#news-list-content').prepend(getNewListItem(data[item]));
-          }
-        }
-
-        if (mode == "check") {
-          showToast("New articles are available!");
-          setTimeout(hideToast, 4000);
-        }
-
+function getNewsList(postId, sourceId ,mode) {
+  $.post(api,{
+    action:"news_list",
+    post_id:postId,
+    source_id:sourceId,
+    mode:mode
+  },null, 'json')
+  .done(function(data) {
+    if (data) {
+      for (item in data) {
+        newsList[(data[item].id)] = data[item];
         if (mode == "normal") {
-          hideToast();
+          $('#news-list-content').append(getNewListItem(data[item]));
+        } else {
+          $('#news-list-content').prepend(getNewListItem(data[item]));
         }
-      } else {
-        $('#load-more-btn').hide();
       }
-      // show load more button
-      $('#load-more-btn').fadeIn();
 
-      // get sources
-      if (Object.keys(newsSources).length == 0) {
-        getSources();
+      if (mode == "check") {
+        showToast("New articles are available!");
+        setTimeout(hideToast, 4000);
+      } else {
+        hideToast();
       }
-    },
-    error: function () {
-      ons.notification.alert("Unable to read feeds!");
+    } else {
+      $('#load-more-btn').hide();
     }
-  });
+
+    if (Object.keys(newsSources).length == 0) {
+      getSources();
+    }
+
+  })
+  .fail(function() {
+    ons.notification.alert("Unable to read feeds!");
+  })
 }
 
 function goToNewsList() {
@@ -90,8 +75,8 @@ function loadMoreNews() {
   $('#load-more-btn').hide();
   showToast("Loading more posts...");
   var keys = Object.keys(newsList);
-  var oldestID = keys[0];
-  getNewsList(oldestID, selectedSource, "normal");
+  var oldestId = keys[0];
+  getNewsList(oldestId, selectedSource, "normal");
 }
 
 function getNewListItem(post) {
@@ -106,48 +91,43 @@ function getNewListItem(post) {
   return (html);
 }
 
-function loadPost(postID) {
-  if (postID in newsPosts) {
-    loadPostOffline(postID);
+function loadPost(postId) {
+  if (postId in newsPosts) {
+    getPostOffline(postId);
   } else {
-    loadPostOnline(postID);
+    getPostOnline(postId);
   }
   currentPage = "post";
-  currentPostID = postID;
+  currentPostId = postId;
 }
 
-function loadPostOffline(postID) {
-  showPost(postID, newsPosts[postID]);
+function getPostOffline(postId) {
+  showPost(postId, newsPosts[postId]);
 }
 
-function loadPostOnline(postID) {
-  // get full post from server
+function getPostOnline(postId) {
   showToast("Loading post...");
-  $.ajax({
-    type: 'post',
-    data: {
-      news_pst: 0,
-      code: sc,
-      post_id: postID
-    },
-    url: "https://pk.navinda.xyz/api/ceylon_news/v2.1/a.php",
-    dataType: 'json',
-    timeout: 60000, //60s
-    success: function (data) {
-      newsPosts[data.id] = data;
-      showPost(postID, data);
-      hideToast();
-    }
-  });
-
+  $.post(api,{
+    action:"news_post",
+    post_id:postId
+  },null, 'json')
+  .done(function(data) {
+    newsPosts[data.id] = data;
+    showPost(postId, data);
+    hideToast();
+  })
+  .fail(function() {
+    hideToast();
+    ons.notification.alert("Unable to load post!");
+  })
 }
 
-function showPost(postID, data) {
+function showPost(postId, data) {
   // set element values on post
   var source, datetime, title, mainImg, content, link;
-  source = newsList[postID].source;
-  datetime = newsList[postID].datetime;
-  title = revertEscapedHtml(newsList[postID].title);
+  source = newsList[postId].source;
+  datetime = newsList[postId].datetime;
+  title = revertEscapedHtml(newsList[postId].title);
   content = revertEscapedHtml(data.post);
   link = data.link;
   $('#post-source, #post-source-bottom, #toolbar-title').text(source);
@@ -169,30 +149,28 @@ function showPost(postID, data) {
 }
 
 function getSources() {
-  // get sources and append them to menu
-  $.post("https://pk.navinda.xyz/api/ceylon_news/v2.1/a.php",
-    {
-      code: sc,
-      news_s: 0
-    },
-    function (data) {
-      var JSONdata = JSON.parse(data);
-      for (item in JSONdata) {
-        $('#menu-sources').append('<ons-list-item tappable onclick="loadSource(\'' + JSONdata[item].id + '\');">' + JSONdata[item].source + '</ons-list-item>');
-
-        // add to object for later use
-        newsSources[JSONdata[item].id] = JSONdata[item].source;
-      }
-    });
+  $.post(api,{
+    action:"sources_list"
+  },null, 'json')
+  .done(function(data) {
+    for (item in data) {
+      $('#menu-sources').append('<ons-list-item tappable onclick="loadSource(\'' + data[item].id + '\');">' + data[item].source + '</ons-list-item>');
+      // add to object for later use
+      newsSources[data[item].id] = data[item].source;
+    }
+  })
+  .fail(function() {
+    ons.notification.alert("Unable to read sources!");
+  })
 }
 
-function loadSource(sourceID) {
-  var sourceName = newsSources[sourceID];
-  selectedSource = sourceID;
+function loadSource(sourceId) {
+  var sourceName = newsSources[sourceId];
+  selectedSource = sourceId;
   showToast("Loading posts...");
   $('#load-more-btn').hide();
   $('#news-list-content').empty();
-  getNewsList("null", sourceID, "normal");
+  getNewsList("null", sourceId, "normal");
   $('#toolbar-title').text(sourceName);
   menu.close();
 }
@@ -248,44 +226,30 @@ function fixElements() {
 
 function checkNewPosts() {
   var keys = Object.keys(newsList);
-  var newestID = keys[keys.length - 1];
-  getNewsList(newestID, "null", "check");
+  var newestId = keys[keys.length - 1];
+  getNewsList(newestId, "null", "check");
 
   if (!localStorage.getItem('rated')) {
-    ons.notification.confirm("Do you like Ceylon News?")
-      .then(function (index) {
-        if (index === 1) {
-          showRateDialog();
-        } else {
-          localStorage.setItem('rated', 'false');
-          alert("Don't use this app if you don't like it!");
-          exitApp();
-        }
-      });
-  } else {
-    if (localStorage.getItem('rated') == 'false') {
-      alert("Don't use this app if you don't like it!");
-      exitApp();
-    }
+    showRateDialog();
   }
 }
 
 function sharePost() {
-  window.plugins.socialsharing.share(newsList[currentPostID].title, null, null, " - Readmore @ " + newsPosts[currentPostID].link);
+  window.plugins.socialsharing.share(newsList[currentPostId].title, null, null, " - Readmore @ " + newsPosts[currentPostId].link);
 }
 
 function openSourceURL() {
-  var url = newsPosts[currentPostID].link;
+  var url = newsPosts[currentPostId].link;
   window.open(url, '_blank');
 }
 
 function revertEscapedHtml(text) {
   return text
-    .replace("&amp;", "&")
-    .replace("&lt;", "<")
-    .replace("&gt;", ">")
-    .replace("&quot;", '"')
-    .replace("&#039;", "'");
+  .replace("&amp;", "&")
+  .replace("&lt;", "<")
+  .replace("&gt;", ">")
+  .replace("&quot;", '"')
+  .replace("&#039;", "'");
 }
 
 document.addEventListener("offline", onOffline, false);
@@ -306,7 +270,7 @@ function refreshData() {
     showToast("Loading posts...");
     getNewsList("null", "null", "normal");
   } else if (currentPage == "post") {
-    loadPostOnline(currentPostID);
+    getPostOnline(currentPostId);
   }
 }
 
@@ -314,13 +278,13 @@ function showNotice() {
   var msg = "The content of this app comes from publicly available feeds of news sites and they retain all copyrights.\n\nThus, this app is not to be held responsible for any of the content displayed.\n\nThe owners of these sites can exclude their feeds with or without reason from this app by sending an email to me.";
 
   ons.notification.confirm(msg)
-    .then(function (index) {
-      if (index === 1) {
-        localStorage.setItem('showNotice', true);
-      } else {
-        exitApp();
-      }
-    });
+  .then(function (index) {
+    if (index === 1) {
+      localStorage.setItem('showNotice', true);
+    } else {
+      exitApp();
+    }
+  });
 }
 
 function showRateDialog() {
@@ -328,12 +292,13 @@ function showRateDialog() {
     displayAppName: 'Ceylon News',
     promptAgainForEachNewVersion: false,
     simpleMode:true,
+    usesUntilPrompt: 4,
     storeAppURL: {
       android: 'market://details?id=xyz.navinda.ceylonnews'
     },
     customLocale: {
       title: "Would you mind rating %@?",
-      message: "It won’t take more than a minute and helps to promote our app. Thanks for your support!",
+      message: "It won’t take more than a minute and helps to promote my app. Thanks for your support!",
       cancelButtonLabel: "No, Thanks",
       laterButtonLabel: "Remind Me Later",
       rateButtonLabel: "Rate It Now",
@@ -348,7 +313,7 @@ function showRateDialog() {
         callback(1)
       },
       onButtonClicked: function (buttonIndex) {
-        if (buttonIndex == 3) {
+        if (buttonIndex == 3 || buttonIndex == 1) {
           localStorage.setItem('rated', true);
         }
       }
@@ -370,6 +335,5 @@ window.fn.load = function (page) {
   var content = document.getElementById('content');
   var menu = document.getElementById('menu');
   content.load(page)
-    .then(menu.close.bind(menu));
+  .then(menu.close.bind(menu));
 };
-
