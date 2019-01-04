@@ -48,11 +48,8 @@ function getNewsList(postId, sourceId ,mode) {
       } else {
         hideToast();
       }
-
-      $('#load-more-btn').fadeIn();
-
     } else {
-      $('#load-more-btn').hide();
+      if (mode == "normal") $('#load-more-btn').hide();
     }
 
     if (Object.keys(newsSources).length == 0) {
@@ -228,13 +225,25 @@ function fixElements() {
 }
 
 function checkNewPosts() {
-  var keys = Object.keys(newsList);
-  var newestId = keys[keys.length - 1];
-  getNewsList(newestId, "null", "check");
-
   if (!localStorage.getItem('rated')) {
     showRateDialog();
   }
+
+  var keys = Object.keys(newsList).sort();
+  var newestId = keys[keys.length - 1];
+
+  $.post(api,{
+    action:"news_check",
+  },null, 'json')
+  .done(function(data) {
+    if (data.id !== newestId) {
+      getNewsList(newestId, "null", "check");
+    }
+  })
+  .fail(function() {
+    ons.notification.alert("Unable to check news!");
+  })
+
 }
 
 function sharePost() {
