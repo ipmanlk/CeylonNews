@@ -48,6 +48,9 @@ function getNewsList(postId, sourceId ,mode) {
       } else {
         hideToast();
       }
+
+      $('#load-more-btn').fadeIn();
+
     } else {
       $('#load-more-btn').hide();
     }
