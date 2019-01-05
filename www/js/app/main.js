@@ -20,6 +20,7 @@ ons.ready(function() {
   // get news list
   showToast("Loading posts...");
   getNewsList("null", "null", "normal");
+  getAppCoverImg();
   // check for new articles
   setInterval(checkNewPosts, 60000);
 });
@@ -96,6 +97,18 @@ function getNewsList(postId, sourceId, mode) {
     })
     .fail(function() {
       ons.notification.alert("Unable to read feeds!");
+    });
+}
+
+function getAppCoverImg() {
+  $.post(api, {
+      action: "cover_img"
+    }, null, 'json')
+    .done(function(data) {
+      $('#coverImg').attr('src', data.img);
+    })
+    .fail(function() {
+      ons.notification.alert("Fail to get the cover image!");
     });
 }
 
