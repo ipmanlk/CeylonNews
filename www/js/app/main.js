@@ -33,7 +33,7 @@ function getNewsList(postId, sourceId ,mode) {
   },null, 'json')
   .done(function(data) {
     if (data) {
-      for (item in data) {
+      for (var item in data) {
         newsList[(data[item].id)] = data[item];
         if (mode == "normal") {
           $('#news-list-content').append(getNewListItem(data[item]));
@@ -59,7 +59,7 @@ function getNewsList(postId, sourceId ,mode) {
   })
   .fail(function() {
     ons.notification.alert("Unable to read feeds!");
-  })
+  });
 }
 
 function goToNewsList() {
@@ -87,7 +87,7 @@ function getNewListItem(post) {
   datetime = post.datetime;
   title = revertEscapedHtml(post.title);
   mainImg = post.mainImg;
-  var html = '<li id="' + id + '" class="list-item"><div class="list-item__left"><img class="list-item__thumbnail" src="' + mainImg + '" alt="mainImg"  onerror="imgError(this);"></div><div class="list-item__center" onclick="loadPost(' + "'" + id + "'" + ')"><div class="list-item__title sinhala">' + title + '</div><div class="list-item__subtitle" style="margin-top:5px;">' + source + " - " + datetime + '</div></div></li>'
+  var html = '<li id="' + id + '" class="list-item"><div class="list-item__left"><img class="list-item__thumbnail" src="' + mainImg + '" alt="mainImg"  onerror="imgError(this);"></div><div class="list-item__center" onclick="loadPost(' + "'" + id + "'" + ')"><div class="list-item__title sinhala">' + title + '</div><div class="list-item__subtitle" style="margin-top:5px;">' + source + " - " + datetime + '</div></div></li>';
   return (html);
 }
 
@@ -119,7 +119,7 @@ function getPostOnline(postId) {
   .fail(function() {
     hideToast();
     ons.notification.alert("Unable to load post!");
-  })
+  });
 }
 
 function showPost(postId, data) {
@@ -153,7 +153,7 @@ function getSources() {
     action:"sources_list"
   },null, 'json')
   .done(function(data) {
-    for (item in data) {
+    for (var item in data) {
       $('#menu-sources').append('<ons-list-item tappable onclick="loadSource(\'' + data[item].id + '\');">' + data[item].source + '</ons-list-item>');
       // add to object for later use
       newsSources[data[item].id] = data[item].source;
@@ -161,7 +161,7 @@ function getSources() {
   })
   .fail(function() {
     ons.notification.alert("Unable to read sources!");
-  })
+  });
 }
 
 function loadSource(sourceId) {
@@ -216,8 +216,8 @@ function fixElements() {
 
   $("#post a, #post p").each(function () {
     var val = $(this).attr('href');
-    if (val == null) { val = $(this).text() }
-    if (val == null) { val = "null" }
+    if (val == null) { val = $(this).text(); }
+    if (val == null) { val = "null"; }
     if (val.indexOf("fivefilters") >= 0 || val.indexOf("Viewers") >= 0) {
       $(this).remove();
     }
@@ -242,7 +242,7 @@ function checkNewPosts() {
   })
   .fail(function() {
     ons.notification.alert("Unable to check news!");
-  })
+  });
 
 }
 
@@ -322,7 +322,7 @@ function showRateDialog() {
     callbacks: {
       handleNegativeFeedback: null,
       onRateDialogShow: function (callback) {
-        callback(1)
+        callback(1);
       },
       onButtonClicked: function (buttonIndex) {
         if (buttonIndex == 3 || buttonIndex == 1) {
