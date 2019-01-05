@@ -32,7 +32,7 @@ function getNewsList(postId, sourceId ,mode) {
     mode:mode
   },null, 'json')
   .done(function(data) {
-    if (data) {
+    if (!jQuery.isEmptyObject(data)) {
       for (var item in data) {
         newsList[(data[item].id)] = data[item];
         if (mode == "normal") {
@@ -48,6 +48,9 @@ function getNewsList(postId, sourceId ,mode) {
       } else {
         hideToast();
       }
+
+      $('#load-more-btn').fadeIn();
+
     } else {
       if (mode == "normal") $('#load-more-btn').hide();
     }
@@ -261,7 +264,8 @@ function revertEscapedHtml(text) {
   .replace("&lt;", "<")
   .replace("&gt;", ">")
   .replace("&quot;", '"')
-  .replace("&#039;", "'");
+  .replace("&#039;", "'")
+  .replace("&amp;#039;", "'");
 }
 
 document.addEventListener("offline", onOffline, false);
