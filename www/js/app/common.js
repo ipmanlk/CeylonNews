@@ -7,7 +7,7 @@ function onBackKeyDown(e) {
   // handle accordingly
   switch (currentPage) {
     case "post":
-    goToNewsList();
+    showNewsList();
     break;
     default:
     ons.notification.confirm('Do you really want to close the app?') // Ask for confirmation

@@ -10,7 +10,7 @@ var currentPage = "news-list";
 // current reading post
 var currentPostId;
 
-ons.ready(function () {
+ons.ready(function() {
   // check disclamer notice
   if (!localStorage.getItem('showNotice')) {
     showNotice();
@@ -24,76 +24,82 @@ ons.ready(function () {
   setInterval(checkNewPosts, 60000);
 });
 
-function getNewsList(postId, sourceId ,mode) {
-  $.post(api,{
-    action:"news_list",
-    post_id:postId,
-    source_id:sourceId,
-    mode:mode
-  },null, 'json')
-  .done(function(data) {
-    if (!jQuery.isEmptyObject(data)) {
+// api requests
+function getPostOnline(postId) {
+  showToast("Loading post...");
+  $.post(api, {
+      action: "news_post",
+      post_id: postId
+    }, null, 'json')
+    .done(function(data) {
+      newsPosts[data.id] = data;
+      showPost(postId, data);
+      hideToast();
+    })
+    .fail(function() {
+      hideToast();
+      ons.notification.alert("Unable to load post!");
+    });
+}
+
+function getSources() {
+  $.post(api, {
+      action: "sources_list"
+    }, null, 'json')
+    .done(function(data) {
       for (var item in data) {
-        newsList[(data[item].id)] = data[item];
-        if (mode == "normal") {
-          $('#news-list-content').append(getNewListItem(data[item]));
-        } else {
-          $('#news-list-content').prepend(getNewListItem(data[item]));
+        $('#menu-sources').append('<ons-list-item tappable onclick="loadSource(\'' + data[item].id + '\');">' + data[item].source + '</ons-list-item>');
+        // add to object for later use
+        newsSources[data[item].id] = data[item].source;
+      }
+    })
+    .fail(function() {
+      ons.notification.alert("Unable to read sources!");
+    });
+}
+
+function getNewsList(postId, sourceId, mode) {
+  $.post(api, {
+      action: "news_list",
+      post_id: postId,
+      source_id: sourceId,
+      mode: mode
+    }, null, 'json')
+    .done(function(data) {
+      if (!jQuery.isEmptyObject(data)) {
+        for (var item in data) {
+          newsList[(data[item].id)] = data[item];
+          if (mode == "normal") {
+            $('#news-list-content').append(getNewListItem(data[item]));
+          } else {
+            $('#news-list-content').prepend(getNewListItem(data[item]));
+          }
         }
-      }
 
-      if (mode == "check") {
-        showToast("New articles are available!");
-        setTimeout(hideToast, 4000);
+        if (mode == "check") {
+          showToast("New articles are available!");
+          setTimeout(hideToast, 4000);
+        } else {
+          hideToast();
+        }
+
+        $('#load-more-btn').fadeIn();
+
       } else {
-        hideToast();
+        if (mode == "normal") $('#load-more-btn').hide();
       }
 
-      $('#load-more-btn').fadeIn();
+      if (Object.keys(newsSources).length == 0) {
+        getSources();
+      }
 
-    } else {
-      if (mode == "normal") $('#load-more-btn').hide();
-    }
-
-    if (Object.keys(newsSources).length == 0) {
-      getSources();
-    }
-
-  })
-  .fail(function() {
-    ons.notification.alert("Unable to read feeds!");
-  });
+    })
+    .fail(function() {
+      ons.notification.alert("Unable to read feeds!");
+    });
 }
 
-function goToNewsList() {
-  // go back to news list
-  showMainToolbar();
-  $('#post').hide();
-  $('#news-list').fadeIn();
-  currentPage = "news-list";
-}
-
-function loadMoreNews() {
-  // load more posts
-  $('#load-more-btn').hide();
-  showToast("Loading more posts...");
-  var keys = Object.keys(newsList);
-  var oldestId = keys[0];
-  getNewsList(oldestId, selectedSource, "normal");
-}
-
-function getNewListItem(post) {
-  // generate li element for list
-  var id, source, datetime, title, mainImg;
-  id = post.id;
-  source = post.source;
-  datetime = post.datetime;
-  title = revertEscapedHtml(post.title);
-  mainImg = post.mainImg;
-  var html = '<li id="' + id + '" class="list-item"><div class="list-item__left"><img class="list-item__thumbnail" src="' + mainImg + '" alt="mainImg"  onerror="imgError(this);"></div><div class="list-item__center" onclick="loadPost(' + "'" + id + "'" + ')"><div class="list-item__title sinhala">' + title + '</div><div class="list-item__subtitle" style="margin-top:5px;">' + source + " - " + datetime + '</div></div></li>';
-  return (html);
-}
-
+// other functional tasks
 function loadPost(postId) {
   if (postId in newsPosts) {
     getPostOffline(postId);
@@ -108,21 +114,132 @@ function getPostOffline(postId) {
   showPost(postId, newsPosts[postId]);
 }
 
-function getPostOnline(postId) {
-  showToast("Loading post...");
-  $.post(api,{
-    action:"news_post",
-    post_id:postId
-  },null, 'json')
-  .done(function(data) {
-    newsPosts[data.id] = data;
-    showPost(postId, data);
-    hideToast();
-  })
-  .fail(function() {
-    hideToast();
-    ons.notification.alert("Unable to load post!");
+function loadMoreNews() {
+  // load more posts
+  $('#load-more-btn').hide();
+  showToast("Loading more posts...");
+  var keys = Object.keys(newsList);
+  var oldestId = keys[0];
+  getNewsList(oldestId, selectedSource, "normal");
+}
+
+function refreshData() {
+  if (currentPage == "news-list") {
+    $('#load-more-btn').hide();
+    $('#news-list-content').empty();
+    showToast("Loading posts...");
+    getNewsList("null", "null", "normal");
+  } else if (currentPage == "post") {
+    getPostOnline(currentPostId);
+  }
+}
+
+function loadSource(sourceId) {
+  var sourceName = newsSources[sourceId];
+  selectedSource = sourceId;
+  showToast("Loading posts...");
+  $('#load-more-btn').hide();
+  $('#news-list-content').empty();
+  getNewsList("null", sourceId, "normal");
+  $('#toolbar-title').text(sourceName);
+  menu.close();
+}
+
+// element generators
+function getNewListItem(post) {
+  // generate li element for list
+  var id, source, datetime, title, mainImg;
+  id = post.id;
+  source = post.source;
+  datetime = post.datetime;
+  title = fixEscapedHtml(post.title);
+  mainImg = post.mainImg;
+  var html = '<li id="' + id + '" class="list-item"><div class="list-item__left"><img class="list-item__thumbnail" src="' + mainImg + '" alt="mainImg"  onerror="fixBrokenImg(this);"></div><div class="list-item__center" onclick="loadPost(' + "'" + id + "'" + ')"><div class="list-item__title sinhala">' + title + '</div><div class="list-item__subtitle" style="margin-top:5px;">' + source + " - " + datetime + '</div></div></li>';
+  return (html);
+}
+
+// time loops
+function checkNewPosts() {
+  if (!localStorage.getItem('rated')) {
+    showRateDialog();
+  }
+
+  var keys = Object.keys(newsList).sort();
+  var newestId = keys[keys.length - 1];
+
+  $.post(api, {
+      action: "news_check",
+    }, null, 'json')
+    .done(function(data) {
+      if (data.id !== newestId) {
+        getNewsList(newestId, "null", "check");
+      }
+    })
+    .fail(function() {
+      ons.notification.alert("Unable to check news!");
+    });
+
+}
+
+// fix things
+function fixEscapedHtml(text) {
+  return text
+    .replace("&amp;", "&")
+    .replace("&lt;", "<")
+    .replace("&gt;", ">")
+    .replace("&quot;", '"')
+    .replace("&#039;", "'")
+    .replace("&amp;#039;", "'");
+}
+
+function fixElements() {
+  // fix broken elements of page & remove useless ones
+  $("#post iframe").width('100%');
+  // $("#post iframe").height('auto');
+  $("#post img").width('100%');
+  $("#post img").height('auto');
+  $('img').attr('onerror', 'fixBrokenImg(this);');
+
+  $("#post a, #post p").each(function() {
+    var val = $(this).attr('href');
+    if (val == null) {
+      val = $(this).text();
+    }
+    if (val == null) {
+      val = "null";
+    }
+    if (val.indexOf("fivefilters") >= 0 || val.indexOf("Viewers") >= 0) {
+      $(this).remove();
+    }
   });
+}
+
+function fixBrokenImg(img) {
+  // when image error happen, set default img
+  img.src = "./img/sources/default.png";
+  return true;
+}
+
+// handle events
+document.addEventListener("offline", onOffline, false);
+
+function onOffline() {
+  if (Object.keys(newsList).length == 0) {
+    ons.notification.alert("You are offline!. Please connect to the internet.").then(function() {
+      exitApp();
+    });
+  } else {
+    ons.notification.alert("You are offline!. Some assets will not load properly.");
+  }
+}
+
+// navigate between pages
+function showNewsList() {
+  // go back to news list
+  showMainToolbar();
+  $('#post').hide();
+  $('#news-list').fadeIn();
+  currentPage = "news-list";
 }
 
 function showPost(postId, data) {
@@ -130,8 +247,8 @@ function showPost(postId, data) {
   var source, datetime, title, mainImg, content, link;
   source = newsList[postId].source;
   datetime = newsList[postId].datetime;
-  title = revertEscapedHtml(newsList[postId].title);
-  content = revertEscapedHtml(data.post);
+  title = fixEscapedHtml(newsList[postId].title);
+  content = fixEscapedHtml(data.post);
   link = data.link;
   $('#post-source, #post-source-bottom, #toolbar-title').text(source);
   $('#post-title').text(title);
@@ -151,33 +268,20 @@ function showPost(postId, data) {
   $('.page__content').scrollTop(0);
 }
 
-function getSources() {
-  $.post(api,{
-    action:"sources_list"
-  },null, 'json')
-  .done(function(data) {
-    for (var item in data) {
-      $('#menu-sources').append('<ons-list-item tappable onclick="loadSource(\'' + data[item].id + '\');">' + data[item].source + '</ons-list-item>');
-      // add to object for later use
-      newsSources[data[item].id] = data[item].source;
-    }
-  })
-  .fail(function() {
-    ons.notification.alert("Unable to read sources!");
-  });
+function openSourceURL() {
+  var url = newsPosts[currentPostId].link;
+  window.open(url, '_blank');
 }
 
-function loadSource(sourceId) {
-  var sourceName = newsSources[sourceId];
-  selectedSource = sourceId;
-  showToast("Loading posts...");
-  $('#load-more-btn').hide();
-  $('#news-list-content').empty();
-  getNewsList("null", sourceId, "normal");
-  $('#toolbar-title').text(sourceName);
-  menu.close();
+// show hide basic elements
+function showToast(msg) {
+  $('#outputToastMsg').text(msg);
+  outputToast.toggle();
 }
 
+function hideToast() {
+  outputToast.hide();
+}
 
 function showPostToolbar() {
   $('#toolbar-menu-toggler').hide();
@@ -194,120 +298,29 @@ function showMainToolbar() {
   $('#toolbar-title').text("Ceylon News");
 }
 
-function imgError(image) {
-  // when image error happen, set default img
-  image.src = "./img/sources/default.png";
-  return true;
-}
+// non functional
+function showNotice() {
+  var msg = "The content of this app comes from publicly available feeds of news sites and they retain all copyrights.\n\nThus, this app is not to be held responsible for any of the content displayed.\n\nThe owners of these sites can exclude their feeds with or without reason from this app by sending an email to me.";
 
-function showToast(msg) {
-  $('#outputToastMsg').text(msg);
-  outputToast.toggle();
-}
-
-function hideToast() {
-  outputToast.hide();
-}
-
-function fixElements() {
-  // fix broken elements of page & remove useless ones
-  $("#post iframe").width('100%');
-  // $("#post iframe").height('auto');
-  $("#post img").width('100%');
-  $("#post img").height('auto');
-  $('img').attr('onerror', 'imgError(this);');
-
-  $("#post a, #post p").each(function () {
-    var val = $(this).attr('href');
-    if (val == null) { val = $(this).text(); }
-    if (val == null) { val = "null"; }
-    if (val.indexOf("fivefilters") >= 0 || val.indexOf("Viewers") >= 0) {
-      $(this).remove();
-    }
-  });
-}
-
-function checkNewPosts() {
-  if (!localStorage.getItem('rated')) {
-    showRateDialog();
-  }
-
-  var keys = Object.keys(newsList).sort();
-  var newestId = keys[keys.length - 1];
-
-  $.post(api,{
-    action:"news_check",
-  },null, 'json')
-  .done(function(data) {
-    if (data.id !== newestId) {
-      getNewsList(newestId, "null", "check");
-    }
-  })
-  .fail(function() {
-    ons.notification.alert("Unable to check news!");
-  });
-
+  ons.notification.confirm(msg)
+    .then(function(index) {
+      if (index === 1) {
+        localStorage.setItem('showNotice', true);
+      } else {
+        exitApp();
+      }
+    });
 }
 
 function sharePost() {
   window.plugins.socialsharing.share(newsList[currentPostId].title, null, null, " - Readmore @ " + newsPosts[currentPostId].link);
 }
 
-function openSourceURL() {
-  var url = newsPosts[currentPostId].link;
-  window.open(url, '_blank');
-}
-
-function revertEscapedHtml(text) {
-  return text
-  .replace("&amp;", "&")
-  .replace("&lt;", "<")
-  .replace("&gt;", ">")
-  .replace("&quot;", '"')
-  .replace("&#039;", "'")
-  .replace("&amp;#039;", "'");
-}
-
-document.addEventListener("offline", onOffline, false);
-function onOffline() {
-  if (Object.keys(newsList).length == 0) {
-    ons.notification.alert("You are offline!. Please connect to the internet.").then(function () {
-      exitApp();
-    });
-  } else {
-    ons.notification.alert("You are offline!. Some assets will not load properly.");
-  }
-}
-
-function refreshData() {
-  if (currentPage == "news-list") {
-    $('#load-more-btn').hide();
-    $('#news-list-content').empty();
-    showToast("Loading posts...");
-    getNewsList("null", "null", "normal");
-  } else if (currentPage == "post") {
-    getPostOnline(currentPostId);
-  }
-}
-
-function showNotice() {
-  var msg = "The content of this app comes from publicly available feeds of news sites and they retain all copyrights.\n\nThus, this app is not to be held responsible for any of the content displayed.\n\nThe owners of these sites can exclude their feeds with or without reason from this app by sending an email to me.";
-
-  ons.notification.confirm(msg)
-  .then(function (index) {
-    if (index === 1) {
-      localStorage.setItem('showNotice', true);
-    } else {
-      exitApp();
-    }
-  });
-}
-
 function showRateDialog() {
   AppRate.preferences = {
     displayAppName: 'Ceylon News',
     promptAgainForEachNewVersion: false,
-    simpleMode:true,
+    simpleMode: true,
     usesUntilPrompt: 4,
     storeAppURL: {
       android: 'market://details?id=xyz.navinda.ceylonnews'
@@ -325,10 +338,10 @@ function showRateDialog() {
     },
     callbacks: {
       handleNegativeFeedback: null,
-      onRateDialogShow: function (callback) {
+      onRateDialogShow: function(callback) {
         callback(1);
       },
-      onButtonClicked: function (buttonIndex) {
+      onButtonClicked: function(buttonIndex) {
         if (buttonIndex == 3 || buttonIndex == 1) {
           localStorage.setItem('rated', true);
         }
@@ -342,14 +355,14 @@ function showRateDialog() {
 // handle slide menu (code from onsen ui)
 window.fn = {};
 
-window.fn.open = function () {
+window.fn.open = function() {
   var menu = document.getElementById('menu');
   menu.open();
 };
 
-window.fn.load = function (page) {
+window.fn.load = function(page) {
   var content = document.getElementById('content');
   var menu = document.getElementById('menu');
   content.load(page)
-  .then(menu.close.bind(menu));
+    .then(menu.close.bind(menu));
 };
