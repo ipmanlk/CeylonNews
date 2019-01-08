@@ -86,6 +86,8 @@ function getNewsList(postId, sourceId, mode) {
 
         $('#load-more-btn').fadeIn();
 
+        fixElements();
+
       } else {
         if (mode == "normal") $('#load-more-btn').hide();
       }
@@ -167,7 +169,7 @@ function getNewListItem(post) {
   datetime = post.datetime;
   title = fixEscapedHtml(post.title);
   mainImg = post.mainImg;
-  var html = '<li id="' + id + '" class="list-item"><div class="list-item__left"><img class="list-item__thumbnail" src="' + mainImg + '" alt="mainImg"  onerror="fixBrokenImg(this);"></div><div class="list-item__center" onclick="loadPost(' + "'" + id + "'" + ')"><div class="list-item__title sinhala">' + title + '</div><div class="list-item__subtitle" style="margin-top:5px;">' + source + " - " + datetime + '</div></div></li>';
+  var html = '<li id="' + id + '" class="list-item"><div class="list-item__left"><img class="list-item__thumbnail" src="' + mainImg + '" alt="mainImg"  onerror="fixBrokenImg($(this));"></div><div class="list-item__center" onclick="loadPost(' + "'" + id + "'" + ')"><div class="list-item__title sinhala">' + title + '</div><div class="list-item__subtitle" style="margin-top:5px;">' + source + " - " + datetime + '</div></div></li>';
   return (html);
 }
 
@@ -212,7 +214,7 @@ function fixElements() {
   $("#post img").width('100%');
   $("#post img").height('auto');
   $('img').attr('onerror', 'fixBrokenImg(this);');
-
+  // remove useless elements
   $("#post a, #post p").each(function() {
     var val = $(this).attr('href');
     if (val == null) {
@@ -225,11 +227,18 @@ function fixElements() {
       $(this).remove();
     }
   });
+  // fix print logo issue
+  $("img").each(function () {
+    var src = $(this).attr('src');
+    if (src.indexOf("print.png") > -1) {
+      fixBrokenImg($(this));
+    }
+  });
 }
 
 function fixBrokenImg(img) {
   // when image error happen, set default img
-  img.src = "./img/sources/default.png";
+  $(img).attr('src', "./img/sources/default.png");
   return true;
 }
 
