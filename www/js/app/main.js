@@ -223,6 +223,12 @@ function fixElements() {
       fixBrokenImg($(this));
     }
   });
+
+  // site specific fixes
+  // gossip lanka blank ad spaces
+  try {
+    $('.adsbygoogle').remove();
+  } catch (e) {}
 }
 
 function elementRemover(selectors, array) {
