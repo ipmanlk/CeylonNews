@@ -215,18 +215,7 @@ function fixElements() {
   $("#post img").height('auto');
   $('img').attr('onerror', 'fixBrokenImg(this);');
   // remove useless elements
-  $("#post a, #post p").each(function() {
-    var val = $(this).attr('href');
-    if (val == null) {
-      val = $(this).text();
-    }
-    if (val == null) {
-      val = "null";
-    }
-    if (val.indexOf("fivefilters") >= 0 || val.indexOf("Viewers") >= 0) {
-      $(this).remove();
-    }
-  });
+  elementRemover('#post a, #post p', ["fivefilters", "Viewers"]);
   // fix print logo issue
   $("img").each(function () {
     var src = $(this).attr('src');
@@ -234,6 +223,21 @@ function fixElements() {
       fixBrokenImg($(this));
     }
   });
+}
+
+function elementRemover(selectors, array) {
+  for (var item in array) {
+    remove(array[item]);
+  }
+
+  function remove(str) {
+    $(selectors).each(function() {
+      var val = $(this).attr('href') == null ? $(this).text() : $(this).attr('href');
+      if (val.indexOf(str) > -1) {
+        $(this).remove();
+      }
+    });
+  }
 }
 
 function fixBrokenImg(img) {
