@@ -196,9 +196,8 @@ function checkNewPosts() {
     showRateDialog();
   }
 
-  var keys = Object.keys(newsList).sort();
+  var keys = Object.keys(newsList);
   var newestId = keys[keys.length - 1];
-
   $.post(api, {
     action: "news_check",
     lang: lang
