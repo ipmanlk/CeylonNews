@@ -334,6 +334,7 @@ function hideToast() {
 
 function showPostToolbar() {
   $('#toolbar-menu-toggler').hide();
+  $('#toolbar-lang').hide();
   $('#toolbar-back').fadeIn();
   $('#toolbar-share').fadeIn();
   $('#toolbar-web').fadeIn();
@@ -344,6 +345,7 @@ function showMainToolbar() {
   $('#toolbar-web').hide();
   $('#toolbar-share').hide();
   $('#toolbar-menu-toggler').fadeIn();
+  $('#toolbar-lang').fadeIn();
   $('#toolbar-title').text("Ceylon News");
 }
 
