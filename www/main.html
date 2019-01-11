@@ -116,6 +116,17 @@
     </ons-page>
   </template>
 
+  <ons-modal direction="up" id="modalLangSelect">
+    <div style="text-align: center">
+      <h4>Please select your language</h4>
+      <h4>කරුණාකර ඔබගේ භාෂාව තෝරන්න</h4>
+      <h4>தயவு செய்து உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்</h4>
+    </div>
+    <ons-button class="ons-button" onclick="selectLang('en')">English</ons-button>
+    <ons-button class="ons-button" onclick="selectLang('sn')">සිංහල</ons-button>
+    <ons-button class="ons-button" onclick="selectLang('tm')">தமிழ்</ons-button>
+  </ons-modal>
+
   <ons-toast id="outputToast" animation="ascend">
     <span id="outputToastMsg"></span>
   </ons-toast>

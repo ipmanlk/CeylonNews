@@ -31,3 +31,8 @@
   color:#000000;
   margin-bottom: 15px;
 }
+
+.ons-button {
+  width: 90%;
+  margin: 0 20px 15px 20px;
+}

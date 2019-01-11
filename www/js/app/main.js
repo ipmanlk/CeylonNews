@@ -1,9 +1,9 @@
-var api = "https://pk.navinda.xyz/api/ceylon_news/v2.2/";
+var api = "https://pk.navinda.xyz/api/ceylon_news/v2.3/";
 // store news list, posts temp
 var newsList = {};
 var newsPosts = {};
-var newsSources = {};
 var selectedSource = "null";
+var lang = "null";
 
 // current location in app
 var currentPage = "news-list";
@@ -18,100 +18,105 @@ ons.ready(function() {
   // disable built in back button handler of onsen
   ons.disableDeviceBackButtonHandler();
   // get news list
-  showToast("Loading posts...");
-  getNewsList("null", "null", "normal");
-  getAppCoverImg();
-  // check for new articles
-  setInterval(checkNewPosts, 60000);
+  if (!localStorage.getItem("lang")) {
+    showModalSelectLang();
+  } else {
+    lang = localStorage.getItem("lang");
+    showToast("Loading posts...");
+    getSources();
+    getNewsList("null", "null", "normal");
+    getAppCoverImg();
+    // check for new articles
+    setInterval(checkNewPosts, 60000);
+  }
 });
 
 // api requests
 function getPostOnline(postId) {
   showToast("Loading post...");
   $.post(api, {
-      action: "news_post",
-      post_id: postId
-    }, null, 'json')
-    .done(function(data) {
-      newsPosts[data.id] = data;
-      showPost(postId, data);
-      hideToast();
-    })
-    .fail(function() {
-      hideToast();
-      ons.notification.alert("Unable to load post!");
-    });
+    action: "news_post",
+    post_id: postId,
+    lang:lang
+  }, null, 'json')
+  .done(function(data) {
+    newsPosts[data.id] = data;
+    showPost(postId, data);
+    hideToast();
+  })
+  .fail(function() {
+    hideToast();
+    ons.notification.alert("Unable to load post!");
+  });
 }
 
 function getSources() {
   $.post(api, {
-      action: "sources_list"
-    }, null, 'json')
-    .done(function(data) {
-      for (var item in data) {
-        $('#menu-sources').append('<ons-list-item tappable onclick="loadSource(\'' + data[item].id + '\');">' + data[item].source + '</ons-list-item>');
-        // add to object for later use
-        newsSources[data[item].id] = data[item].source;
-      }
-    })
-    .fail(function() {
-      ons.notification.alert("Unable to read sources!");
-    });
+    action: "sources_list",
+    lang:lang
+  }, null, 'json')
+  .done(function(data) {
+    for (var item in data) {
+      $('#menu-sources').append('<ons-list-item tappable onclick="loadSource(\'' + data[item].source + '\');">' + data[item].source + '</ons-list-item>');
+    }
+  })
+  .fail(function() {
+    ons.notification.alert("Unable to read sources!");
+  });
 }
 
-function getNewsList(postId, sourceId, mode) {
+function getNewsList(postId, source, mode) {
   $.post(api, {
-      action: "news_list",
-      post_id: postId,
-      source_id: sourceId,
-      mode: mode
-    }, null, 'json')
-    .done(function(data) {
-      if (!jQuery.isEmptyObject(data)) {
-        for (var item in data) {
-          newsList[(data[item].id)] = data[item];
-          if (mode == "normal") {
-            $('#news-list-content').append(getNewListItem(data[item]));
-          } else {
-            $('#news-list-content').prepend(getNewListItem(data[item]));
-          }
-        }
-
-        if (mode == "check") {
-          showToast("New articles are available!");
-          setTimeout(hideToast, 4000);
+    action: "news_list",
+    post_id: postId,
+    source: source,
+    mode: mode,
+    lang:lang
+  }, null, 'json')
+  .done(function(data) {
+    if (!jQuery.isEmptyObject(data)) {
+      for (var item in data) {
+        newsList[(data[item].id)] = data[item];
+        if (mode == "normal") {
+          $('#news-list-content').append(getNewListItem(data[item]));
         } else {
-          hideToast();
+          $('#news-list-content').prepend(getNewListItem(data[item]));
         }
+      }
 
-        $('#load-more-btn').fadeIn();
-
-        fixElements();
-
+      if (mode == "check") {
+        showToast("New articles are available!");
+        setTimeout(hideToast, 4000);
       } else {
-        if (mode == "normal") $('#load-more-btn').hide();
+        hideToast();
       }
 
-      if (Object.keys(newsSources).length == 0) {
-        getSources();
-      }
+      $('#load-more-btn').fadeIn();
 
-    })
-    .fail(function() {
-      ons.notification.alert("Unable to read feeds!");
-    });
+      fixElements();
+
+    } else {
+      if (mode == "normal") {
+        $('#load-more-btn').hide();
+        hideToast();
+      }
+    }
+  })
+  .fail(function() {
+    ons.notification.alert("Unable to read feeds!");
+  });
 }
 
 function getAppCoverImg() {
   $.post(api, {
-      action: "cover_img"
-    }, null, 'json')
-    .done(function(data) {
-      $('#coverImg').attr('src', data.img);
-    })
-    .fail(function() {
-      ons.notification.alert("Fail to get the cover image!");
-    });
+    action: "cover_img"
+  }, null, 'json')
+  .done(function(data) {
+    $('#coverImg').attr('src', data.img);
+  })
+  .fail(function() {
+    ons.notification.alert("Fail to get the cover image!");
+  });
 }
 
 // other functional tasks
@@ -149,15 +154,27 @@ function refreshData() {
   }
 }
 
-function loadSource(sourceId) {
-  var sourceName = newsSources[sourceId];
-  selectedSource = sourceId;
+function loadSource(source) {
+  selectedSource = source;
   showToast("Loading posts...");
   $('#load-more-btn').hide();
   $('#news-list-content').empty();
-  getNewsList("null", sourceId, "normal");
-  $('#toolbar-title').text(sourceName);
+  getNewsList("null", source, "normal");
+  $('#toolbar-title').text(source);
   menu.close();
+}
+
+
+function selectLang(lang) {
+  localStorage.setItem("lang", lang);
+  var modal = $('#modalLangSelect');
+  modal.hide();
+  window.location = "./main.html";
+}
+
+function showModalSelectLang() {
+  var modal = $('#modalLangSelect');
+  modal.show();
 }
 
 // element generators
@@ -183,28 +200,29 @@ function checkNewPosts() {
   var newestId = keys[keys.length - 1];
 
   $.post(api, {
-      action: "news_check",
-    }, null, 'json')
-    .done(function(data) {
-      if (data.id !== newestId) {
-        getNewsList(newestId, "null", "check");
-      }
-    })
-    .fail(function() {
-      ons.notification.alert("Unable to check news!");
-    });
+    action: "news_check",
+    lang: lang
+  }, null, 'json')
+  .done(function(data) {
+    if (data.id !== newestId) {
+      getNewsList(newestId, "null", "check");
+    }
+  })
+  .fail(function() {
+    ons.notification.alert("Unable to check news!");
+  });
 
 }
 
 // fix things
 function fixEscapedHtml(text) {
   return text
-    .replace("&amp;", "&")
-    .replace("&lt;", "<")
-    .replace("&gt;", ">")
-    .replace("&quot;", '"')
-    .replace("&#039;", "'")
-    .replace("&amp;#039;", "'");
+  .replace("&amp;", "&")
+  .replace("&lt;", "<")
+  .replace("&gt;", ">")
+  .replace("&quot;", '"')
+  .replace("&#039;", "'")
+  .replace("&amp;#039;", "'");
 }
 
 function fixElements() {
@@ -335,13 +353,13 @@ function showNotice() {
   var msg = "The content of this app comes from publicly available feeds of news sites and they retain all copyrights.\n\nThus, this app is not to be held responsible for any of the content displayed.\n\nThe owners of these sites can exclude their feeds with or without reason from this app by sending an email to me.";
 
   ons.notification.confirm(msg)
-    .then(function(index) {
-      if (index === 1) {
-        localStorage.setItem('showNotice', true);
-      } else {
-        exitApp();
-      }
-    });
+  .then(function(index) {
+    if (index === 1) {
+      localStorage.setItem('showNotice', true);
+    } else {
+      exitApp();
+    }
+  });
 }
 
 function sharePost() {
@@ -396,5 +414,5 @@ window.fn.load = function(page) {
   var content = document.getElementById('content');
   var menu = document.getElementById('menu');
   content.load(page)
-    .then(menu.close.bind(menu));
+  .then(menu.close.bind(menu));
 };
