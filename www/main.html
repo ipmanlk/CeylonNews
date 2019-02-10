@@ -18,12 +18,13 @@
 
 
 <body>
+  <!-- side menu start -->
   <ons-splitter>
     <ons-splitter-side id="menu" side="left" width="220px" collapse swipeable>
       <ons-page>
         <img id="coverImg" src="./img/cover.jpg" style="width:100%">
         <ons-list>
-          <ons-list-item onclick="fn.load('main.html');getNewsList('null', 'null', 'normal');selectedSource='null'" tappable>
+          <ons-list-item onclick="fn.load('main.html');newsListLoad('-1', '-1', 'normal');selectedSource='-1'" tappable>
             Home
           </ons-list-item>
           <ons-list-item expandable>
@@ -42,16 +43,18 @@
     </ons-splitter-side>
     <ons-splitter-content id="content" page="main.html"></ons-splitter-content>
   </ons-splitter>
+  <!-- side menu end -->
 
   <template id="main.html">
     <ons-page>
+      <!-- toolbar start -->
       <ons-toolbar>
         <div class="left">
           <ons-toolbar-button onclick="fn.open()" id="toolbar-menu-toggler">
             <ons-icon icon="md-menu"></ons-icon>
           </ons-toolbar-button>
 
-          <ons-toolbar-button onclick="showNewsList();" id="toolbar-back" style="display:none">
+          <ons-toolbar-button onclick="newsListShow();" id="toolbar-back" style="display:none">
             <ons-icon icon="md-arrow-back"></ons-icon>
           </ons-toolbar-button>
         </div>
@@ -61,23 +64,24 @@
         </div>
 
         <div class="right">
-          <ons-toolbar-button onclick="openSourceURL();" id="toolbar-web" style="display:none">
+          <ons-toolbar-button onclick="sourceUrlOpen();" id="toolbar-web" style="display:none">
             <ons-icon icon="md-link"></ons-icon>
           </ons-toolbar-button>
 
-          <ons-toolbar-button onclick="sharePost()" id="toolbar-share" style="display:none">
+          <ons-toolbar-button onclick="postShare()" id="toolbar-share" style="display:none">
             <ons-icon icon="md-share"></ons-icon>
           </ons-toolbar-button>
 
-          <ons-toolbar-button onclick="showModalSelectLang()" id="toolbar-lang">
+          <ons-toolbar-button onclick="langSelectorShow()" id="toolbar-lang">
             <ons-icon icon="md-translate"></ons-icon>
           </ons-toolbar-button>
 
-          <ons-toolbar-button onclick="refreshData()" id="toolbar-refresh">
+          <ons-toolbar-button onclick="newsRefresh()" id="toolbar-refresh">
             <ons-icon icon="md-refresh"></ons-icon>
           </ons-toolbar-button>
         </div>
       </ons-toolbar>
+      <!-- toolbar end -->
 
       <div id="news-list">
         <ul id="news-list-content" class="list">
@@ -85,7 +89,7 @@
         </ul>
 
         <div style="margin:10px 10px 20px 10px">
-          <button id="load-more-btn" class="button--large button--outline" onclick="loadMoreNews();" style="display:none">Load More</button>
+          <button id="load-more-btn" class="button--large button--outline" onclick="newsLoadMore();" style="display:none">Load More</button>
         </div>
       </div>
 
@@ -126,9 +130,9 @@
       <h4>කරුණාකර ඔබගේ භාෂාව තෝරන්න</h4>
       <h4>தயவு செய்து உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்</h4>
     </div>
-    <ons-button class="ons-button" onclick="selectLang('en')">English</ons-button>
-    <ons-button class="ons-button" onclick="selectLang('sn')">සිංහල</ons-button>
-    <ons-button class="ons-button" onclick="selectLang('tm')">தமிழ்</ons-button>
+    <ons-button class="ons-button" onclick="langSet('en')">English</ons-button>
+    <ons-button class="ons-button" onclick="langSet('sn')">සිංහල</ons-button>
+    <ons-button class="ons-button" onclick="langSet('tm')">தமிழ்</ons-button>
   </ons-modal>
 
   <ons-toast id="outputToast" animation="ascend">
@@ -177,8 +181,8 @@
   </template>
 
   <!--  app -->
-  <script src="./js/app/main.js" charset="utf-8"></script>
-  <script src="./js/app/common.js" charset="utf-8"></script>
+  <script src="./js/main.js" charset="utf-8"></script>
+  <script src="./js/navigate.js" charset="utf-8"></script>
 </body>
 
 </html>

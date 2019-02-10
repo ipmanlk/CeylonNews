@@ -1,9 +1,7 @@
+// handle back key
 document.addEventListener("backbutton", onBackKeyDown, false);
-
 function onBackKeyDown(e) {
-  // prevent back button exit
   e.preventDefault();
-
   // handle accordingly
   switch (currentPage) {
     case "post":
