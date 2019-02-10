@@ -5,15 +5,15 @@ function onBackKeyDown(e) {
   // handle accordingly
   switch (currentPage) {
     case "post":
-    showNewsList();
-    break;
+      newsListShow();
+      break;
     default:
-    ons.notification.confirm('Do you really want to close the app?') // Ask for confirmation
-    .then(function(index) {
-      if (index === 1) { // OK button
-        exitApp(); // Close the app
-      }
-    });
+      ons.notification.confirm('Do you really want to close the app?') // Ask for confirmation
+        .then(function (index) {
+          if (index === 1) { // OK button
+            exitApp(); // Close the app
+          }
+        });
   }
 }
 

@@ -188,7 +188,7 @@ function postLoad(postId) {
 
 // load already viewd posts
 function postGetOffline(postId) {
-	postShow(postId, newsPosts[postId]);
+	newsPostShow(postId, newsPosts[postId]);
 }
 
 // load posts from online
@@ -203,7 +203,7 @@ function postGetOnline(postId) {
 		},
 		function (data) {
 			newsPosts[data.id] = data;
-			postShow(postId, data);
+			newsPostShow(postId, data);
 			toastToggle(null, null);
 		}
 	);
@@ -293,7 +293,7 @@ function newsListShow() {
 	currentPage = "news-list";
 }
 
-function postShow(postId, data) {
+function newsPostShow(postId, data) {
 	// set element values on post
 	var source, datetime, title, mainImg, content, link;
 	source = newsList[postId].source;
@@ -317,6 +317,8 @@ function postShow(postId, data) {
 
 	// scroll to top of page
 	$('.page__content').scrollTop(0);
+
+	currentPage = "post";
 }
 
 // open original url to article
