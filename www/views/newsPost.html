@@ -8,33 +8,38 @@
     <div id="toolbarTitle" class="center">
       <!-- title goes here -->
     </div>
+    <div class="right">
+      <ons-toolbar-button onclick="sourceUrlOpen();">
+        <ons-icon icon="md-link"></ons-icon>
+      </ons-toolbar-button>
+      <ons-toolbar-button onclick="postShare()" id="toolbar-share">
+        <ons-icon icon="md-share"></ons-icon>
+      </ons-toolbar-button>
+      <ons-toolbar-button onclick="newsRefresh()">
+        <ons-icon icon="md-refresh"></ons-icon>
+      </ons-toolbar-button>
+    </div>
   </ons-toolbar>
 
-    <div id="post" class="card card--material">
-      <div class="post-data">
-        <div class="card__title card--material__title">
-          <span id="postTitle" class="sinhala justify">
+  <div id="post" class="card card--material">
+    <div class="post-data">
+      <div class="card__title card--material__title">
+        <span id="postTitle" class="sinhala justify"> </span>
+      </div>
+      <span id="postDateTime"> </span>
+      <hr />
+      <div class="card__content card--material__content">
+        <!-- <img id="post-img" src="https://tinyurl.com/y9rod7ud" style="width:100%" onerror="imgError(this);"> -->
 
-          </span>
-        </div>
-        <span id="postDateTime">
-
-        </span>
-        <hr>
-        <div class="card__content card--material__content">
-          <!-- <img id="post-img" src="https://tinyurl.com/y9rod7ud" style="width:100%" onerror="imgError(this);"> -->
-
-          <div id="postContent" class="sinhala justify post-content" style="font-size:17px; color:#000000">
-
-            <!--  post content load here -->
-
-          </div>
-        </div>
-        <hr>
-        <div class="card--material__footer">
-          <span>Source: <span id="postSource">Hiru News</span> - <a id="postLink" href="#">Original Post</a></span>
+        <div id="postContent" class="sinhala justify post-content" style="font-size:17px; color:#000000">
+          <!--  post content load here -->
         </div>
       </div>
+      <hr />
+      <div class="card--material__footer">
+        <span>Source: <span id="postSource">Hiru News</span> -
+          <a id="postLink" href="#">Original Post</a></span>
+      </div>
     </div>
-
+  </div>
 </ons-page>
