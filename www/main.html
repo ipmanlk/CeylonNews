@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+</head>
+<link rel="stylesheet" href="https://cdn.navinda.xyz/OnsenUI-dist-2.10.5/css/onsenui.min.css">
+<link rel="stylesheet" href="https://cdn.navinda.xyz/OnsenUI-dist-2.10.5/css/onsen-css-components.min.css">
+<link rel="stylesheet" href="https://cdn.navinda.xyz/OnsenUI-dist-2.10.5/css/custom.css">
+
+<link rel="stylesheet" href="./css/custom.css">
+
+<script src="cordova.js"></script>
+
+<!--  libs -->
+<script src="https://cdn.navinda.xyz/jquery/jquery-3.3.1.min.js"></script>
+<script src="https://cdn.navinda.xyz/OnsenUI-dist-2.10.5/js/onsenui.min.js"></script>
+<script src="https://cdn.navinda.xyz/imagesloaded-4.1.4/imagesloaded.pkgd.min.js"></script>
+
+
+<body>
+  <!-- side menu start -->
+  <ons-splitter>
+    <ons-splitter-side id="menu" side="left" width="220px" collapse swipeable>
+      <ons-page>
+        <img id="coverImg" src="./img/cover.jpg" style="width:100%">
+        <ons-list>
+          <ons-list-item onclick="window.location='./index.html';selectedSource='-1'" tappable>
+            News
+          </ons-list-item>
+          <ons-list-item expandable>
+            Sources
+            <div class="expandable-content">
+              <ons-list id="menuSources">
+
+              </ons-list>
+            </div>
+          </ons-list-item>
+          <ons-list-item style="display: none" onclick="fn.load('./views/settings.html')" tappable>
+            Settings
+          </ons-list-item>
+          <ons-list-item onclick="fn.load('./views/about.html')" tappable>
+            About
+          </ons-list-item>
+          <ons-list-item onclick="window.open('https://play.google.com/store/apps/developer?id=Navinda+Dissanayake', '_system', 'location=yes');" tappable>
+            More Apps
+          </ons-list-item>
+        </ons-list>
+      </ons-page>
+    </ons-splitter-side>
+    <ons-splitter-content id="content" page="./views/newsList.html"></ons-splitter-content>
+  </ons-splitter>
+  <!-- side menu end -->
+
+  <ons-modal direction="up" id="modalLangSelect">
+    <div style="text-align: center">
+      <h4>Please select your language</h4>
+      <h4>කරුණාකර ඔබගේ භාෂාව තෝරන්න</h4>
+      <h4>தயவு செய்து உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்</h4>
+    </div>
+    <ons-button class="ons-button" onclick="langSet('en')">English</ons-button>
+    <ons-button class="ons-button" onclick="langSet('sn')">සිංහල</ons-button>
+    <ons-button class="ons-button" onclick="langSet('tm')">தமிழ்</ons-button>
+  </ons-modal>
+
+  <ons-toast id="outputToast" animation="ascend">
+    <span id="outputToastMsg"></span>
+  </ons-toast>
+
+
+  <!--  app -->
+  <script src="./js/main.js" charset="utf-8"></script>
+  <script src="./js/navigate.js" charset="utf-8"></script>
+</body>
+
+</html>
