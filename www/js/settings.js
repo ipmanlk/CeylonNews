@@ -55,4 +55,9 @@ function settingsApply() {
 	// global settings
 	!settings.sinhalaFont ? $("*").removeClass("sinhala") : false;
 
+	if (settings.darkMode) {
+		$("#postBody").removeClass("black");
+		$("#postBody").addClass("white");
+		$("#theme").attr("href", "./lib/css/dark-onsen-css-components.min.css");
+	} 
 }
