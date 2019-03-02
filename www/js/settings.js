@@ -40,6 +40,7 @@ function settingsUIupdate() {
 function settingSet(setting, isSet) {	
 	settings[setting] = isSet;
 	localStorage.setItem("settings", JSON.stringify(settings));
+	settingsApply();
 }
 
 function settingsApply() {
@@ -56,8 +57,16 @@ function settingsApply() {
 	!settings.sinhalaFont ? $("*").removeClass("sinhala") : false;
 
 	if (settings.darkMode) {
-		$("#postBody").removeClass("black");
-		$("#postBody").addClass("white");
 		$("#theme").attr("href", "./lib/css/dark-onsen-css-components.min.css");
-	} 
+		if (currentPage == "post") {
+			$("#postBody").removeClass("black");
+			$("#postBody").addClass("white");
+		}
+	} else {
+		$("#theme").attr("href", "./lib/css/onsen-css-components.min.css");
+		if (currentPage == "post") {
+			$("#postBody").removeClass("white");
+			$("#postBody").addClass("black");
+		}
+	}
 }
