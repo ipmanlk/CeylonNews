@@ -355,9 +355,9 @@ function settingsShow() {
   content.load("./views/settings.html").then(function() {
     settingHandlersReg();
     settingsUIupdate();
-    var menu = document.getElementById("menu");
-    menu.close();
   });
+  var menu = document.getElementById("menu");
+  menu.close();
 }
 
 // show/hide toast in bottom
