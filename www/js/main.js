@@ -4,6 +4,7 @@ var newsPosts = {};
 var selectedSource = "-1";
 var lang = "sn";
 var currentPage = "news-list";
+var settings = {};
 
 ons.ready(function() {
   init();
@@ -19,6 +20,7 @@ function init() {
     newsListLoad("-1", "-1", "normal");
     appCoverImgLoad();
     setInterval(newsUpdateCheck, 60000);
+    settingsCheck();
   }
 }
 
@@ -135,6 +137,7 @@ function newsListAdd(data, mode) {
       $("#newsList").prepend(newsListItemGet(data[i]));
     }
   }
+  settingsApply();
 }
 
 // generate li element for the news list
@@ -172,6 +175,7 @@ function newsRefresh() {
   } else if (currentPage == "post") {
     postGetOnline(currentPostId);
   }
+  settingsApply();
 }
 
 function newsUpdateCheck() {
@@ -202,12 +206,13 @@ function postLoad(postId) {
     }
     currentPage = "post";
     currentPostId = postId;
+    settingsApply();
   });
 }
 
 // load already viewd posts
 function postGetOffline(postId) {
-  newsPostShow(postId, newsPosts[postId]);
+  postSet(postId, newsPosts[postId]);
 }
 
 // load posts from online
@@ -222,7 +227,7 @@ function postGetOnline(postId) {
     },
     function(data) {
       newsPosts[data.id] = data;
-      newsPostShow(postId, data);
+      postSet(postId, data);
       toastToggle(null, null);
     }
   );
@@ -314,11 +319,12 @@ function newsListShow() {
     } else {
       newsListLoad("-1", "-1", "normal");
 	}
-	currentPage = "news-list";
+  currentPage = "news-list";
+
   });
 }
 
-function newsPostShow(postId, data) {
+function postSet(postId, data) {
   // set element values on post
   var source, datetime, title, mainImg, content, link;
   source = newsList[postId].source;
@@ -329,7 +335,7 @@ function newsPostShow(postId, data) {
   $("#toolbarTitle, #postSource").text(source);
   $("#postTitle").text(title);
   $("#postDateTime").text(datetime);
-  $("#postContent").html(content);
+  $("#postBody").html(content);
   $("#postLink").attr("href", link);
 
   // fix element issus on post
@@ -342,6 +348,16 @@ function newsPostShow(postId, data) {
 function sourceUrlOpen() {
   var url = newsPosts[currentPostId].link;
   window.open(url, "_blank");
+}
+
+// settings 
+function settingsShow() {
+  content.load("./views/settings.html").then(function() {
+    settingHandlersReg();
+    settingsUIupdate();
+    var menu = document.getElementById("menu");
+    menu.close();
+  });
 }
 
 // show/hide toast in bottom
