@@ -6,7 +6,7 @@ var lang = "sn";
 var currentPage = "news-list";
 var settings = {};
 
-ons.ready(function() {
+ons.ready(function () {
   init();
 });
 
@@ -21,6 +21,7 @@ function init() {
     appCoverImgLoad();
     setInterval(newsUpdateCheck, 60000);
     settingsCheck();
+    newsListOnScrollInit();
   }
 }
 
@@ -32,11 +33,11 @@ function onsenInit() {
 // set onisen slider
 function onsenSlideBarInit() {
   window.fn = {};
-  window.fn.open = function() {
+  window.fn.open = function () {
     var menu = document.getElementById("menu");
     menu.open();
   };
-  window.fn.load = function(page) {
+  window.fn.load = function (page) {
     var content = document.getElementById("content");
     var menu = document.getElementById("menu");
     content.load(page).then(menu.close.bind(menu));
@@ -75,14 +76,14 @@ function sourcesLoad() {
       action: "sources_list",
       lang: lang
     },
-    function(sources) {
+    function (sources) {
       for (var i = 0; i < sources.length; i++) {
         $("#menuSources").append(
           "<ons-list-item tappable onclick=\"sourceLoad('" +
-            sources[i].source +
-            "');\">" +
-            sources[i].source +
-            "</ons-list-item>"
+          sources[i].source +
+          "');\">" +
+          sources[i].source +
+          "</ons-list-item>"
         );
       }
     }
@@ -96,7 +97,7 @@ function appCoverImgLoad() {
     {
       action: "cover_img"
     },
-    function(data) {
+    function (data) {
       $("#coverImg").attr("src", data.img);
     }
   );
@@ -114,7 +115,7 @@ function newsListLoad(postId, source, mode) {
       mode: mode,
       lang: lang
     },
-    function(data) {
+    function (data) {
       if (!isNullOrEmpty(data)) {
         newsListAdd(data, mode);
         htmlElementsFix();
@@ -165,6 +166,16 @@ function newsListItemGet(post) {
   return html;
 }
 
+// event listener to detect end of the news list
+function newsListOnScrollInit() {
+  $('.page__content').on('scroll', function () {
+    var isBottom = ($(this).scrollTop() + $(this).innerHeight() + 100 >= $(this)[0].scrollHeight);
+    if (isBottom && (currentPage == "news-list")) {
+      newsLoadMore();
+    }
+  });
+}
+
 // refresh data
 function newsRefresh() {
   if (currentPage == "news-list") {
@@ -187,7 +198,7 @@ function newsUpdateCheck() {
       action: "news_check",
       lang: lang
     },
-    function(data) {
+    function (data) {
       if (data.id > newestId) {
         newsListLoad(newestId, "-1", "check");
         toastToggle("New posts are available!.", 4000);
@@ -198,7 +209,7 @@ function newsUpdateCheck() {
 
 // load post
 function postLoad(postId) {
-  content.load("./views/newsPost.html").then(function() {
+  content.load("./views/newsPost.html").then(function () {
     if (postId in newsPosts) {
       postGetOffline(postId);
     } else {
@@ -225,7 +236,7 @@ function postGetOnline(postId) {
       post_id: postId,
       lang: lang
     },
-    function(data) {
+    function (data) {
       newsPosts[data.id] = data;
       postSet(postId, data);
       toastToggle(null, null);
@@ -273,7 +284,7 @@ function htmlElementsFix() {
   // remove useless elements
   elementRemover("#post a, #post p", ["fivefilters", "Viewers"]);
   // fix print logo issue
-  $("img").each(function() {
+  $("img").each(function () {
     var src = $(this).attr("src");
     if (src.indexOf("print.png") > -1) {
       brokenImgFix($(this));
@@ -284,7 +295,7 @@ function htmlElementsFix() {
   // gossip lanka blank ad spaces
   try {
     $(".adsbygoogle").remove();
-  } catch (e) {}
+  } catch (e) { }
 }
 
 // remove elements
@@ -294,7 +305,7 @@ function elementRemover(selectors, array) {
   }
 
   function remove(str) {
-    $(selectors).each(function() {
+    $(selectors).each(function () {
       var val =
         $(this).attr("href") == null ? $(this).text() : $(this).attr("href");
       if (val.indexOf(str) > -1) {
@@ -312,14 +323,15 @@ function brokenImgFix(img) {
 
 // show news list
 function newsListShow() {
-  content.load("./views/newsList.html").then(function() {
+  content.load("./views/newsList.html").then(function () {
     if (!isNullOrEmpty(newsList)) {
       newsListAdd(Object.values(newsList));
       $("#btnLoadMore").fadeIn();
+      newsListOnScrollInit();
     } else {
       newsListLoad("-1", "-1", "normal");
-	}
-  currentPage = "news-list";
+    }
+    currentPage = "news-list";
 
   });
 }
@@ -352,7 +364,7 @@ function sourceUrlOpen() {
 
 // settings 
 function settingsShow() {
-  content.load("./views/settings.html").then(function() {
+  content.load("./views/settings.html").then(function () {
     settingHandlersReg();
     settingsUIupdate();
   });
@@ -395,10 +407,10 @@ function requestSend(type, data, callback) {
     data: data,
     dataType: "json",
     timeout: 30000,
-    success: function(data) {
+    success: function (data) {
       callback(data);
     },
-    error: function() {
+    error: function () {
       toastToggle("Request failed!", 4000);
     }
   });
@@ -414,7 +426,7 @@ function onOffline() {
   if (isNullOrEmpty(newsList)) {
     ons.notification
       .alert("You are offline!. Please connect to the internet.")
-      .then(function() {
+      .then(function () {
         exitApp();
       });
   } else {
@@ -430,7 +442,7 @@ function noticeShow() {
     var msg =
       "The content of this app comes from publicly available feeds of news sites and they retain all copyrights.\n\nThus, this app is not to be held responsible for any of the content displayed.\n\nThe owners of these sites can exclude their feeds with or without reason from this app by sending an email to me.";
 
-    ons.notification.confirm(msg).then(function(index) {
+    ons.notification.confirm(msg).then(function (index) {
       if (index === 1) {
         localStorage.setItem("showNotice", true);
       } else {
