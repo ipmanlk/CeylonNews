@@ -170,7 +170,7 @@ function newsListItemGet(post) {
 function newsListOnScrollInit() {
   $('.page__content').on('scroll', function () {
     var isBottom = ($(this).scrollTop() + $(this).innerHeight() + 100 >= $(this)[0].scrollHeight);
-    if (isBottom && (currentPage == "news-list")) {
+    if (isBottom && (currentPage == "news-list") && settings['newsListAutoLoad']) {
       newsLoadMore();
     }
   });

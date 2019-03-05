@@ -10,7 +10,8 @@ function settingsGetDefault() {
 		"newsListJustify": false,
 		"postTitleJustify": false,
 		"postBodyJustify": true,
-		"imgLoad": true
+		"imgLoad": true,
+		"newsListAutoLoad": false
 	}
 }
 
