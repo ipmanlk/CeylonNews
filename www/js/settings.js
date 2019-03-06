@@ -21,6 +21,13 @@ function settingsCheck() {
 		settingSetDefault();
 	} else {
 		settings = JSON.parse(localStorage.getItem("settings"));
+		// check for setting conflicts between app versions
+		var keys = Object.keys(settings);
+		var defaultKeys = Object.keys(settingsGetDefault());
+		if (!isArraysEqual(keys, defaultKeys)) {
+			settingSetDefault();
+			toastToggle("Settings have been reset to recover from a possible conflict.", 4000);
+		}
 		settingsApply();
 	}
 }
@@ -53,7 +60,7 @@ function settingsApply() {
 	if (currentPage == "post") {
 		settings.postTitleJustify ? $("#postTitle").addClass("justify") : false;
 		!settings.postBodyJustify ? $("#postBody").removeClass("justify") : false;
-		
+
 		var postBodyFontSize = settings.postBodyBigFontSize ? "21px" : "17px";
 		$("#postBody").css("font-size", postBodyFontSize);
 	}
@@ -80,4 +87,9 @@ function settingsApply() {
 			$("#postBody").addClass("black");
 		}
 	}
+}
+
+// check if arrays equal
+function isArraysEqual(a, b) {
+	return JSON.stringify(a) == JSON.stringify(b);
 }
