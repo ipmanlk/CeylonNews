@@ -10,6 +10,7 @@ function settingsGetDefault() {
 		"newsListJustify": false,
 		"postTitleJustify": false,
 		"postBodyJustify": true,
+		"postBodyBigFontSize": false,
 		"imgLoad": true,
 		"newsListAutoLoad": false
 	}
@@ -52,6 +53,9 @@ function settingsApply() {
 	if (currentPage == "post") {
 		settings.postTitleJustify ? $("#postTitle").addClass("justify") : false;
 		!settings.postBodyJustify ? $("#postBody").removeClass("justify") : false;
+		
+		var postBodyFontSize = settings.postBodyBigFontSize ? "21px" : "17px";
+		$("#postBody").css("font-size", postBodyFontSize);
 	}
 
 	// global settings
