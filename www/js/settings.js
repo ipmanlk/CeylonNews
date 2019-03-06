@@ -19,7 +19,7 @@ function settingsCheck() {
 	if (!localStorage.getItem("settings")) {
 		settingSetDefault();
 	} else {
-	    settings = JSON.parse(localStorage.getItem("settings"));
+		settings = JSON.parse(localStorage.getItem("settings"));
 		settingsApply();
 	}
 }
@@ -38,7 +38,7 @@ function settingsUIupdate() {
 	}
 }
 
-function settingSet(setting, isSet) {	
+function settingSet(setting, isSet) {
 	settings[setting] = isSet;
 	localStorage.setItem("settings", JSON.stringify(settings));
 	settingsApply();
@@ -55,16 +55,22 @@ function settingsApply() {
 	}
 
 	// global settings
+	// sinhala font
 	!settings.sinhalaFont ? $("*").removeClass("sinhala") : false;
 
+	// handle dark mode
 	if (settings.darkMode) {
-		$("#theme").attr("href", "./lib/css/dark-onsen-css-components.min.css");
+		if ($("#theme").attr("href") !== "./lib/css/dark-onsen-css-components.min.css") {
+			$("#theme").attr("href", "./lib/css/dark-onsen-css-components.min.css");
+		}
 		if (currentPage == "post") {
 			$("#postBody").removeClass("black");
 			$("#postBody").addClass("white");
 		}
 	} else {
-		$("#theme").attr("href", "./lib/css/onsen-css-components.min.css");
+		if ($("#theme").attr("href") !== "./lib/css/onsen-css-components.min.css") {
+			$("#theme").attr("href", "./lib/css/onsen-css-components.min.css");
+		}
 		if (currentPage == "post") {
 			$("#postBody").removeClass("white");
 			$("#postBody").addClass("black");
