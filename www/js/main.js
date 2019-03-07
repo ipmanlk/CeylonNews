@@ -5,6 +5,7 @@ var selectedSource = "-1";
 var lang = "sn";
 var currentPage = "news-list";
 var settings = {};
+var currentPostId = null;
 
 ons.ready(function () {
   init();
@@ -328,6 +329,12 @@ function newsListShow() {
       newsListAdd(Object.values(newsList));
       $("#btnLoadMore").fadeIn();
       newsListOnScrollInit();
+      // scroll to last position
+      if (currentPostId !== null) {
+        var id = "#" + currentPostId;
+        $(".page__content").scrollTop(($(id).offset().top) - 80);
+        currentPostId = null;
+      }
     } else {
       newsListLoad("-1", "-1", "normal");
     }
