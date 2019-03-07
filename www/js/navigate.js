@@ -11,15 +11,15 @@ function onBackKeyDown(e) {
       newsListShow();
       break;
     default:
-      ons.notification.confirm('Do you really want to close the app?') // Ask for confirmation
-        .then(function (index) {
-          if (index === 1) { // OK button
-            exitApp(); // Close the app
-          }
-        });
+      exitApp();
   }
 }
 
 function exitApp() {
-  navigator.app.exitApp();
+  ons.notification.confirm('Do you really want to close the app?') // Ask for confirmation
+    .then(function (index) {
+      if (index === 1) { // OK button
+        navigator.app.exitApp();
+      }
+    });
 }
