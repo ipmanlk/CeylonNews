@@ -138,6 +138,7 @@ function newsListAdd(data, mode) {
     } else {
       $("#newsList").prepend(newsListItemGet(data[i]));
     }
+    imgLoadingShow(data[i].id, data[i].mainImg);
   }
   settingsApply();
 }
@@ -149,7 +150,7 @@ function newsListItemGet(post) {
   source = post.source;
   datetime = post.datetime;
   title = escapedHtmlFix(post.title);
-  mainImg = post.mainImg;
+  mainImg = "./img/loading.gif";
   var html =
     '<li id="' +
     id +
@@ -265,6 +266,22 @@ function newsLoadMore() {
   newsListLoad(oldestId, selectedSource, "normal");
 }
 
+// show loading spinner while news list imgs load
+function imgLoadingShow(id, img) {
+  var tmpImg = new Image();
+  var newsListImg = $("#" + id + " img");
+  var imageLoaded = function () {
+    $(newsListImg).attr("src", img);
+    
+  }
+  var imageNotLoaded = function () {
+    $(newsListImg).attr("src", "./img/sources/default.png");    
+  }
+  tmpImg.onload = imageLoaded;
+  tmpImg.onerror = imageNotLoaded;
+  tmpImg.src = img;
+}
+
 // fix broken html tags when json parse
 function escapedHtmlFix(text) {
   return text
@@ -281,9 +298,9 @@ function htmlElementsFix() {
   $("#post iframe").width("100%");
   $("#post img").width("100%");
   $("#post img").height("auto");
-  $("img").attr("onerror", "brokenImgFix(this);");
+  $("#post img").attr("onerror", "brokenImgFix(this);");
   // remove useless elements
-  elementRemover("#post a, #post p", ["fivefilters", "Viewers"]);
+  elementRemover("#post a, #post p", ["fivefilters", "Viewers"]);elementRemover("#post a, #post p", ["fivefilters", "Viewers"]);
   // fix print logo issue
   $("img").each(function () {
     var src = $(this).attr("src");
