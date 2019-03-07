@@ -370,6 +370,7 @@ function settingsShow() {
   });
   var menu = document.getElementById("menu");
   menu.close();
+  currentPage = "settings";
 }
 
 // show/hide toast in bottom

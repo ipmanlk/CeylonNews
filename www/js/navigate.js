@@ -7,6 +7,9 @@ function onBackKeyDown(e) {
     case "post":
       newsListShow();
       break;
+    case "settings":
+      newsListShow();
+      break;
     default:
       ons.notification.confirm('Do you really want to close the app?') // Ask for confirmation
         .then(function (index) {
