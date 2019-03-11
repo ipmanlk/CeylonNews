@@ -11,7 +11,9 @@ function onBackKeyDown(e) {
       newsListShow();
       break;
     default:
+    if (!settings.backgroundMode) {
       exitApp();
+    }
   }
 }
 

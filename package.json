@@ -33,7 +33,8 @@
       "cordova-plugin-splashscreen": {},
       "cordova-plugin-inappbrowser": {},
       "cordova-plugin-device": {},
-      "cordova-plugin-local-notification": {}
+      "cordova-plugin-local-notification": {},
+      "cordova-plugin-background-mode": {}
     },
     "platforms": [
       "browser"

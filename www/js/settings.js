@@ -13,7 +13,8 @@ function settingsGetDefault() {
 		"postBodyBigFontSize": false,
 		"imgLoad": true,
 		"newsListAutoLoad": false,
-		"notificationShow": false
+		"notificationShow": false,
+		"backgroundMode": false
 	};
 }
 
@@ -79,7 +80,7 @@ function settingsApply() {
 	// global settings
 	// sinhala font
 	if (!settings.sinhalaFont) {
-		$("*").removeClass("sinhala") ;
+		$("*").removeClass("sinhala");
 	}
 
 	// handle dark mode
@@ -99,6 +100,13 @@ function settingsApply() {
 			$("#postBody").removeClass("white");
 			$("#postBody").addClass("black");
 		}
+	}
+
+	// background mode (run)
+	if (settings.backgroundMode) {
+		cordova.plugins.backgroundMode.enable();
+		cordova.plugins.backgroundMode.overrideBackButton();
+		cordova.plugins.backgroundMode.excludeFromTaskList();
 	}
 }
 
