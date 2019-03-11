@@ -46,11 +46,11 @@ function onsenSlideBarInit() {
     content.load(page).then(menu.close.bind(menu));
   };
   // disable post auto load when menu is open
-  menu.addEventListener("postopen", function() {
+  menu.addEventListener("postopen", function () {
     newsListAutoLoad = settings.newsListAutoLoad ? false : null;
   });
 
-  menu.addEventListener("postclose", function() {
+  menu.addEventListener("postclose", function () {
     newsListAutoLoad = settings.newsListAutoLoad ? true : null;
   });
 }
@@ -141,12 +141,19 @@ function newsListLoad(postId, source, mode) {
 
 // append to news list
 function newsListAdd(data, mode) {
+  // mode 
+  // check = when new post is present
+  // normal = request for more posts normally
+  // load = load from global newList object
   for (var i = 0; i < data.length; i++) {
     newsList[data[i].id] = data[i];
     if (mode == "normal") {
       $("#newsList").append(newsListItemGet(data[i]));
+    } else if (mode == "load"){
+      $("#newsList").prepend(newsListItemGet(data[i]));
     } else {
       $("#newsList").prepend(newsListItemGet(data[i]));
+      notificationShow(data[i]);
     }
     imgLoadingShow(data[i].id, data[i].mainImg);
   }
@@ -282,10 +289,10 @@ function imgLoadingShow(id, img) {
   var newsListImg = $("#" + id + " img");
   var imageLoaded = function () {
     $(newsListImg).attr("src", img);
-    
+
   };
   var imageNotLoaded = function () {
-    $(newsListImg).attr("src", "./img/sources/default.png");    
+    $(newsListImg).attr("src", "./img/sources/default.png");
   };
   tmpImg.onload = imageLoaded;
   tmpImg.onerror = imageNotLoaded;
@@ -310,7 +317,7 @@ function htmlElementsFix() {
   $("#post img").height("auto");
   $("#post img").attr("onerror", "brokenImgFix(this);");
   // remove useless elements
-  elementRemover("#post a, #post p", ["fivefilters", "Viewers"]);elementRemover("#post a, #post p", ["fivefilters", "Viewers"]);
+  elementRemover("#post a, #post p", ["fivefilters", "Viewers"]); elementRemover("#post a, #post p", ["fivefilters", "Viewers"]);
   // fix print logo issue
   $("img").each(function () {
     var src = $(this).attr("src");
@@ -353,7 +360,7 @@ function brokenImgFix(img) {
 function newsListShow() {
   content.load("./views/newsList.html").then(function () {
     if (!isNullOrEmpty(newsList)) {
-      newsListAdd(Object.values(newsList));
+      newsListAdd(Object.values(newsList), "load");
       $("#btnLoadMore").fadeIn();
       newsListOnScrollInit();
       // scroll to last position
@@ -429,6 +436,18 @@ function postShare() {
     null,
     " - Readmore @ " + newsPosts[currentPostId].link
   );
+}
+
+function notificationShow(post) {
+  cordova.plugins.notification.local.schedule({
+    title: post.title,
+    text: post.source,
+    foreground: true
+  });
+
+  cordova.plugins.notification.local.on("click", function() {
+    postLoad(post.id);
+  }, this);
 }
 
 function requestSend(type, data, callback) {
