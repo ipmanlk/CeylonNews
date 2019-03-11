@@ -47,11 +47,11 @@ function onsenSlideBarInit() {
   };
   // disable post auto load when menu is open
   menu.addEventListener("postopen", function() {
-    settings.newsListAutoLoad ? newsListAutoLoad = false :  null;
+    newsListAutoLoad = settings.newsListAutoLoad ? false : null;
   });
 
   menu.addEventListener("postclose", function() {
-    settings.newsListAutoLoad ? newsListAutoLoad = true :  null;
+    newsListAutoLoad = settings.newsListAutoLoad ? true : null;
   });
 }
 
@@ -182,7 +182,7 @@ function newsListItemGet(post) {
 function newsListOnScrollInit() {
   $('.page__content').on('scroll', function () {
     var isBottom = ($(this).scrollTop() + $(this).innerHeight() + 100 >= $(this)[0].scrollHeight);
-    if (isBottom && (currentPage == "news-list") && settings['newsListAutoLoad'] && newsListAutoLoad) {
+    if (isBottom && (currentPage == "news-list") && settings.newsListAutoLoad && newsListAutoLoad) {
       newsLoadMore();
     }
   });
@@ -283,10 +283,10 @@ function imgLoadingShow(id, img) {
   var imageLoaded = function () {
     $(newsListImg).attr("src", img);
     
-  }
+  };
   var imageNotLoaded = function () {
     $(newsListImg).attr("src", "./img/sources/default.png");    
-  }
+  };
   tmpImg.onload = imageLoaded;
   tmpImg.onerror = imageNotLoaded;
   tmpImg.src = img;

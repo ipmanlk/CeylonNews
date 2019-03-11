@@ -13,7 +13,7 @@ function settingsGetDefault() {
 		"postBodyBigFontSize": false,
 		"imgLoad": true,
 		"newsListAutoLoad": false
-	}
+	};
 }
 
 function settingsCheck() {
@@ -57,11 +57,19 @@ function settingSet(setting, isSet) {
 function settingsApply() {
 	// page specific settigns
 	if (currentPage == "news-list") {
-		settings.newsListJustify ? $(".list-item").addClass("justify") : false;
+		if (settings.newsListJustify) {
+			$(".list-item").addClass("justify");
+		}
 	}
 	if (currentPage == "post") {
-		settings.postTitleJustify ? $("#postTitle").addClass("justify") : false;
-		!settings.postBodyJustify ? $("#postBody").removeClass("justify") : false;
+
+		if (settings.postTitleJustify) {
+			$("#postTitle").addClass("justify");
+		}
+
+		if (!settings.postBodyJustify) {
+			$("#postBody").removeClass("justify");
+		}
 
 		var postBodyFontSize = settings.postBodyBigFontSize ? "21px" : "17px";
 		$("#postBody").css("font-size", postBodyFontSize);
@@ -69,7 +77,9 @@ function settingsApply() {
 
 	// global settings
 	// sinhala font
-	!settings.sinhalaFont ? $("*").removeClass("sinhala") : false;
+	if (!settings.sinhalaFont) {
+		$("*").removeClass("sinhala") ;
+	}
 
 	// handle dark mode
 	if (settings.darkMode) {
