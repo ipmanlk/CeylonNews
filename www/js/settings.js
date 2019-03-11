@@ -12,7 +12,8 @@ function settingsGetDefault() {
 		"postBodyJustify": true,
 		"postBodyBigFontSize": false,
 		"imgLoad": true,
-		"newsListAutoLoad": false
+		"newsListAutoLoad": false,
+		"notificationShow": false
 	};
 }
 

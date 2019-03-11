@@ -149,7 +149,7 @@ function newsListAdd(data, mode) {
     newsList[data[i].id] = data[i];
     if (mode == "normal") {
       $("#newsList").append(newsListItemGet(data[i]));
-    } else if (mode == "load"){
+    } else if (mode == "load") {
       $("#newsList").prepend(newsListItemGet(data[i]));
     } else {
       $("#newsList").prepend(newsListItemGet(data[i]));
@@ -439,15 +439,17 @@ function postShare() {
 }
 
 function notificationShow(post) {
-  cordova.plugins.notification.local.schedule({
-    title: post.title,
-    text: post.source,
-    foreground: true
-  });
+  if (settings.notificationShow) {
+    cordova.plugins.notification.local.schedule({
+      title: post.title,
+      text: post.source,
+      foreground: true
+    });
 
-  cordova.plugins.notification.local.on("click", function() {
-    postLoad(post.id);
-  }, this);
+    cordova.plugins.notification.local.on("click", function () {
+      postLoad(post.id);
+    }, this);
+  }
 }
 
 function requestSend(type, data, callback) {
