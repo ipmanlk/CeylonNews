@@ -6,6 +6,8 @@ var lang = "sn";
 var currentPage = "news-list";
 var settings = {};
 var currentPostId = null;
+// fix for auto load when menu is open
+var newsListAutoLoad;
 
 ons.ready(function () {
   init();
@@ -33,9 +35,9 @@ function onsenInit() {
 
 // set onisen slider
 function onsenSlideBarInit() {
+  var menu = document.getElementById("menu");
   window.fn = {};
   window.fn.open = function () {
-    var menu = document.getElementById("menu");
     menu.open();
   };
   window.fn.load = function (page) {
@@ -43,6 +45,14 @@ function onsenSlideBarInit() {
     var menu = document.getElementById("menu");
     content.load(page).then(menu.close.bind(menu));
   };
+  // disable post auto load when menu is open
+  menu.addEventListener("postopen", function() {
+    settings.newsListAutoLoad ? newsListAutoLoad = false :  null;
+  });
+
+  menu.addEventListener("postclose", function() {
+    settings.newsListAutoLoad ? newsListAutoLoad = true :  null;
+  });
 }
 
 // check language is set
@@ -172,7 +182,7 @@ function newsListItemGet(post) {
 function newsListOnScrollInit() {
   $('.page__content').on('scroll', function () {
     var isBottom = ($(this).scrollTop() + $(this).innerHeight() + 100 >= $(this)[0].scrollHeight);
-    if (isBottom && (currentPage == "news-list") && settings['newsListAutoLoad']) {
+    if (isBottom && (currentPage == "news-list") && settings['newsListAutoLoad'] && newsListAutoLoad) {
       newsLoadMore();
     }
   });

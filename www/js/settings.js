@@ -21,6 +21,8 @@ function settingsCheck() {
 		settingSetDefault();
 	} else {
 		settings = JSON.parse(localStorage.getItem("settings"));
+		// fix for side menu
+		newsListAutoLoad = settings.newsListAutoLoad;
 		// check for setting conflicts between app versions
 		var keys = Object.keys(settings);
 		var defaultKeys = Object.keys(settingsGetDefault());
