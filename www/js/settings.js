@@ -54,6 +54,18 @@ function settingSet(setting, isSet) {
 	settings[setting] = isSet;
 	localStorage.setItem("settings", JSON.stringify(settings));
 	settingsApply();
+	// custom behaviour for some settings
+	customBehaviourApply(setting, isSet);
+}
+
+function customBehaviourApply(setting, isSet) {
+	// custom behaviour for background mode
+	if (setting == "backgroundMode" && !isSet) {
+		ons.notification.alert('App need to restart in order to apply this setting.')
+			.then(function () {
+				navigator.app.exitApp();
+			});
+	}
 }
 
 function settingsApply() {
