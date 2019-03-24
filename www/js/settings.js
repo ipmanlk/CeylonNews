@@ -14,7 +14,8 @@ function settingsGetDefault() {
 		"imgLoad": true,
 		"newsListAutoLoad": false,
 		"notificationShow": false,
-		"backgroundMode": false
+		"backgroundMode": false,
+		"apiNew": true
 	};
 }
 

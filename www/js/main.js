@@ -451,7 +451,12 @@ function requestSend(type, data, callback) {
   // type = request type
   // data = data to be send
   // callback = function to run after success
-  var api = "https://api.navinda.xyz/cn/v2.4/";
+  if (settings.apiNew) {
+    api = "http://35.211.9.240:3000/cn/v1.0";
+  } else {
+    api = "https://api.navinda.xyz/cn/v2.4/";
+  }
+
   $.ajax({
     url: api,
     type: type,
