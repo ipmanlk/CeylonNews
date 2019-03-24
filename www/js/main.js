@@ -254,6 +254,7 @@ function postGetOnline(postId) {
 // get news list from custom source
 function sourceLoad(source) {
   selectedSource = source;
+  newsList = {};
   toastToggle("Loading posts...", null);
   $("#btnLoadMore").hide();
   $("#newsList").empty();
