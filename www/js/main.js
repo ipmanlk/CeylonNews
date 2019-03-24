@@ -21,7 +21,6 @@ function init() {
   } else {
     sourcesLoad();
     newsListLoad("-1", "-1", "normal");
-    appCoverImgLoad();
     setInterval(newsUpdateCheck, 60000);
     settingsCheck();
     newsListOnScrollInit();
@@ -98,19 +97,6 @@ function sourcesLoad() {
           "</ons-list-item>"
         );
       }
-    }
-  );
-}
-
-//  load cover img
-function appCoverImgLoad() {
-  requestSend(
-    "get",
-    {
-      action: "cover_img"
-    },
-    function (data) {
-      $("#coverImg").attr("src", data.img);
     }
   );
 }
