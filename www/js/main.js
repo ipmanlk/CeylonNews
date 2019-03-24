@@ -19,10 +19,10 @@ function init() {
   if (!langCheck()) {
     langSelectorShow();
   } else {
+    settingsCheck();
     sourcesLoad();
     newsListLoad("-1", "-1", "normal");
     setInterval(newsUpdateCheck, 60000);
-    settingsCheck();
     newsListOnScrollInit();
     bModeDefaultsSet();
   }
