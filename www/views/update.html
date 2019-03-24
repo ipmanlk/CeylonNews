@@ -1,0 +1,33 @@
+<ons-page>
+    <!-- toolbar start -->
+    <ons-toolbar>
+        <div class="left">
+            <ons-toolbar-button onclick="newsListShow();currentPage='news-list';">
+                <ons-icon icon="md-arrow-back"></ons-icon>
+            </ons-toolbar-button>
+        </div>
+
+        <div class="center">
+            <span id="toolbarTitle">App Updater</span>
+        </div>
+    </ons-toolbar>
+    <!-- toolbar end -->
+
+    <ons-card>
+        <center>
+            <img src="./img/update.png" style="width: 65%">
+        </center>
+        <div class="content">
+            <p style="font-size:17px; text-align:justify;">There is a newer version available for download!. Please
+                update this app by visiting Google Play Store or download & install the apk manually from Github
+                releases.</p>
+            <h5>Current Version : <span id="lblCurrentVersion"></span></h5>
+            <h5>New Version : <span id="lblNewVersion"></span></h5>
+        </div>
+        <br>
+        <ons-button modifier="large" onclick="updateRun('Github')">Update from Github</ons-button>
+        <br>
+        <br>
+        <ons-button modifier="large" onclick="updateRun('PlayStore')">Update from PlayStore</ons-button>
+    </ons-card>
+</ons-page>

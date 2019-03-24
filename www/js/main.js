@@ -25,6 +25,7 @@ function init() {
     setInterval(newsUpdateCheck, 60000);
     newsListOnScrollInit();
     bModeDefaultsSet();
+    updateCheck();
   }
 }
 
