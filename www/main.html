@@ -17,6 +17,19 @@
 <script src="./lib/js/onsenui.min.js"></script>
 <script src="./lib/js/imagesloaded.pkgd.min.js"></script>
 
+<!-- styles for about page -->
+<style>
+  .modal-about div h4 {
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .modal-about div h3 {
+    margin-top: 0;
+    padding-top: 0;
+  }
+</style>
+
 <body>
   <!-- side menu start -->
   <ons-splitter>
@@ -36,10 +49,11 @@
           <ons-list-item onclick="settingsShow();" tappable>
             Settings
           </ons-list-item>
-          <ons-list-item onclick="fn.load('./views/about.html')" tappable>
+          <ons-list-item onclick="aboutShow();" tappable>
             About
           </ons-list-item>
-          <ons-list-item onclick="window.open('https://play.google.com/store/apps/developer?id=Navinda+Dissanayake', '_system', 'location=yes');"
+          <ons-list-item
+            onclick="window.open('https://play.google.com/store/apps/developer?id=Navinda+Dissanayake', '_system', 'location=yes');"
             tappable>
             More Apps
           </ons-list-item>
@@ -64,6 +78,20 @@
   <ons-toast id="outputToast" animation="ascend">
     <span id="outputToastMsg"></span>
   </ons-toast>
+
+  <ons-modal direction="up" id="modalAbout" class="modal-about">
+    <div style="text-align: center">
+      <hr />
+      <h4>Developed By</h4>
+      <h3>Navinda Dissanayake</h3>
+      <h4>Web</h4>
+      <h3>www.navinda.xyz</h3>
+      <h4>Mail</h4>
+      <h3>navilk@zoho.com</h3>
+      <button class="button button--material" onclick="$('#modalAbout').hide();">Close</button>
+      <hr />
+    </div>
+  </ons-modal>
 
   <!--  app -->
   <script src="./js/main.js" charset="utf-8"></script>

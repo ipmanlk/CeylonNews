@@ -511,3 +511,7 @@ function noticeShow() {
     });
   }
 }
+
+function aboutShow() {
+  $('#modalAbout').show();
+}
