@@ -12,6 +12,7 @@
   "dependencies": {
     "cordova-android": "^7.1.4",
     "cordova-browser": "^5.0.4",
+    "cordova-plugin-background-mode": "^0.7.2",
     "cordova-plugin-badge": "^0.8.8",
     "cordova-plugin-device": "^2.0.2",
     "cordova-plugin-inappbrowser": "^3.0.0",
@@ -21,8 +22,7 @@
     "cordova-plugin-whitelist": "^1.3.3",
     "cordova-plugin-x-socialsharing": "^5.4.4",
     "device": "^0.3.9",
-    "es6-promise-plugin": "^4.2.2",
-    "cordova-plugin-background-mode": "~0.7.2"
+    "es6-promise-plugin": "^4.2.2"
   },
   "cordova": {
     "plugins": {
@@ -34,8 +34,7 @@
       "cordova-plugin-splashscreen": {},
       "cordova-plugin-inappbrowser": {},
       "cordova-plugin-device": {},
-      "cordova-plugin-local-notification": {},
-      "cordova-plugin-background-mode": {}
+      "cordova-plugin-local-notification": {}
     },
     "platforms": [
       "browser",
