@@ -24,7 +24,6 @@ function init() {
     newsListLoad("-1", "-1", "normal");
     setInterval(newsUpdateCheck, 60000);
     newsListOnScrollInit();
-    bModeDefaultsSet();
     updateCheck();
   }
 }
@@ -438,16 +437,6 @@ function notificationShow(post) {
     cordova.plugins.notification.local.on("click", function () {
       postLoad(post.id);
     }, this);
-  }
-}
-
-// background mode settings
-function bModeDefaultsSet() {
-  if (settings.backgroundMode) {
-    cordova.plugins.backgroundMode.setDefaults({
-      title: "Ceylon News",
-      text: "Running in the background",
-    });
   }
 }
 

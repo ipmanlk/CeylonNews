@@ -14,7 +14,6 @@ function settingsGetDefault() {
 		"imgLoad": true,
 		"newsListAutoLoad": false,
 		"notificationShow": false,
-		"backgroundMode": false,
 		"apiNew": true
 	};
 }
@@ -56,18 +55,12 @@ function settingSet(setting, isSet) {
 	localStorage.setItem("settings", JSON.stringify(settings));
 	settingsApply();
 	// custom behaviour for some settings
-	customBehaviourApply(setting, isSet);
+	// customBehaviourApply(setting, isSet);
 }
 
-function customBehaviourApply(setting, isSet) {
-	// custom behaviour for background mode
-	if (setting == "backgroundMode" && !isSet) {
-		ons.notification.alert('App need to restart in order to apply this setting.')
-			.then(function () {
-				navigator.app.exitApp();
-			});
-	}
-}
+// function customBehaviourApply(setting, isSet) {
+
+// }
 
 function settingsApply() {
 	// page specific settigns
@@ -115,12 +108,6 @@ function settingsApply() {
 		}
 	}
 
-	// background mode (run)
-	if (settings.backgroundMode) {
-		cordova.plugins.backgroundMode.enable();
-		cordova.plugins.backgroundMode.overrideBackButton();
-		cordova.plugins.backgroundMode.excludeFromTaskList();
-	}
 }
 
 // check if arrays equal
