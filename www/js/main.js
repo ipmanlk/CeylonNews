@@ -443,10 +443,12 @@ function notificationShow(post) {
 
 // background mode settings
 function bModeDefaultsSet() {
-  cordova.plugins.backgroundMode.setDefaults({
-    title: "Ceylon News",
-    text: "Running in the background",
-  });
+  if (settings.backgroundMode) {
+    cordova.plugins.backgroundMode.setDefaults({
+      title: "Ceylon News",
+      text: "Running in the background",
+    });
+  }
 }
 
 function requestSend(type, data, callback) {
