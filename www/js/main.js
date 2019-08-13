@@ -118,6 +118,7 @@ function newsListLoad(postId, source, mode) {
         newsListAdd(data, mode);
         htmlElementsFix();
         $("#btnLoadMore").fadeIn();
+        newsListAutoLoad = true;
       } else {
         $("#btnLoadMore").fadeOut();
       }
@@ -264,6 +265,7 @@ function sourceLoad(source) {
 
 // handle load more button
 function newsLoadMore() {
+  newsListAutoLoad = false;
   $("#btnLoadMore").hide();
   toastToggle("Loading more posts...", null);
   var keys = Object.keys(newsList);
