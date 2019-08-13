@@ -1,5 +1,5 @@
 function updateCheck() {
-    var currentVersion = "5.8.1";
+    var currentVersion = "5.8.2";
     requestSend(
         "get",
         {
