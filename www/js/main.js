@@ -154,7 +154,7 @@ function newsListItemGet(post) {
   id = post.id;
   source = post.source;
   datetime = post.datetime;
-  title = escapedHtmlFix(post.title);
+  title = post.title;
   mainImg = "./img/loading.gif";
   var html =
     '<li id="' +
@@ -289,55 +289,12 @@ function imgLoadingShow(id, img) {
   tmpImg.src = img;
 }
 
-// fix broken html tags when json parse
-function escapedHtmlFix(text) {
-  return text
-    .replace("&amp;", "&")
-    .replace("&lt;", "<")
-    .replace("&gt;", ">")
-    .replace("&quot;", '"')
-    .replace("&#039;", "'")
-    .replace("&amp;#039;", "'");
-}
-
 // fix useless elements in posts
 function htmlElementsFix() {
-  $("#post iframe").width("100%");
-  $("#post img").width("100%");
-  $("#post img").height("auto");
-  $("#post img").attr("onerror", "brokenImgFix(this);");
-  // remove useless elements
-  elementRemover("#post a, #post p", ["fivefilters", "Viewers"]); elementRemover("#post a, #post p", ["fivefilters", "Viewers"]);
-  // fix print logo issue
-  $("img").each(function () {
-    var src = $(this).attr("src");
-    if (src.indexOf("print.png") > -1) {
-      brokenImgFix($(this));
-    }
-  });
-
-  // site specific fixes
-  // gossip lanka blank ad spaces
-  try {
-    $(".adsbygoogle").remove();
-  } catch (e) { }
-}
-
-// remove elements
-function elementRemover(selectors, array) {
-  for (var item in array) {
-    remove(array[item]);
-  }
-
-  function remove(str) {
-    $(selectors).each(function () {
-      var val =
-        $(this).attr("href") == null ? $(this).text() : $(this).attr("href");
-      if (val.indexOf(str) > -1) {
-        $(this).remove();
-      }
-    });
-  }
+  $("iframe").attr("width","100%");
+  $("img").attr("width","100%");
+  $("img").attr("height","auto");
+  $("img").attr("onerror", "brokenImgFix(this);");
 }
 
 // when image error happen, set default img
@@ -372,8 +329,8 @@ function postSet(postId, data) {
   var source, datetime, title, mainImg, content, link;
   source = newsList[postId].source;
   datetime = newsList[postId].datetime;
-  title = escapedHtmlFix(newsList[postId].title);
-  content = escapedHtmlFix(data.post);
+  title = newsList[postId].title;
+  content = data.post;
   link = data.link;
   $("#toolbarTitle, #postSource").text(source);
   $("#postTitle").text(title);
