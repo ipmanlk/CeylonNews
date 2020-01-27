@@ -2,7 +2,7 @@
   "name": "xyz.navinda.ceylonnews",
   "displayName": "CeylonNews",
   "version": "1.0.0",
-  "description": "A sample Apache Cordova application that responds to the deviceready event.",
+  "description": "Free &amp; easy to use Sinhala news reader.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,6 +16,7 @@
     "cordova-android": "^8.1.0",
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-network-information": "^2.0.2",
+    "cordova-plugin-splashscreen": "^5.0.3",
     "cordova-plugin-x-socialsharing": "^5.6.3",
     "es6-promise-plugin": "^4.2.2"
   },
@@ -24,7 +25,8 @@
       "cordova-plugin-x-socialsharing": {},
       "cordova-plugin-device": {},
       "cordova-plugin-network-information": {},
-      "cordova-plugin-whitelist": {}
+      "cordova-plugin-whitelist": {},
+      "cordova-plugin-splashscreen": {}
     },
     "platforms": [
       "android"
