@@ -311,7 +311,7 @@ const selectLang = (lang) => {
     delete data.sources;
     loadNewsSources().then(() => {
         saveSettings();
-        window.location = "./";
+        window.location = "./index.html";
     });
 }
 
@@ -348,6 +348,7 @@ const setLoadMore = (isEnabled) => {
 }
 
 const refreshNewsList = () => {
+    vars.newsList = {};
     $("#ul-news-list").empty();
     loadNewsList("online");
 }
