@@ -59,6 +59,8 @@ const initOnsenComponents = () => {
     });
 
     document.addEventListener("backbutton", onBackKeyDown, false);
+
+    document.addEventListener("offline", onOffline, false);
 }
 
 const loadNewsSources = () => {
@@ -406,6 +408,20 @@ const initNewsListScrollListener = () => {
         }
 
     });
+}
+
+const onOffline = () => {
+    if (Object.keys(vars.newsList).length == 0) {
+        ons.notification
+            .alert("You are offline!. Please connect to the internet.")
+            .then(() => {
+                navigator.app.exitApp();
+            });
+    } else {
+        ons.notification.alert(
+            "You are offline!. Some assets will not load properly."
+        );
+    }
 }
 
 const sendRequest = (data = { word: "cat" }, method = "get") => {
