@@ -4,43 +4,54 @@
   font-weight: normal;
 }
 
-.sinhala {
+.sinhala-font {
   font-family: "Malithi-Web";
 }
 
-.justify {
-  text-align: justify;
+.side-menu-img {
+  width: 100%;
 }
 
-.no-padding-margin {
-  margin: 0;
-  padding: 0;
+.post-content {
+  font-size: 17px;
 }
 
 .post-content img {
   width: 100%;
+  height: auto !important;
 }
 
-.about-label-title {
-  background-color:#000000;
-  border-radius:10px;
-  color:#FFFFFF;
+.text-white {
+  color: white;
 }
 
-.about-label-text {
-  color:#000000;
-  margin-bottom: 15px;
+.text-black {
+  color: black;
 }
 
-.ons-button {
+.text-justify {
+  text-align: justify;
+}
+
+.modal-langselect div {
+  text-align: center;
+}
+
+.modal-langselect .ons-button {
   width: 75%;
   margin-bottom: 10px;
 }
 
-.black {
-  color:#000000
+.news-list-footer {
+  margin: 10px 10px 20px 10px;
 }
 
-.white {
-  color:#FFFFFF
+.modal-about div h4 {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.modal-about div h3 {
+  margin-top: 0;
+  padding-top: 0;
 }
