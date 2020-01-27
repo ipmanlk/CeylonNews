@@ -57,6 +57,8 @@ const initOnsenComponents = () => {
     menu.addEventListener("postclose", () => {
         vars.loadMore = true;
     });
+
+    document.addEventListener("backbutton", onBackKeyDown, false);
 }
 
 const loadNewsSources = () => {
@@ -362,10 +364,10 @@ const shareNewsPost = () => {
     const newsId = vars.currentPostId;
     const url = vars.newsPosts[newsId].link;
     window.plugins.socialsharing.share(
-        newsList[currentPostId].title,
+        vars.newsList[newsId].title,
         null,
         null,
-        " - Readmore @ " + newsPosts[currentPostId].link
+        " - Readmore @ " + url
     );
 }
 

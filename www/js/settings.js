@@ -42,6 +42,8 @@ const showSettingsPage = () => {
         $('ons-switch').change((e) => {
             changeSetting(e.target.id, e.target.checked);
         });
+
+        vars.currentPage = "settings";
     });
 }
 
@@ -57,7 +59,7 @@ const applySettings = () => {
     const page = vars.currentPage;
     // apply theme
     if (settings["st-darkmode"]) {
-        const darkCssPath = "./lib/css/dark-onsen-css-components.min.css"; 
+        const darkCssPath = "./lib/css/dark-onsen-css-components.min.css";
         if ($("#app-theme").attr("href") !== darkCssPath) {
             $("#app-theme").attr("href", darkCssPath);
         }
@@ -66,7 +68,7 @@ const applySettings = () => {
             $("#lbl-news-post-body").addClass("text-white");
         }
     } else {
-        const lightCssPath = "./lib/css/onsen-css-components.min.css"; 
+        const lightCssPath = "./lib/css/onsen-css-components.min.css";
         if ($("#app-theme").attr("href") !== lightCssPath) {
             $("#app-theme").attr("href", lightCssPath);
         }
@@ -77,32 +79,32 @@ const applySettings = () => {
     }
 
     if (page == "news-list") {
-		if (settings["st-news-list-justify"]) {
-			$(".list-item").addClass("text-justify");
+        if (settings["st-news-list-justify"]) {
+            $(".list-item").addClass("text-justify");
         }
-        
+
         if (settings["st-sinhalafont"]) {
             $(".list-item__title").addClass("sinhala-font");
         }
     }
-    
-    if (page == "news-post") {
-		if (settings["st-news-post-title-justify"]) {
-			$("#lbl-news-post-title").addClass("text-justify");
-		}
 
-		if (settings["st-news-post-body-justify"]) {
-			$("#lbl-news-post-body").addClass("text-justify");
-		}
+    if (page == "news-post") {
+        if (settings["st-news-post-title-justify"]) {
+            $("#lbl-news-post-title").addClass("text-justify");
+        }
+
+        if (settings["st-news-post-body-justify"]) {
+            $("#lbl-news-post-body").addClass("text-justify");
+        }
 
         if (settings["st-sinhalafont"]) {
             $("#lbl-news-post-title").addClass("sinhala-font");
             $("#lbl-news-post-body").addClass("sinhala-font");
         }
 
-		const postBodyFontSize = settings["st-news-post-body-lgfont"] ? "21px" : "17px";
-		$("#lbl-news-post-body").css("font-size", postBodyFontSize);
-	}
+        const postBodyFontSize = settings["st-news-post-body-lgfont"] ? "21px" : "17px";
+        $("#lbl-news-post-body").css("font-size", postBodyFontSize);
+    }
 }
 
 const changeSetting = (id, isChecked) => {
