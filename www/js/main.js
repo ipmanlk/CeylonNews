@@ -430,10 +430,13 @@ const sendRequest = (data = { word: "cat" }, method = "get") => {
             url: "http://35.211.9.240:3001/v1.0",
             method: method,
             dataType: "json",
-            data: data
+            data: data,
+            timeout: 10000
         }).done((res) => {
             resolve(res);
         }).fail(() => {
+            hideOutputToast();
+            showTimedToast("Request failed!.", 3000);
             reject("Request failed.");
         })
     });
