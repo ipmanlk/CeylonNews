@@ -299,6 +299,13 @@ const showNewsList = () => {
         applySettings();
 
         initNewsListScrollListener();
+
+        // scroll to last position
+        if (vars.currentPostId !== null) {
+            const id = `#${vars.currentPostId}`;
+            $(".page__content").scrollTop(($(id).offset().top) - 80);
+            vars.currentPostId = null;
+        }
     });
 }
 
