@@ -218,6 +218,8 @@ const loadNewsFromSource = (sourceId) => {
     showOutputToast("Loading news list....");
 
     sendRequest({ action: "news-list", sources: sourceId }).then(newsList => {
+        // clear saved news list
+        vars.newsList = {};
         $("#ul-news-list").empty();
         appendToNewsList(newsList);
         setLoadMore(true);
