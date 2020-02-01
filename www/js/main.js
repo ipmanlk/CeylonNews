@@ -449,10 +449,10 @@ const onOffline = () => {
     }
 }
 
-const sendRequest = (data = { word: "cat" }, method = "get") => {
+const sendRequest = (data = { }, method = "get") => {
     return new Promise((resolve, reject) => {
         $.ajax({
-            url: "http://35.211.9.240:3001/v1.0",
+            url: "http://ceylon-news-api.navinda.xyz/v1.0",
             method: method,
             dataType: "json",
             data: data,
