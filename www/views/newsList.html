@@ -2,35 +2,36 @@
 	<!-- toolbar start -->
 	<ons-toolbar>
 		<div class="left">
-			<ons-toolbar-button onclick="fn.open()" id="toolbar-menu-toggler">
+			<ons-toolbar-button id="btn-toolbar-menutoggle" onclick="fn.openSideMenu()">
 				<ons-icon icon="md-menu"></ons-icon>
 			</ons-toolbar-button>
 		</div>
 
 		<div class="center">
-			<span id="toolbarTitle">Ceylon News</span>
+			<span id="lbl-toolbar-title">Ceylon News</span>
 		</div>
 
 		<div class="right">
-			<ons-toolbar-button onclick="langSelectorShow()">
+			<ons-toolbar-button id="btn-toolbar-translate" onclick="showLangSelectModal()">
 				<ons-icon icon="md-translate"></ons-icon>
 			</ons-toolbar-button>
 
-			<ons-toolbar-button onclick="newsRefresh()">
-				<ons-icon icon="md-refresh"></ons-icon>
+			<ons-toolbar-button id="btn-toolbar-refresh">
+				<ons-icon icon="md-refresh" onclick="refreshNewsList()"></ons-icon>
 			</ons-toolbar-button>
 		</div>
 	</ons-toolbar>
 	<!-- toolbar end -->
 
-	<div id="news">
-		<ons-list id="newsList">
+	<div id="news-list">
+		<ons-list id="ul-news-list">
 
 		</ons-list>
 
-		<div style="margin:10px 10px 20px 10px">
-			<button id="btnLoadMore" class="button--large button--outline" onclick="newsLoadMore();" style="display:none">Load
-				More</button>
+		<div class="news-list-footer">
+			<button id="btn-news-list-loadmore" class="button--large button--outline" style="display: none;" onclick="loadMore()">
+				Load More
+			</button>
 		</div>
 	</div>
 

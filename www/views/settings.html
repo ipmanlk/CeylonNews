@@ -1,104 +1,100 @@
 <ons-page>
   <!-- toolbar start -->
   <ons-toolbar>
-    <div class="left">
-      <ons-toolbar-button onclick="fn.open()" id="toolbar-menu-toggler">
-        <ons-icon icon="md-menu"></ons-icon>
+		<div class="left">
+      <ons-toolbar-button id="btn-toolbar-back" onclick="showNewsList()">
+        <ons-icon icon="md-arrow-back"></ons-icon>
       </ons-toolbar-button>
-    </div>
+		</div>
 
-    <div class="center">
-      <span id="toolbarTitle">Settings</span>
-    </div>
+		<div class="center">
+			<span id="lbl-toolbar-title">Settings</span>
+		</div>
   </ons-toolbar>
   <!-- toolbar end -->
 
   <div>
     <ons-list>
       <ons-list-header>App</ons-list-header>
+
       <ons-list-item>
         <div class="center">
           Dark Mode
         </div>
         <div class="right">
-          <ons-switch id="darkMode"></ons-switch>
+          <ons-switch id="st-darkmode"></ons-switch>
         </div>
       </ons-list-item>
+
       <ons-list-item>
         <div class="center">
           Custom Sinhala Font
         </div>
         <div class="right">
-          <ons-switch id="sinhalaFont"></ons-switch>
+          <ons-switch id="st-sinhalafont"></ons-switch>
         </div>
       </ons-list-item>
-      <ons-list-item>
-        <div class="center">
-          Show Notifications
-        </div>
-        <div class="right">
-          <ons-switch id="notificationShow"></ons-switch>
-        </div>
-      </ons-list-item>
-      <ons-list-item>
-        <div class="center">
-          Use Experimental API
-        </div>
-        <div class="right">
-          <ons-switch id="apiNew"></ons-switch>
-        </div>
-      </ons-list-item>
+
       <ons-list-header>News List</ons-list-header>
+
       <ons-list-item>
         <div class="center">
           Justify News List
         </div>
         <div class="right">
-          <ons-switch id="newsListJustify"></ons-switch>
+          <ons-switch id="st-news-list-justify"></ons-switch>
         </div>
       </ons-list-item>
+
+      <ons-list-item>
+        <div class="center">
+          Card UI
+        </div>
+        <div class="right">
+          <ons-switch id="st-news-list-card-ui"></ons-switch>
+        </div>
+      </ons-list-item>
+
       <ons-list-header>News Post</ons-list-header>
+
       <ons-list-item>
         <div class="center">
           Justify Post Title
         </div>
         <div class="right">
-          <ons-switch id="postTitleJustify"></ons-switch>
+          <ons-switch id="st-news-post-title-justify"></ons-switch>
         </div>
       </ons-list-item>
+
       <ons-list-item>
         <div class="center">
           Justify Post Body
         </div>
         <div class="right">
-          <ons-switch id="postBodyJustify"></ons-switch>
+          <ons-switch id="st-news-post-body-jusitfy"></ons-switch>
         </div>
       </ons-list-item>
+
       <ons-list-item>
         <div class="center">
           Large Font Size
         </div>
         <div class="right">
-          <ons-switch id="postBodyBigFontSize"></ons-switch>
+          <ons-switch id="st-news-post-body-lgfont"></ons-switch>
         </div>
       </ons-list-item>
+
       <ons-list-header>Data Saving</ons-list-header>
+
       <ons-list-item>
         <div class="center">
           Auto Load News
         </div>
         <div class="right">
-          <ons-switch id="newsListAutoLoad"></ons-switch>
+          <ons-switch id="st-news-list-autoload"></ons-switch>
         </div>
       </ons-list-item>
-      <ons-list-item style="display:none">
-        <div class="center">
-          Load Images
-        </div>
-        <div class="right">
-          <ons-switch id="imgLoad"></ons-switch>
-        </div>
-      </ons-list-item>
+
     </ons-list>
   </div>
 </ons-page>

@@ -2,31 +2,85 @@
 <html lang="en" dir="ltr">
 
 <head>
-  <meta charset="utf-8">
-  <title>Loader</title>
+    <meta charset="utf-8" />
+    <title>CeylonNews</title>
+    <link rel="stylesheet" href="./lib/css/onsenui-core.min.css" />
+    <link id="app-theme" rel="stylesheet" href="./lib/css/onsen-css-components.min.css" />
+    <link rel="stylesheet" href="./lib/css/material-design-iconic-font/css/material-design-iconic-font.min.css" />
+    <link rel="stylesheet" href="./css/custom.css" />
+    <link rel="stylesheet" href="./css/animate.css" />
+
+    <script src="cordova.js"></script>
+
+    <!--  libs -->
+    <script src="./lib/js/jquery.min.js"></script>
+    <script src="./lib/js/onsenui.min.js"></script>
+    <script src="./lib/js/imagesloaded.pkgd.min.js"></script>
 </head>
-<script src="cordova.js"></script>
-<script src="./js/navigate.js" charset="utf-8"></script>
 
 <body>
-  <script type="text/javascript">
-    // this checks if device is online
-    document.addEventListener("deviceready", function () {
-      var networkState = navigator.connection.type;
-      var isOffline = (networkState == Connection.NONE) || (networkState == Connection.UNKNOWN);
-      if (isOffline) {
-        alert("You are offline!");
-        exitApp();
-      } else {
-        try {
-          window.location = "./main.html";
-        } catch (error) {
-          alert("Something went wrong!");
-          exitApp();
-        }
-      }
-    }, true);
-  </script>
+    <!-- side menu start -->
+    <ons-splitter>
+        <ons-splitter-side id="sidemenu" side="left" width="220px" swipe-target-width="70px" collapse swipeable>
+            <ons-page>
+                <img class="side-menu-img" src="./img/cover.jpg" style="width:100%" />
+                <ons-list>
+                    <ons-list-item id="btn-sidemenu-news" onclick="sideMenuAction('news')" tappable>
+                        News
+                    </ons-list-item>
+                    <ons-list-item expandable>
+                        Sources
+                        <div class="expandable-content">
+                            <ons-list id="ul-sidemenu-sources">
+
+                            </ons-list>
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item id="btn-sidemenu-settings" onclick="sideMenuAction('settings')" tappable>
+                        Settings
+                    </ons-list-item>
+                    <ons-list-item id="btn-sidemenu-about" onclick="sideMenuAction('about')" tappable>
+                        About
+                    </ons-list-item>
+                </ons-list>
+            </ons-page>
+        </ons-splitter-side>
+        <ons-splitter-content id="page-content" page="./views/newsList.html"></ons-splitter-content>
+    </ons-splitter>
+    <!-- side menu end -->
+
+    <ons-modal direction="up" id="modal-langselect" class="modal-langselect">
+        <div style="text-align: center">
+            <h4>Please select your language</h4>
+            <h4>කරුණාකර ඔබගේ භාෂාව තෝරන්න</h4>
+            <h4>தயவு செய்து உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்</h4>
+        </div>
+        <ons-button class="ons-button" onclick="selectLang('en')">English</ons-button>
+        <ons-button class="ons-button" onclick="selectLang('sn')">සිංහල</ons-button>
+        <ons-button class="ons-button" onclick="selectLang('tm')">தமிழ்</ons-button>
+    </ons-modal>
+
+    <ons-modal direction="up" id="modal-about" class="modal-about">
+        <div>
+            <h4>Developed By</h4>
+            <h3>Navinda Dissanayake</h3>
+            <h4>Web</h4>
+            <h3>www.navinda.xyz</h3>
+            <h4>Mail</h4>
+            <h3>io@navinda.xyz</h3>
+            <button id="btn-modal-about-close" class="button button--material" onclick="$('#modal-about').hide()">Close</button>
+        </div>
+    </ons-modal>
+
+    <ons-toast id="toast-bottom" animation="ascend">
+        <span id="lbl-toast-bottom"></span>
+    </ons-toast>
+
+
+    <script src="./js/main.js"></script>
+    <script src="./js/settings.js"></script>
+    <script src="./js/navigate.js"></script>
+
 </body>
 
 </html>
