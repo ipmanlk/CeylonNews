@@ -30,9 +30,11 @@ const getDefaultSettings = () => {
         "st-news-post-title-justify": false,
         "st-news-post-body-justify": true,
         "st-news-post-body-lgfont": false,
-        "st-news-list-autoload": true
+        "st-news-list-autoload": true,
+        "st-news-list-card-ui": false
     };
 }
+
 
 const showSettingsPage = () => {
     fn.loadPage("./views/settings.html").then(() => {
@@ -80,11 +82,19 @@ const applySettings = () => {
 
     if (page == "news-list") {
         if (settings["st-news-list-justify"]) {
-            $(".list-item").addClass("text-justify");
+            if (settings["st-news-list-card-ui"]) {
+                $(".news-list-card").addClass("text-justify");
+            } else {
+                $(".list-item").addClass("text-justify");
+            }
         }
 
         if (settings["st-sinhalafont"]) {
-            $(".list-item__title").addClass("sinhala-font");
+            if (settings["st-news-list-card-ui"]) {
+                $(".news-list-card-title").addClass("sinhala-font");
+            } else {
+                $(".list-item__title").addClass("sinhala-font");
+            }
         }
     }
 

@@ -125,22 +125,38 @@ const loadNewsList = (mode) => {
 }
 
 const appendToNewsList = (newsList) => {
+
     newsList.forEach(news => {
-        $("#ul-news-list").append(`
-        <li id="${news.id}" class="list-item" onclick="loadNewsPost('${news.id}')">
-            <div class="list-item__left">
-                <img id="img${news.id}" class="list-item__thumbnail" src="./img/loading.gif">
+        if (settings["st-news-list-card-ui"]) {
+            $("#ul-news-list").append(`
+            <ons-card class="news-list-card" id="${news.id}" onclick="loadNewsPost('${news.id}')">
+                <img id="img${news.id}" src="./img/loading.gif" style="width: 100%">
+            <div class="title news-list-card-title">
+                ${news.title}
             </div>
-            <div class="list-item__center">
-                <div class="list-item__title">
-                    ${news.title}
-                </div>
-                <div class="list-item__subtitle" style="margin-top:5px;">
-                    ${news.source} - ${news.time}
-                </div>
+            <div class="content news-list-card-content">
+                ${news.source} - ${news.time}
             </div>
-        </li>
-        `);
+            </ons-card>  
+            `);
+
+        } else {
+            $("#ul-news-list").append(`
+            <li id="${news.id}" class="list-item" onclick="loadNewsPost('${news.id}')">
+                <div class="list-item__left">
+                    <img id="img${news.id}" class="list-item__thumbnail" src="./img/loading.gif">
+                </div>
+                <div class="list-item__center">
+                    <div class="list-item__title">
+                        ${news.title}
+                    </div>
+                    <div class="list-item__subtitle" style="margin-top:5px;">
+                        ${news.source} - ${news.time}
+                    </div>
+                </div>
+            </li>
+            `);
+        }
 
         // load news list item thumbnail 
         loadNewsListItemImg(news.id, news.main_img);
