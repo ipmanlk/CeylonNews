@@ -5,7 +5,18 @@ const saveSettings = () => {
 
 const loadSettings = () => {
     if (localStorage.getItem("settings") && localStorage.getItem("data")) {
-        window.settings = JSON.parse(localStorage.getItem("settings"));
+        // parse current settings from local storage
+        const currentSettings = JSON.parse(localStorage.getItem("settings"));
+
+        // check if settings are correct (to handle version mismatch)
+        if (JSON.stringify(Object.keys(getDefaultSettings())) !== JSON.stringify(Object.keys(currentSettings))) {
+            showTimedToast("Settings has been reset to prevent a possible conflict.", 3000);
+            setDefaultSettings();
+            return;
+        }
+
+        // or continue to load settings
+        window.settings = currentSettings;
         window.data = JSON.parse(localStorage.getItem("data"));
     } else {
         setDefaultSettings();
