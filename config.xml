@@ -18,12 +18,12 @@
     <!-- <allow-intent href="geo:*" /> -->
     <platform name="android">
         <preference name="SplashScreenSpinnerColor" value="white" />
-        <icon density="ldpi" src="res/icon/android/drawable-ldpi-icon.png" />
-        <icon density="mdpi" src="res/icon/android/drawable-mdpi-icon.png" />
-        <icon density="hdpi" src="res/icon/android/drawable-hdpi-icon.png" />
-        <icon density="xhdpi" src="res/icon/android/drawable-xhdpi-icon.png" />
-        <icon density="xxhdpi" src="res/icon/android/drawable-xxhdpi-icon.png" />
-        <icon density="xxxhdpi" src="res/icon/android/drawable-xxxhdpi-icon.png" />
+        <icon density="ldpi" src="res/icon/android/ldpi.png" />
+        <icon density="mdpi" src="res/icon/android/mdpi.png" />
+        <icon density="hdpi" src="res/icon/android/hdpi.png" />
+        <icon density="xhdpi" src="res/icon/android/xhdpi.png" />
+        <icon density="xxhdpi" src="res/icon/android/xxhdpi.png" />
+        <icon density="xxxhdpi" src="res/icon/android/xxxhdpi.png" />
         <splash src="res/screen/android/splash.png" />
         <allow-intent href="market:*" />
 
