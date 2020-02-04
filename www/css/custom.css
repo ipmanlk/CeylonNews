@@ -16,6 +16,11 @@
   font-size: 17px;
 }
 
+.post-content iframe {
+  height: auto !important;
+  width: 100% !important;
+}
+
 .post-content img {
   width: 100%;
   height: auto !important;
