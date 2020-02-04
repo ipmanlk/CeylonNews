@@ -419,6 +419,10 @@ const sideMenuAction = (action) => {
         case "about":
             $("#modal-about").show();
             break;
+
+        case "contact":
+            window.location = "mailto:io@navinda.xyz?Subject=CeylonNews"
+            break;
     }
 }
 
@@ -449,7 +453,7 @@ const onOffline = () => {
     }
 }
 
-const sendRequest = (data = { }, method = "get") => {
+const sendRequest = (data = {}, method = "get") => {
     return new Promise((resolve, reject) => {
         $.ajax({
             url: "http://ceylon-news-api.navinda.xyz/v1.0",
