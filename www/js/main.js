@@ -3,6 +3,7 @@ ons.ready(() => init());
 const init = () => {
     setGlobalVars();
     loadSettings();
+    showDisclaimer();
     if (!checkLang()) return;
     initOnsenComponents();
     loadNewsSources().then(() => {
@@ -450,6 +451,20 @@ const onOffline = () => {
         ons.notification.alert(
             "You are offline!. Some assets will not load properly."
         );
+    }
+}
+
+const showDisclaimer = () => {
+    if (data.disclaimerAccepted) return;
+
+    const msg =
+        `The content of this app comes from publicly available feeds of news sites and they retain all copyrights.\n\nThus, this app is not to be held responsible for any of the content displayed.\n\nThe owners of these sites can exclude their feeds with or without reason from this app by sending an email to me.\n\nIf you wish to continue, press "OK". Otherwise, press "CANCEL" to exit the app.`;
+
+    if (window.confirm(msg)) {
+        data.disclaimerAccepted = true;
+        saveSettings();
+    } else {
+        exitApp();
     }
 }
 
