@@ -331,6 +331,8 @@ const showNewsList = () => {
 const checkLang = () => {
     if (!data.lang) {
         showLangSelectModal();
+        // if there is no language set, disable modal dismiss
+        $("#btn-modal-about-close").hide();
         return false;
     }
     return true;
