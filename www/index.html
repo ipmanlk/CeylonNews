@@ -26,24 +26,27 @@
                 <img class="side-menu-img" src="./img/cover.jpg" style="width:100%" />
                 <ons-list>
                     <ons-list-item id="btn-sidemenu-news" onclick="sideMenuAction('news')" tappable>
-                        News
+                        <ons-icon icon="md-archive"> News</ons-icon>
                     </ons-list-item>
                     <ons-list-item expandable>
-                        Sources
+                        <ons-icon icon="md-view-list"> Sources</ons-icon>
                         <div class="expandable-content">
                             <ons-list id="ul-sidemenu-sources">
 
                             </ons-list>
                         </div>
                     </ons-list-item>
+                    <ons-list-item id="btn-sidemenu-settings" onclick="showLangSelectModal()" tappable>
+                        <ons-icon icon="md-translate"> Set Language</ons-icon>
+                    </ons-list-item>
                     <ons-list-item id="btn-sidemenu-settings" onclick="sideMenuAction('settings')" tappable>
-                        Settings
+                        <ons-icon icon="md-settings"> Settings</ons-icon>
                     </ons-list-item>
                     <ons-list-item id="btn-sidemenu-about" onclick="sideMenuAction('contact')" tappable>
-                        Contact Me
+                        <ons-icon icon="md-email"> Contact Me</ons-icon>
                     </ons-list-item>
                     <ons-list-item id="btn-sidemenu-about" onclick="sideMenuAction('about')" tappable>
-                        About
+                        <ons-icon icon="md-info"> About</ons-icon>
                     </ons-list-item>
                 </ons-list>
             </ons-page>
@@ -71,7 +74,8 @@
             <h3>www.navinda.xyz</h3>
             <h4>Mail</h4>
             <h3>io@navinda.xyz</h3>
-            <button id="btn-modal-about-close" class="button button--material" onclick="$('#modal-about').hide()">Close</button>
+            <button id="btn-modal-about-close" class="button button--material"
+                onclick="$('#modal-about').hide()">Close</button>
         </div>
     </ons-modal>
 
