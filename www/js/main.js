@@ -471,7 +471,7 @@ const showDisclaimer = () => {
 const sendRequest = (data = {}, method = "get") => {
     return new Promise((resolve, reject) => {
         $.ajax({
-            url: "http://api.navinda.xyz:3000/v1.0",
+            url: "https://s1.navinda.xyz/ceylon_news/v1.0/",
             method: method,
             dataType: "json",
             data: data,
