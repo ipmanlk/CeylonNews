@@ -133,3 +133,15 @@ const changeSetting = (id, isChecked) => {
     saveSettings();
     applySettings();
 }
+
+const resetSettings = () => {
+    ons.notification.confirm("Do you really want to reset settings?.")
+    .then((index) => {
+        if (index === 1) {
+            localStorage.removeItem("settings");
+            localStorage.removeItem("data");
+            localStorage.removeItem("settings");
+            ons.notification.alert("Settings has been reset!. Please restart the app.");
+        }
+    });
+}

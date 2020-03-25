@@ -1,15 +1,15 @@
 <ons-page>
   <!-- toolbar start -->
   <ons-toolbar>
-		<div class="left">
+    <div class="left">
       <ons-toolbar-button id="btn-toolbar-back" onclick="showNewsList()">
         <ons-icon icon="md-arrow-back"></ons-icon>
       </ons-toolbar-button>
-		</div>
+    </div>
 
-		<div class="center">
-			<span id="lbl-toolbar-title">Settings</span>
-		</div>
+    <div class="center">
+      <span id="lbl-toolbar-title">Settings</span>
+    </div>
   </ons-toolbar>
   <!-- toolbar end -->
 
@@ -95,6 +95,16 @@
         </div>
       </ons-list-item>
 
+      <ons-list-header>Other</ons-list-header>
+
+      <ons-list-item>
+        <div class="center">
+          Reset Settings
+        </div>
+        <div class="right">
+          <div class="list-item__label" onclick="resetSettings()">Reset</div>
+        </div>
+      </ons-list-item>
     </ons-list>
   </div>
 </ons-page>
