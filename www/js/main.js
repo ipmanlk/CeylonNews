@@ -216,7 +216,6 @@ const showNewsPost = (newsId, newsPost) => {
         $("#lbl-news-post-datetime").text(vars.newsList[newsId].time);
         $("#lbl-news-post-body").html(newsPost.post);
         $("#lbl-news-post-source").text(vars.newsList[newsId].source);
-        $("#lbl-news-post-source-link").text(vars.newsList[newsId].link);
 
         // store in the global vars mapped by news ids
         vars.currentPostId = newsId;
