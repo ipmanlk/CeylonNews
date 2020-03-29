@@ -212,7 +212,7 @@ const loadNewsPost = (newsId) => {
 const showNewsPost = (newsId, newsPost) => {
     fn.loadPage("./views/newsPost.html").then(() => {
         $("#lbl-toolbar-title").text(vars.newsList[newsId].source);
-        $("#lbl-news-post-title").text(vars.newsList[newsId].title);
+        $("#lbl-news-post-title").html(vars.newsList[newsId].title);
         $("#lbl-news-post-datetime").text(vars.newsList[newsId].time);
         $("#lbl-news-post-body").html(newsPost.post);
         $("#lbl-news-post-source").text(vars.newsList[newsId].source);
