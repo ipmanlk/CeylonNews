@@ -9,6 +9,7 @@ const init = () => {
     loadNewsSources().then(() => {
         loadNewsList("online");
     });
+    checkForUpdates();
 }
 
 const setGlobalVars = () => {
