@@ -394,10 +394,10 @@ const shareNewsPost = () => {
     const newsId = vars.currentPostId;
     const url = vars.newsPosts[newsId].link;
     window.plugins.socialsharing.share(
-        vars.newsList[newsId].title,
+        url,
         null,
         null,
-        " - Readmore @ " + url
+        "Powered by Ceylon News app."
     );
 }
 
