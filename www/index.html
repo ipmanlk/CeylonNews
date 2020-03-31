@@ -49,6 +49,14 @@
                         <ons-icon icon="md-info"> About</ons-icon>
                     </ons-list-item>
                 </ons-list>
+
+                <!-- corona details -->
+                <ons-list style="position: absolute; bottom: 0; width:220px">
+                    <ons-list-item onclick="showCoronaDialog()" tappable>
+                        <ons-icon icon="md-rss"> Corona Updates</ons-icon>
+                    </ons-list-item>
+                </ons-list>
+
             </ons-page>
         </ons-splitter-side>
         <ons-splitter-content id="page-content" page="./views/newsList.html"></ons-splitter-content>
@@ -79,8 +87,8 @@
             <h3>www.navinda.xyz</h3>
             <h4>Mail</h4>
             <h3>io@navinda.xyz</h3>
-            <button id="btn-modal-about-close" class="button button--material"
-                onclick="$('#modal-about').hide()" style="background-color: red;">Close</button>
+            <button id="btn-modal-about-close" class="button button--material" onclick="$('#modal-about').hide()"
+                style="background-color: red;">Close</button>
         </div>
     </ons-modal>
 
@@ -89,10 +97,43 @@
     </ons-toast>
 
 
+    <!-- corona updates dialog -->
+    <ons-dialog id="corona-dialog">
+        <div style="text-align: center; padding: 10px;">
+            <p>
+                <h3>Corona Updates</h3>
+                <h5 style="margin-bottom: 12px;">
+                    New Cases: <span id="corona-new-cases"></span>
+                </h5>
+                <h5 style="margin-top: 12px; margin-bottom: 12px;">
+                    In Hospitals: <span id="corona-in-hospital"></span>
+                </h5>
+                <h5 style="margin-top: 12px; margin-bottom: 12px;">
+                    Recovered: <span id="corona-recovered"></span>
+                </h5>
+                <h5 style="margin-top: 12px; margin-bottom: 12px;">
+                    Deaths: <span id="corona-deaths"></span>
+                </h5>
+                <h5 style="margin-top: 12px; margin-bottom: 15px;">
+                    Total Cases: <span id="corona-total-cases"></span>
+                </h5>
+
+                <i>(Source: hpb.health.gov.lk)</i>
+            </p>
+
+            <p style="margin-top: 30px; margin-bottom: 24px;">
+                <ons-button onclick="hideCoronaDialog()">Close</ons-button>
+            </p>
+        </div>
+    </ons-dialog>>
+
+
     <script src="./js/main.js"></script>
     <script src="./js/settings.js"></script>
     <script src="./js/navigate.js"></script>
     <script src="./js/update.js"></script>
+
+    <script src="./js/corona.js"></script>
 </body>
 
 </html>
