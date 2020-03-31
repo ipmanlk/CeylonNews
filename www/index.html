@@ -36,8 +36,11 @@
                             </ons-list>
                         </div>
                     </ons-list-item>
+                    <ons-list-item onclick="showCoronaDialog()" tappable>
+                        <ons-icon icon="md-rss"> Corona Updates</ons-icon>
+                    </ons-list-item>
                     <ons-list-item id="btn-sidemenu-settings" onclick="showLangSelectModal()" tappable>
-                        <ons-icon icon="md-translate"> Set Language</ons-icon>
+                        <ons-icon icon="md-translate"> Change Language</ons-icon>
                     </ons-list-item>
                     <ons-list-item id="btn-sidemenu-settings" onclick="sideMenuAction('settings')" tappable>
                         <ons-icon icon="md-settings"> Settings</ons-icon>
@@ -49,14 +52,6 @@
                         <ons-icon icon="md-info"> About</ons-icon>
                     </ons-list-item>
                 </ons-list>
-
-                <!-- corona details -->
-                <ons-list style="position: absolute; bottom: 0; width:220px">
-                    <ons-list-item onclick="showCoronaDialog()" tappable>
-                        <ons-icon icon="md-rss"> Corona Updates</ons-icon>
-                    </ons-list-item>
-                </ons-list>
-
             </ons-page>
         </ons-splitter-side>
         <ons-splitter-content id="page-content" page="./views/newsList.html"></ons-splitter-content>
