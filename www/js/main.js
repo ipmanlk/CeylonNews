@@ -108,7 +108,7 @@ const loadNewsList = (mode) => {
         showOutputToast("Loading news list....");
         let sourcesStr = getSourcesStr();
         setLoadMore(false);
-        sendRequest({ action: "news-list", sources: sourcesStr }).then(newsList => {
+        sendRequest({ action: "news-list", sources: sourcesStr, keyword: "" }).then(newsList => {
             if (newsList.length == 0) {
                 hideOutputToast();
                 showTimedToast("Ooops!. Failed to find anything on that.", 3000);
@@ -203,7 +203,7 @@ const loadNewsPost = (newsId) => {
         showNewsPost(newsId, vars.newsPosts[newsId]);
     } else {
     }
-    sendRequest({ action: "news-post", post_id: newsId }).then(newsPost => {
+    sendRequest({ action: "news-post", news_id: newsId }).then(newsPost => {
         showNewsPost(newsId, newsPost);
         vars.newsPosts[newsId] = newsPost;
     });
@@ -234,7 +234,7 @@ const loadNewsFromSource = (sourceId) => {
 
     showOutputToast("Loading news list....");
 
-    sendRequest({ action: "news-list", sources: sourceId }).then(newsList => {
+    sendRequest({ action: "news-list", sources: sourceId, keyword: "" }).then(newsList => {
         // clear saved news list
         vars.newsList = {};
         $("#ul-news-list").empty();
@@ -248,10 +248,6 @@ const loadNewsFromSource = (sourceId) => {
 }
 
 const loadMore = () => {
-    const newsIds = Object.keys(vars.newsList);
-    const sourcesStr = (vars.selectedSourceId == null) ? getSourcesStr() : vars.selectedSourceId;
-    const oldestNewsId = newsIds[0];
-
     // if loadmore is disabled (no news to load)
     if (!vars.loadMore) return;
 
@@ -260,7 +256,9 @@ const loadMore = () => {
 
     showOutputToast("Loading news list....");
 
-    sendRequest({ action: "news-list-old", news_id: oldestNewsId, sources: sourcesStr }).then(newsList => {
+    const sourcesStr = getSourcesStr();
+    
+    sendRequest({ action: "news-list", sources: sourcesStr, keyword: "", skip: Object.keys(vars.newsList).length }).then(newsList => {
         hideOutputToast();
         if (newsList.length == 0) {
             // if there aren't any more news items 
@@ -473,7 +471,7 @@ const showDisclaimer = () => {
 const sendRequest = (data = {}, method = "get") => {
     return new Promise((resolve, reject) => {
         $.ajax({
-            url: "https://s1.navinda.xyz/ceylon_news/v1.0/",
+            url: "http://10.0.2.2:3000/v2.0",
             method: method,
             dataType: "json",
             data: data,

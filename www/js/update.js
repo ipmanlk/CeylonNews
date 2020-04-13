@@ -1,6 +1,6 @@
 const checkForUpdates = () => {
     //TODO: Update app version with each new release
-    const appVersion = "v6.5.0";
+    const appVersion = "v6.5.3";
 
     // Get latest version from Github releases and compare with app version
     const api = "https://api.github.com/repos/ipmanlk/CeylonNews/releases/latest";
