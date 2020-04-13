@@ -19,7 +19,8 @@ const setGlobalVars = () => {
         newsPosts: {},
         currentPostId: null,
         selectedSourceId: null,
-        loadMore: true
+        loadMore: true,
+        searchEnabled: true
     };
 }
 
@@ -272,8 +273,8 @@ const loadMore = () => {
 
     showOutputToast("Loading news list....");
 
-    const sourcesStr = vars.selectedSourceId == null ? getSourcesStr() :  vars.selectedSourceId;
-    
+    const sourcesStr = vars.selectedSourceId == null ? getSourcesStr() : vars.selectedSourceId;
+
     const keyword = $("#txtNewsSearch").val();
 
     sendRequest({ action: "news-list", sources: sourcesStr, keyword: keyword, skip: Object.keys(vars.newsList).length }).then(newsList => {
@@ -351,8 +352,20 @@ const showNewsList = () => {
 }
 
 const searchNews = () => {
+    if (!vars.searchEnabled) return;
+
+    // request news list with keyword
     $("#ul-news-list").empty();
     loadNewsList("online");
+
+    // desiable search
+    vars.searchEnabled = false;
+
+    // NOTE: Temporary solution to prevent duplicate search results & search requests
+    // enable search after 1s
+    setTimeout(() => {
+        vars.searchEnabled = true;
+    }, 1000);
 }
 
 const checkLang = () => {
