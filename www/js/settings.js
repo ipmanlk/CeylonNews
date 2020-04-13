@@ -35,7 +35,8 @@ const getDefaultSettings = () => {
         "st-news-post-body-justify": true,
         "st-news-post-body-lgfont": false,
         "st-news-list-autoload": true,
-        "st-news-list-card-ui": false
+        "st-news-list-card-ui": false,
+        "st-searchbar": false
     };
 }
 
@@ -98,6 +99,12 @@ const applySettings = () => {
             } else {
                 $(".list-item__title").addClass("sinhala-font");
             }
+        }
+
+        if (settings["st-searchbar"]) {
+            $("#txtNewsSearch").show();
+        } else {
+            $("#txtNewsSearch").hide();
         }
     }
 
