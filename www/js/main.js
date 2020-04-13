@@ -500,7 +500,7 @@ const showDisclaimer = () => {
 const sendRequest = (data = {}, method = "get") => {
     return new Promise((resolve, reject) => {
         $.ajax({
-            url: "http://10.0.2.2:3000/v2.0",
+            url: "https://s1.navinda.xyz/ceylon_news/v2.0/",
             method: method,
             dataType: "json",
             data: data,
