@@ -108,11 +108,23 @@ const loadNewsList = (mode) => {
         showOutputToast("Loading news list....");
         let sourcesStr = getSourcesStr();
         setLoadMore(false);
-        sendRequest({ action: "news-list", sources: sourcesStr, keyword: "" }).then(newsList => {
-            if (newsList.length == 0) {
+
+        // keyword for searching
+        const keyword = $("#txtNewsSearch").val();
+
+        sendRequest({ action: "news-list", sources: sourcesStr, keyword: keyword }).then(newsList => {
+            if (newsList.length == 0 && keyword == "") {
                 hideOutputToast();
                 showTimedToast("Ooops!. Failed to find anything on that.", 3000);
                 return;
+            }
+            // when no search results found
+            if (newsList.length == 0 && keyword !== "") {
+                $("#ul-news-list").html(`
+                <li class="list-item">
+                    <h4>No results found.</h4>
+                </li>
+                `);
             }
             appendToNewsList(newsList);
             hideOutputToast();
@@ -234,6 +246,10 @@ const loadNewsFromSource = (sourceId) => {
 
     showOutputToast("Loading news list....");
 
+    // disable searching for source
+    $("#txtNewsSearch").val("");
+    $("#txtNewsSearch").hide();
+
     sendRequest({ action: "news-list", sources: sourceId, keyword: "" }).then(newsList => {
         // clear saved news list
         vars.newsList = {};
@@ -256,9 +272,11 @@ const loadMore = () => {
 
     showOutputToast("Loading news list....");
 
-    const sourcesStr = getSourcesStr();
+    const sourcesStr = vars.selectedSourceId == null ? getSourcesStr() :  vars.selectedSourceId;
     
-    sendRequest({ action: "news-list", sources: sourcesStr, keyword: "", skip: Object.keys(vars.newsList).length }).then(newsList => {
+    const keyword = $("#txtNewsSearch").val();
+
+    sendRequest({ action: "news-list", sources: sourcesStr, keyword: keyword, skip: Object.keys(vars.newsList).length }).then(newsList => {
         hideOutputToast();
         if (newsList.length == 0) {
             // if there aren't any more news items 
@@ -323,7 +341,18 @@ const showNewsList = () => {
             $(".page__content").scrollTop(($(id).offset().top) - 80);
             vars.currentPostId = null;
         }
+
+        // reset selected source
+        vars.selectedSourceId = null;
+
+        // show search bar
+        $("#txtNewsSearch").fadeIn();
     });
+}
+
+const searchNews = () => {
+    $("#ul-news-list").empty();
+    loadNewsList("online");
 }
 
 const checkLang = () => {
