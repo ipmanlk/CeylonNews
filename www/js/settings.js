@@ -100,10 +100,10 @@ const applySettings = () => {
                 $(".list-item__title").addClass("sinhala-font");
             }
         }
-
+        
         if (settings["st-searchbar"]) {
             $("#txtNewsSearch").show();
-        } else {
+        } else {            
             $("#txtNewsSearch").hide();
         }
     }
@@ -127,8 +127,8 @@ const applySettings = () => {
     }
 }
 
-const changeSetting = (id, isChecked) => {
-    if (settings[id] !== undefined) {
+const changeSetting = (id, isChecked) => {    
+    if (settings[id] !== undefined) {        
         settings[id] = isChecked;
         saveSettings();
         applySettings();

@@ -345,9 +345,6 @@ const showNewsList = () => {
 
         // reset selected source
         vars.selectedSourceId = null;
-
-        // show search bar
-        $("#txtNewsSearch").fadeIn();
     });
 }
 
