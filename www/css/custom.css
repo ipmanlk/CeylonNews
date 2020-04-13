@@ -1,11 +1,31 @@
 @font-face {
-  font-family: "Malithi-Web";
-  src: url("../fonts/malithi_web.ttf");
+  font-family: "english";
+  src: url("../fonts/english.ttf");
   font-weight: normal;
 }
 
-.sinhala-font {
-  font-family: "Malithi-Web";
+@font-face {
+  font-family: "sinhala";
+  src: url("../fonts/sinhala.ttf");
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "tamil";
+  src: url("../fonts/tamil.ttf");
+  font-weight: normal;
+}
+
+.en-font {
+  font-family: "english";
+}
+
+.sn-font {
+  font-family: "sinhala";
+}
+
+.tm-font {
+  font-family: "tamil";
 }
 
 .side-menu-img {

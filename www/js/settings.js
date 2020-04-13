@@ -18,18 +18,13 @@ const loadSettings = () => {
 
 const setDefaultSettings = () => {
     window.settings = getDefaultSettings();
-
-    window.data = {
-
-    };
-
+    window.data = {};
     saveSettings();
 }
 
 const getDefaultSettings = () => {
     return {
         "st-darkmode": false,
-        "st-sinhalafont": true,
         "st-news-list-justify": false,
         "st-news-post-title-justify": false,
         "st-news-post-body-justify": true,
@@ -63,7 +58,8 @@ const updateSettingsUI = () => {
 
 const applySettings = () => {
     const page = vars.currentPage;
-    // apply theme
+
+    // theme: start
     if (settings["st-darkmode"]) {
         const darkCssPath = "./lib/css/dark-onsen-css-components.min.css";
         if ($("#app-theme").attr("href") !== darkCssPath) {
@@ -83,7 +79,9 @@ const applySettings = () => {
             $("#lbl-news-post-body").addClass("text-black");
         }
     }
+    // theme: end
 
+    // news-list: start
     if (page == "news-list") {
         if (settings["st-news-list-justify"]) {
             if (settings["st-news-list-card-ui"]) {
@@ -93,21 +91,31 @@ const applySettings = () => {
             }
         }
 
-        if (settings["st-sinhalafont"]) {
-            if (settings["st-news-list-card-ui"]) {
-                $(".news-list-card-title").addClass("sinhala-font");
-            } else {
-                $(".list-item__title").addClass("sinhala-font");
-            }
+
+        // change font: start
+        if (settings["st-news-list-card-ui"]) {
+            $(".news-list-card-title").addClass(`${data.lang}-font`);
+        } else {
+            $(".list-item__title").addClass(`${data.lang}-font`);
         }
-        
+
+        if (settings["st-news-list-card-ui"]) {
+            $(".news-list-card-title").addClass(`${data.lang}-font`);
+        } else {
+            $(".list-item__title").addClass(`${data.lang}-font`);
+        }
+        // change font: end
+
+
         if (settings["st-searchbar"]) {
             $("#txtNewsSearch").show();
-        } else {            
+        } else {
             $("#txtNewsSearch").hide();
         }
-    }
+    }   
+    // news-list: end
 
+    // news-post: start
     if (page == "news-post") {
         if (settings["st-news-post-title-justify"]) {
             $("#lbl-news-post-title").addClass("text-justify");
@@ -117,18 +125,19 @@ const applySettings = () => {
             $("#lbl-news-post-body").addClass("text-justify");
         }
 
-        if (settings["st-sinhalafont"]) {
-            $("#lbl-news-post-title").addClass("sinhala-font");
-            $("#lbl-news-post-body").addClass("sinhala-font");
-        }
+        // change font: start
+        $("#lbl-news-post-title").addClass(`${data.lang}-font`);
+        $("#lbl-news-post-body").addClass(`${data.lang}-font`);
+        // change font: end
 
         const postBodyFontSize = settings["st-news-post-body-lgfont"] ? "21px" : "17px";
         $("#lbl-news-post-body").css("font-size", postBodyFontSize);
     }
+    // news-post: end
 }
 
-const changeSetting = (id, isChecked) => {    
-    if (settings[id] !== undefined) {        
+const changeSetting = (id, isChecked) => {
+    if (settings[id] !== undefined) {
         settings[id] = isChecked;
         saveSettings();
         applySettings();
