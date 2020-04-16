@@ -8,6 +8,14 @@ const loadSettings = () => {
         // parse current settings from local storage
         const currentSettings = JSON.parse(localStorage.getItem("settings"));
 
+        // check for setting conflicts
+        const defaultSettings = getDefaultSettings();
+        if (JSON.stringify(Object.keys(currentSettings)) !== JSON.stringify(Object.keys(defaultSettings))) {
+          setDefaultSettings();
+          showTimedToast("Settings has been reset to avoid possible conflicts.", 3000);
+          return;
+        }
+
         // load settings
         window.settings = currentSettings;
         window.data = JSON.parse(localStorage.getItem("data"));
