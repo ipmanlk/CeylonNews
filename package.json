@@ -22,7 +22,9 @@
   },
   "cordova": {
     "plugins": {
-      "cordova-plugin-x-socialsharing": {},
+      "cordova-plugin-x-socialsharing": {
+        "ANDROID_SUPPORT_V4_VERSION": "24.1.1+"
+      },
       "cordova-plugin-device": {},
       "cordova-plugin-network-information": {},
       "cordova-plugin-whitelist": {},
