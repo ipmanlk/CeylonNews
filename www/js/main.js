@@ -9,6 +9,8 @@ const init = () => {
 	loadNewsSources().then(() => {
 		loadNewsList("online");
 	});
+
+	$("body").attr("style", `${data.lang}-font`);
 };
 
 const setGlobalVars = () => {
@@ -124,7 +126,10 @@ const loadNewsList = (mode) => {
 		}).then((newsList) => {
 			if (newsList.length == 0 && keyword == "") {
 				hideOutputToast();
-				showTimedToast("Ooops!. Failed to find anything on that.", 3000);
+				showTimedToast(
+					"Ooops!. Failed to find anything on that.",
+					3000
+				);
 				return;
 			}
 			// when no search results found
