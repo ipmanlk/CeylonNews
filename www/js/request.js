@@ -1,7 +1,7 @@
 const sendRequest = (path, data = {}, method = "get") => {
 	return new Promise((resolve, reject) => {
 		$.ajax({
-			url: "http://192.168.8.174:5000/api/v1.0" + path,
+			url: "https://arm.navinda.xyz/cn/api/v1.0" + path,
 			method: method,
 			dataType: "json",
 			data: data,
