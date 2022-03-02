@@ -463,8 +463,8 @@ const shareNewsPost = () => {
 
 const loadOriginalPost = () => {
 	const newsId = vars.currentPostId;
-	const url = vars.newsPosts[newsId].link;
-	window.open(url, "_blank");
+	const url = vars.newsPosts[newsId].url;
+	cordova.InAppBrowser.open(url, "_blank", "location=yes");
 };
 
 const sideMenuAction = (action) => {
