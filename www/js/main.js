@@ -187,7 +187,7 @@ const appendToNewsList = (newsList) => {
 		}
 
 		// load news list item thumbnail
-		loadNewsListItemImg(news.id, news.main_img);
+		loadNewsListItemImg(news.id, news.thumbnailUrl);
 
 		// store in the global vars mapped by news ids
 		vars.newsList[news.id] = news;
@@ -452,12 +452,11 @@ const refreshNewsPost = () => {
 
 const shareNewsPost = () => {
 	const newsId = vars.currentPostId;
-	const url = vars.newsPosts[newsId].link;
+	const url = vars.newsPosts[newsId].url;
 	window.plugins.socialsharing.share(
 		url,
 		null,
 		null,
-		"Powered by Ceylon News app."
 	);
 };
 
