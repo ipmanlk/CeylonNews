@@ -5,15 +5,13 @@
 Ceylon News
 ======================
 
-:star: Star us on GitHub — it helps!
-
 This app brings you the latest local news in Sri Lanka. It's built using my [CeylonNewsBackend](https://github.com/ipmanlk/CeylonNewsBackend) project and couple of other open source tools.
 
 ## How to build
 
 ### Prerequisites
 - Android Studio
-- Node.js v10 or above.
+- Node.js v18 or above.
 - Apache Cordova ([Docs](https://cordova.apache.org/docs/en/latest/)).
 
 ### Building
