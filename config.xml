@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="xyz.navinda.ceylonnews" version="7.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Ceylon News</name>
+<widget id="xyz.navinda.ceylonnews" version="1.0.0" xmlns="http://www.w3.org/ns/widgets"
+    xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>CeylonNews</name>
     <description>
         Free &amp; easy to use Sinhala news reader.
     </description>
@@ -9,21 +10,21 @@
     </author>
     <content src="index.html" />
     <preference name="DisallowOverscroll" value="true" />
-    <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
-    <allow-intent href="market:*" />
+
+
     <platform name="android">
         <!-- app icons -->
-        <icon src="res/icon/android/ldpi.png" density="ldpi" />
-        <icon src="res/icon/android/mdpi.png" density="mdpi" />
-        <icon src="res/icon/android/hdpi.png" density="hdpi" />
-        <icon src="res/icon/android/xhdpi.png" density="xhdpi" />
-        <icon src="res/icon/android/xxhdpi.png" density="xxhdpi" />
-        <icon src="res/icon/android/xxxhdpi.png" density="xxxhdpi" />
+        <icon src="res/android/icon/ldpi.png" density="ldpi" />
+        <icon src="res/android/icon/mdpi.png" density="mdpi" />
+        <icon src="res/android/icon/hdpi.png" density="hdpi" />
+        <icon src="res/android/icon/xhdpi.png" density="xhdpi" />
+        <icon src="res/android/icon/xxhdpi.png" density="xxhdpi" />
+        <icon src="res/android/icon/xxxhdpi.png" density="xxxhdpi" />
 
-        <!-- splash screen -->
-        <splash src="res/screen/android/splash.png" />
-        <preference name="SplashScreenSpinnerColor" value="white" />
+        <!-- Default -->
+        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/android/splash/logo.png" />
+        <resource-file src="res/android/xml/colors.xml" target="/app/src/main/res/values/colors.xml" />
     </platform>
 </widget>
