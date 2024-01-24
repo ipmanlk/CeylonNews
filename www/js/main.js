@@ -22,6 +22,7 @@ const setGlobalVars = () => {
 		selectedSourceId: null,
 		loadMore: true,
 		searchEnabled: true,
+		cursor: undefined,
 	};
 };
 
@@ -94,13 +95,13 @@ const appendToSideMenuSources = (sources) => {
 	sources.forEach((source) => {
 		const isChecked = source.enabled ? "checked" : "";
 		$("#ul-sidemenu-sources").append(`
-        <ons-list-item tappable>
-            <label class="left">
-                <ons-checkbox input-id="chk-${source.name}" onchange="toggleSource('${source.name}')" ${isChecked}></ons-checkbox>
-            </label>
-            <span onclick="loadNewsFromSource('${source.name}')">${source.name}</span>
-        </ons-list-item>
-        `);
+				<ons-list-item tappable>
+						<label class="left">
+								<ons-checkbox input-id="chk-${source.name}" onchange="toggleSource('${source.name}')" ${isChecked}></ons-checkbox>
+						</label>
+						<span onclick="loadNewsFromSource('${source.name}')">${source.name}</span>
+				</ons-list-item>
+				`);
 
 		if (source.enabled == undefined) source.enabled = true;
 	});
@@ -123,22 +124,22 @@ const loadNewsList = (mode) => {
 			sources: sourcesStr,
 			keyword: keyword,
 			languages: data.lang,
-		}).then((newsList) => {
+			cursor: window.vars.cursor,
+		}).then(({ data: newsList, paging }) => {
+			window.vars.cursor = paging.prev;
+
 			if (newsList.length == 0 && keyword == "") {
 				hideOutputToast();
-				showTimedToast(
-					"Ooops!. Failed to find anything on that.",
-					3000
-				);
+				showTimedToast("Ooops!. Failed to find anything on that.", 3000);
 				return;
 			}
 			// when no search results found
 			if (newsList.length == 0 && keyword !== "") {
 				$("#ul-news-list").html(`
-                <li class="list-item">
-                    <h4>No results found.</h4>
-                </li>
-                `);
+								<li class="list-item">
+										<h4>No results found.</h4>
+								</li>
+								`);
 			}
 			appendToNewsList(newsList);
 			hideOutputToast();
@@ -154,40 +155,40 @@ const loadNewsList = (mode) => {
 
 const appendToNewsList = (newsList) => {
 	newsList.forEach((news) => {
-		const time = formatTime(news.createdDate);
+		const time = formatTime(news.createdAt);
 
 		if (settings["st-news-list-card-ui"]) {
 			$("#ul-news-list").append(`
-            <ons-card class="news-list-card" id="${news.id}" onclick="loadNewsPost('${news.id}')">
-                <img id="img${news.id}" src="" style="width: 100%">
-            <div class="title news-list-card-title">
-                ${news.title}
-            </div>
-            <div class="content news-list-card-content">
-                ${news.sourceName} - ${time}
-            </div>
-            </ons-card>  
-            `);
+						<ons-card class="news-list-card" id="${news.id}" onclick="loadNewsPost('${news.id}')">
+								<img id="img${news.id}" src="" style="width: 100%">
+						<div class="title news-list-card-title">
+								${news.title}
+						</div>
+						<div class="content news-list-card-content">
+								${news.sourceName} - ${time}
+						</div>
+						</ons-card>  
+						`);
 		} else {
 			$("#ul-news-list").append(`
-            <li id="${news.id}" class="list-item" onclick="loadNewsPost('${news.id}')">
-                <div class="list-item__left">
-                    <img id="img${news.id}" class="list-item__thumbnail" src="./img/loading.gif">
-                </div>
-                <div class="list-item__center">
-                    <div class="list-item__title">
-                        ${news.title}
-                    </div>
-                    <div class="list-item__subtitle" style="margin-top:5px;">
-                        ${news.sourceName} - ${time}
-                    </div>
-                </div>
-            </li>
-            `);
+						<li id="${news.id}" class="list-item" onclick="loadNewsPost('${news.id}')">
+								<div class="list-item__left">
+										<img id="img${news.id}" class="list-item__thumbnail" src="./img/loading.gif">
+								</div>
+								<div class="list-item__center">
+										<div class="list-item__title">
+												${news.title}
+										</div>
+										<div class="list-item__subtitle" style="margin-top:5px;">
+												${news.sourceName} - ${time}
+										</div>
+								</div>
+						</li>
+						`);
 		}
 
 		// load news list item thumbnail
-		loadNewsListItemImg(news.id, news.thumbnailUrl);
+		loadNewsListItemImg(news.id, news.thumbnailURL);
 
 		// store in the global vars mapped by news ids
 		vars.newsList[news.id] = news;
@@ -239,12 +240,12 @@ const showNewsPost = (newsId, newsPost) => {
 		$("#lbl-toolbar-title").text(vars.newsList[newsId].sourceName);
 		$("#lbl-news-post-title").html(vars.newsList[newsId].title);
 		$("#lbl-news-post-datetime").text(
-			formatTime(vars.newsList[newsId].createdDate)
+			formatTime(vars.newsList[newsId].createdAt)
 		);
-		$("#lbl-news-post-body").html(newsPost.content);
+		$("#lbl-news-post-body").html(newsPost.contentHTML);
 		$("#lbl-news-post-source").text(vars.newsList[newsId].sourceName);
 
-		// store in the global vars mapped by news ids
+		// store in the global vars mapped by news ids;
 		vars.currentPostId = newsId;
 
 		// change current page
@@ -269,7 +270,9 @@ const loadNewsFromSource = (sourceId) => {
 		sources: sourceId,
 		keyword: "",
 		languages: data.lang,
-	}).then((newsList) => {
+		cursor: window.vars.cursor,
+	}).then(({ data: newsList, paging }) => {
+		window.vars.cursor = paging.prev;
 		// clear saved news list
 		vars.newsList = {};
 		$("#ul-news-list").empty();
@@ -301,7 +304,9 @@ const loadMore = () => {
 		keyword: keyword,
 		skip: Object.keys(vars.newsList).length,
 		languages: data.lang,
-	}).then((newsList) => {
+		cursor: window.vars.cursor,
+	}).then(({ data: newsList, paging }) => {
+		window.vars.cursor = paging.prev;
 		hideOutputToast();
 		if (newsList.length == 0) {
 			// if there aren't any more news items
@@ -453,11 +458,7 @@ const refreshNewsPost = () => {
 const shareNewsPost = () => {
 	const newsId = vars.currentPostId;
 	const url = vars.newsPosts[newsId].url;
-	window.plugins.socialsharing.share(
-		url,
-		null,
-		null,
-	);
+	window.plugins.socialsharing.share(url, null, null);
 };
 
 const loadOriginalPost = () => {
