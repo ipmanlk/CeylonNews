@@ -10,9 +10,10 @@
     </author>
     <content src="index.html" />
     <preference name="DisallowOverscroll" value="true" />
+    <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
-
+    <allow-intent href="market:*" />
 
     <platform name="android">
         <!-- app icons -->
