@@ -19,7 +19,7 @@ const setGlobalVars = () => {
 		newsList: {},
 		newsPosts: {},
 		currentPostId: null,
-		selectedSourceId: null,
+		selectedSourceName: null,
 		loadMore: true,
 		searchEnabled: true,
 		cursor: undefined,
@@ -77,7 +77,9 @@ const loadNewsSources = () => {
 			showOutputToast("Loading news sources....");
 			sendRequest("/sources", { languages: data.lang })
 				.then((sources) => {
-					appendToSideMenuSources(sources);
+					appendToSideMenuSources(
+						sources.map((source) => ({ ...source, enabled: true }))
+					);
 					hideOutputToast();
 					resolve();
 				})
@@ -97,7 +99,7 @@ const appendToSideMenuSources = (sources) => {
 		$("#ul-sidemenu-sources").append(`
 				<ons-list-item tappable>
 						<label class="left">
-								<ons-checkbox input-id="chk-${source.name}" onchange="toggleSource('${source.name}')" ${isChecked}></ons-checkbox>
+								<ons-checkbox id="chk-${source.name}" onchange="toggleSource('${source.name}')" ${isChecked}></ons-checkbox>
 						</label>
 						<span onclick="loadNewsFromSource('${source.name}')">${source.name}</span>
 				</ons-list-item>
@@ -256,9 +258,9 @@ const showNewsPost = (newsId, newsPost) => {
 	});
 };
 
-const loadNewsFromSource = (sourceId) => {
+const loadNewsFromSource = (sourceName) => {
 	// set global source id
-	vars.selectedSourceId = sourceId;
+	vars.selectedSourceName = sourceName;
 
 	showOutputToast("Loading news list....");
 
@@ -267,7 +269,7 @@ const loadNewsFromSource = (sourceId) => {
 	$("#txtNewsSearch").hide();
 
 	sendRequest("/news", {
-		sources: sourceId,
+		sources: sourceName,
 		keyword: "",
 		languages: data.lang,
 		cursor: window.vars.cursor,
@@ -280,6 +282,9 @@ const loadNewsFromSource = (sourceId) => {
 		setLoadMore(true);
 		hideOutputToast();
 	});
+
+	// Update title
+	$("#lbl-toolbar-title").text(sourceName);
 
 	// close side menu
 	fn.closeSideMenu();
@@ -295,14 +300,13 @@ const loadMore = () => {
 	showOutputToast("Loading news list....");
 
 	const sourcesStr =
-		vars.selectedSourceId == null ? getSourcesStr() : vars.selectedSourceId;
+		vars.selectedSourceName == null ? getSourcesStr() : vars.selectedSourceName;
 
 	const keyword = $("#txtNewsSearch").val();
 
 	sendRequest("/news", {
 		sources: sourcesStr,
 		keyword: keyword,
-		skip: Object.keys(vars.newsList).length,
 		languages: data.lang,
 		cursor: window.vars.cursor,
 	}).then(({ data: newsList, paging }) => {
@@ -317,17 +321,15 @@ const loadMore = () => {
 	});
 };
 
-const toggleSource = (sourceId) => {
-	let isEnabled;
-	if ($(`#chk-${sourceId}`)[0].checked) {
-		isEnabled = true;
-	} else {
-		isEnabled = false;
+const toggleSource = (sourceName) => {
+	const source = data.sources.find((source) => source.name == sourceName);
+	if (!source) {
+		return;
 	}
 
 	data.sources.every((source) => {
-		if (source.name == sourceId) {
-			source.enabled = isEnabled;
+		if (source.name == sourceName) {
+			source.enabled = !source.enabled;
 			return false;
 		}
 		return true;
@@ -373,7 +375,7 @@ const showNewsList = () => {
 		}
 
 		// reset selected source
-		vars.selectedSourceId = null;
+		vars.selectedSourceName = null;
 	});
 };
 
@@ -448,6 +450,9 @@ const refreshNewsList = () => {
 	vars.newsList = {};
 	$("#ul-news-list").empty();
 	loadNewsList("online");
+
+	// update title
+	$("#lbl-toolbar-title").text("Ceylon News");
 };
 
 const refreshNewsPost = () => {
