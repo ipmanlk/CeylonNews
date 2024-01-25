@@ -14,7 +14,7 @@
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="market:*" />
-
+    <allow-intent href="mailto:*" />
     <platform name="android">
         <!-- app icons -->
         <icon src="res/android/icon/ldpi.png" density="ldpi" />
