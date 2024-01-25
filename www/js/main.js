@@ -126,7 +126,6 @@ const loadNewsList = (mode) => {
 			sources: sourcesStr,
 			keyword: keyword,
 			languages: data.lang,
-			cursor: window.vars.cursor,
 		}).then(({ data: newsList, paging }) => {
 			window.vars.cursor = paging.prev;
 
@@ -272,7 +271,6 @@ const loadNewsFromSource = (sourceName) => {
 		sources: sourceName,
 		keyword: "",
 		languages: data.lang,
-		cursor: window.vars.cursor,
 	}).then(({ data: newsList, paging }) => {
 		window.vars.cursor = paging.prev;
 		// clear saved news list
