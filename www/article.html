@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' data: blob:; img-src * 'unsafe-inline' data: blob:; font-src * 'unsafe-inline' data: blob:; connect-src * 'unsafe-inline' data: blob:; media-src * 'unsafe-inline' data: blob:; object-src * 'unsafe-inline' data: blob:; frame-src * 'unsafe-inline' data: blob:; worker-src * 'unsafe-inline' data: blob:; manifest-src * 'unsafe-inline' data: blob:;"
+    />
+    <title>Article Detail</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+      (function () {
+        var savedTheme = localStorage.getItem("theme") || "light";
+        document.documentElement.setAttribute("data-theme", savedTheme);
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="article-hero">
+      <button class="article-back-btn" onclick="history.back()">
+        <i class="ph ph-arrow-left" style="font-size: 22px"></i>
+      </button>
+      <img
+        src="https://images.unsplash.com/photo-1624823183492-2396150d912b?q=80&w=1200&auto=format&fit=crop"
+        alt="Article Hero"
+      />
+    </div>
+
+    <div id="article-loading" class="flex-center" style="min-height: 50vh">
+      <div class="ptr-spinner"></div>
+      <span class="ptr-text">Loading article...</span>
+    </div>
+
+    <div
+      class="article-content"
+      id="article-content"
+      style="
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        display: none;
+      "
+    >
+      <div class="article-header animate-fade-in-up">
+        <span class="article-source" id="article-source">
+          <i class="ph-fill ph-newspaper"></i>
+          <span id="source-name">Loading...</span>
+        </span>
+        <h1 class="article-title" id="article-title">Loading...</h1>
+        <div class="article-meta">
+          <div class="article-meta-item">
+            <i class="ph ph-calendar-blank"></i>
+            <span id="article-date">Loading...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="article-divider"></div>
+
+      <div
+        class="article-body animate-fade-in-up stagger-1"
+        id="article-body"
+      ></div>
+
+      <div style="margin-top: 24px;">
+        <button class="btn btn-outline btn-lg" id="read-original-btn">
+          Read Original
+          <i class="ph ph-arrow-square-out" style="font-size: 18px"></i>
+        </button>
+      </div>
+
+      <div class="article-read-more animate-fade-in-up stagger-2">
+        <p class="article-read-more-title">Related Stories</p>
+        <div id="related-articles"></div>
+      </div>
+
+      <div style="margin-top: 40px; padding-bottom: 40px"></div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+      function sanitizeContentHTML(html) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+
+        doc.body.querySelectorAll("*").forEach((el) => {
+          el.removeAttribute("style");
+          el.removeAttribute("width");
+          el.removeAttribute("height");
+          el.removeAttribute("class");
+        });
+
+        return doc.body.innerHTML;
+      }
+
+      async function loadArticle(id) {
+        const loadingEl = document.getElementById("article-loading");
+        const contentEl = document.getElementById("article-content");
+
+        try {
+          const article = await getArticleById(id);
+
+          loadingEl.style.display = "none";
+          contentEl.style.display = "block";
+
+          document.getElementById("source-name").textContent =
+            article.source_name;
+          document.getElementById("article-title").textContent = article.title;
+          document.getElementById("article-date").textContent = new Date(
+            article.published_at,
+          ).toLocaleDateString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+          });
+
+          const heroImage = document.querySelector(".article-hero img");
+          heroImage.src = article.image_url || getFallbackImage();
+          heroImage.alt = article.title;
+          heroImage.onerror = function () {
+            this.src = getFallbackImage();
+            this.onerror = null;
+          };
+
+          const articleBody = document.getElementById("article-body");
+          articleBody.innerHTML = sanitizeContentHTML(article.content_html);
+
+          const readOriginalBtn = document.getElementById("read-original-btn");
+          readOriginalBtn.onclick = () => window.open(article.url, "_system");
+          readOriginalBtn.innerHTML = `Read Original on ${article.source_name}<i class="ph ph-arrow-square-out" style="font-size: 18px; margin-left: 8px;"></i>`;
+
+          await loadRelatedArticles(article.source_name, article.language);
+        } catch (error) {
+          console.error("Failed to load article:", error);
+          loadingEl.innerHTML = `
+                        <div style="text-align: center; padding: 40px;">
+                            <i class="ph ph-warning-circle" style="font-size: 48px; color: var(--text-muted);"></i>
+                            <p style="margin-top: 16px; color: var(--text-muted);">Failed to load article</p>
+                            <button onclick="history.back()" class="btn btn-outline" style="margin-top: 16px;">Go Back</button>
+                        </div>
+                    `;
+        }
+      }
+
+      async function loadRelatedArticles(source, language) {
+        try {
+          const response = await getRecentArticles({
+            sourceNames: [source],
+            languages: [language],
+            limit: 3,
+          });
+
+          const relatedContainer = document.getElementById("related-articles");
+
+          if (response.articles && response.articles.length > 0) {
+            response.articles.slice(0, 2).forEach((article) => {
+              const card = document.createElement("div");
+              card.className = "card card-compact mb-3";
+              const imageHTML = article.image_url
+                ? `<img src="${article.image_url}" class="card-image" alt="${article.title}" onerror="this.src='${getFallbackImage()}'; this.onerror=null;" />`
+                : `<img src="${getFallbackImage()}" class="card-image" alt="${article.title}" />`;
+              card.innerHTML = `
+                                ${imageHTML}
+                                <div style="flex: 1;">
+                                    <h3 class="card-title">${article.title}</h3>
+                                    <span class="text-xs text-muted mt-1">${article.source_name} • ${formatDate(article.published_at)}</span>
+                                </div>
+                            `;
+              card.onclick = () =>
+                (window.location.href = `article.html?id=${article.id}`);
+              relatedContainer.appendChild(card);
+            });
+          }
+        } catch (error) {
+          console.error("Failed to load related articles:", error);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const articleId = urlParams.get("id");
+
+        if (articleId) {
+          loadArticle(articleId);
+        } else {
+          const loadingEl = document.getElementById("article-loading");
+          loadingEl.innerHTML = `
+                        <div style="text-align: center; padding: 40px;">
+                            <i class="ph ph-warning-circle" style="font-size: 48px; color: var(--text-muted);"></i>
+                            <p style="margin-top: 16px; color: var(--text-muted);">No article specified</p>
+                            <button onclick="history.back()" class="btn btn-outline" style="margin-top: 16px;">Go Back</button>
+                        </div>
+                    `;
+        }
+      });
+    </script>
+  </body>
+</html>

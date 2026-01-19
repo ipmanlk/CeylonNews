@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' data: blob:; img-src * 'unsafe-inline' data: blob:; font-src * 'unsafe-inline' data: blob:; connect-src * 'unsafe-inline' data: blob:; media-src * 'unsafe-inline' data: blob:; object-src * 'unsafe-inline' data: blob:; frame-src * 'unsafe-inline' data: blob:; worker-src * 'unsafe-inline' data: blob:; manifest-src * 'unsafe-inline' data: blob:;"
+    />
+    <title>Settings</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+      (function () {
+        var savedTheme = localStorage.getItem("theme") || "light";
+        document.documentElement.setAttribute("data-theme", savedTheme);
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="glass-header">
+      <div class="container">
+        <h1>Settings</h1>
+      </div>
+    </header>
+
+    <div class="container" style="padding-top: 24px; max-width: 600px">
+      <p class="section-title mb-3">Preferences</p>
+
+      <div class="card" style="padding: 12px 16px">
+        <div class="setting-item">
+          <div class="setting-label">
+            <div class="setting-icon">
+              <i class="ph-fill ph-moon" style="font-size: 20px"></i>
+            </div>
+            <span>Dark Mode</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="theme-toggle" onchange="toggleTheme()" />
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+
+        <div
+          class="setting-item"
+          onclick="window.location.href = 'index.html'"
+          style="cursor: pointer"
+        >
+          <div class="setting-label">
+            <div class="setting-icon">
+              <i class="ph-fill ph-translate" style="font-size: 20px"></i>
+            </div>
+            <span>Language</span>
+          </div>
+          <div class="flex-center">
+            <span class="text-sm text-muted" style="margin-right: 8px"
+              >English</span
+            >
+            <i class="ph ph-caret-right" style="color: var(--text-muted)"></i>
+          </div>
+        </div>
+
+        <div class="setting-item" style="display: none">
+          <div class="setting-label">
+            <div class="setting-icon">
+              <i class="ph-fill ph-bell" style="font-size: 20px"></i>
+            </div>
+            <span>Notifications</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" checked />
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+
+        <!-- Wi-Fi Only removed -->
+      </div>
+
+      <p class="section-title mb-3 mt-5" style="display: none">Account</p>
+
+      <div class="card" style="padding: 12px 16px; display: none">
+        <div class="setting-item">
+          <div class="setting-label">
+            <div class="setting-icon">
+              <i class="ph-fill ph-user" style="font-size: 20px"></i>
+            </div>
+            <span>Profile</span>
+          </div>
+          <i class="ph ph-caret-right" style="color: var(--text-muted)"></i>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <div class="setting-icon">
+              <i class="ph-fill ph-bookmark" style="font-size: 20px"></i>
+            </div>
+            <span>Saved Articles</span>
+          </div>
+          <i class="ph ph-caret-right" style="color: var(--text-muted)"></i>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label">
+            <div class="setting-icon">
+              <i
+                class="ph-fill ph-clock-counter-clockwise"
+                style="font-size: 20px"
+              ></i>
+            </div>
+            <span>Reading History</span>
+          </div>
+          <i class="ph ph-caret-right" style="color: var(--text-muted)"></i>
+        </div>
+      </div>
+
+      <p class="section-title mb-3 mt-5" style="display: none">About</p>
+
+      <div class="card" style="padding: 12px 16px; display: none">
+        <div class="setting-item">
+          <span>Version</span>
+          <span class="text-muted">1.0.0</span>
+        </div>
+
+        <div class="setting-item">
+          <span>API Status</span>
+          <span
+            id="api-status"
+            class="badge badge-solid"
+            style="background: #9ca3af"
+            >Checking...</span
+          >
+        </div>
+
+        <div class="setting-item">
+          <span>Privacy Policy</span>
+          <i class="ph ph-caret-right" style="color: var(--text-muted)"></i>
+        </div>
+
+        <div class="setting-item">
+          <span>Terms of Service</span>
+          <i class="ph ph-caret-right" style="color: var(--text-muted)"></i>
+        </div>
+      </div>
+
+      <button
+        class="btn btn-outline"
+        style="
+          margin-top: 32px;
+          border-color: #ef4444;
+          color: #ef4444;
+          font-weight: 600;
+        "
+        onclick="resetApp()"
+      >
+        <i class="ph ph-trash" style="margin-right: 8px"></i>
+        Reset
+      </button>
+    </div>
+
+    <nav class="bottom-nav">
+      <a href="home.html" class="nav-item">
+        <i class="ph ph-house"></i>
+        <span>Home</span>
+      </a>
+      <a href="search.html" class="nav-item">
+        <i class="ph ph-magnifying-glass"></i>
+        <span>Search</span>
+      </a>
+      <a href="settings.html" class="nav-item active">
+        <i class="ph-fill ph-gear"></i>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        if (localStorage.getItem("theme") === "dark") {
+          document.getElementById("theme-toggle").checked = true;
+        }
+
+        checkApiStatus();
+        updateLanguageDisplay();
+      });
+
+      async function checkApiStatus() {
+        const statusEl = document.getElementById("api-status");
+        try {
+          await healthCheck();
+          statusEl.style.background = "#10b981";
+          statusEl.textContent = "Online";
+        } catch (error) {
+          statusEl.style.background = "#ef4444";
+          statusEl.textContent = "Offline";
+        }
+      }
+
+      function updateLanguageDisplay() {
+        const lang = localStorage.getItem("ceylon_news_lang") || "en";
+        const langDisplay =
+          lang === "en" ? "English" : lang === "si" ? "Sinhala" : "Tamil";
+        const langElement = document.querySelector(
+          '.setting-item[onclick*="index.html"] .text-sm',
+        );
+        if (langElement) {
+          langElement.textContent = langDisplay;
+        }
+      }
+
+      function resetApp() {
+        localStorage.clear();
+        window.location.href = "index.html";
+      }
+    </script>
+  </body>
+</html>

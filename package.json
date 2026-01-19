@@ -1,36 +1,30 @@
 {
   "name": "xyz.navinda.ceylonnews",
-  "displayName": "CeylonNews",
+  "displayName": "Ceylon News",
   "version": "1.0.0",
-  "description": "A sample Apache Cordova application that responds to the deviceready event.",
+  "description": "Your daily aggregator for Sri Lankan news",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "ecosystem:cordova"
+    "ecosystem:cordova",
+    "news",
+    "sri-lanka",
+    "cordova-android"
   ],
-  "author": "Apache Cordova Team",
+  "author": "Navinda",
   "license": "Apache-2.0",
-  "devDependencies": {
-    "cordova-android": "^12.0.1",
-    "cordova-plugin-device": "^2.1.0",
-    "cordova-plugin-inappbrowser": "^6.0.0",
-    "cordova-plugin-network-information": "^3.0.0",
-    "cordova-plugin-splashscreen": "^6.0.1",
-    "cordova-plugin-x-socialsharing": "^6.0.4",
-    "es6-promise-plugin": "^4.2.2"
-  },
   "cordova": {
     "platforms": [
       "android"
     ],
     "plugins": {
-      "cordova-plugin-device": {},
-      "cordova-plugin-inappbrowser": {},
-      "cordova-plugin-network-information": {},
-      "cordova-plugin-splashscreen": {},
-      "cordova-plugin-x-socialsharing": {}
+      "cordova-plugin-network-information": {}
     }
+  },
+  "devDependencies": {
+    "cordova-android": "^14.0.1",
+    "cordova-plugin-network-information": "^3.0.0"
   }
 }

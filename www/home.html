@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' data: blob:; img-src * 'unsafe-inline' data: blob:; font-src * 'unsafe-inline' data: blob:; connect-src * 'unsafe-inline' data: blob:; media-src * 'unsafe-inline' data: blob:; object-src * 'unsafe-inline' data: blob:; frame-src * 'unsafe-inline' data: blob:; worker-src * 'unsafe-inline' data: blob:; manifest-src * 'unsafe-inline' data: blob:;"
+    />
+    <title>Ceylon News</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+      (function () {
+        var savedTheme = localStorage.getItem("theme") || "light";
+        document.documentElement.setAttribute("data-theme", savedTheme);
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="glass-header">
+      <div class="container">
+        <div class="flex-between">
+          <div>
+            <p
+              class="text-sm text-muted font-semibold"
+              style="margin-bottom: 2px; letter-spacing: 0.05em"
+            >
+              TODAY
+            </p>
+            <h1>Ceylon News</h1>
+          </div>
+          <a
+            href="search.html"
+            class="btn btn-icon flex-center"
+            style="text-decoration: none"
+          >
+            <i
+              class="ph ph-magnifying-glass"
+              style="font-size: 22px; color: var(--text-main)"
+            ></i>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <div class="source-scroll" id="source-filters">
+      <div class="source-pill active" data-source="all">All</div>
+    </div>
+
+    <div class="container" id="feed-container">
+      <div id="loading-skeleton" class="animate-fade-in">
+        <div class="skeleton skeleton-hero mb-4"></div>
+        <div class="flex-between mb-4">
+          <div class="flex-center gap-3">
+            <div class="skeleton skeleton-avatar"></div>
+            <div>
+              <div class="skeleton skeleton-text" style="width: 80px"></div>
+              <div class="skeleton skeleton-text" style="width: 60px"></div>
+            </div>
+          </div>
+        </div>
+        <div class="skeleton skeleton-title"></div>
+        <div class="skeleton skeleton-text"></div>
+        <div class="skeleton skeleton-text" style="width: 70%"></div>
+        <div class="divider"></div>
+        <div class="card card-standard mb-3" style="pointer-events: none">
+          <div class="skeleton skeleton-card"></div>
+          <div style="flex: 1">
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text" style="width: 60%"></div>
+          </div>
+        </div>
+        <div class="card card-standard" style="pointer-events: none">
+          <div class="skeleton skeleton-card"></div>
+          <div style="flex: 1">
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text" style="width: 60%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="news-content" class="hidden">
+        <div id="all-articles-section">
+          <div id="articles-list"></div>
+          <div
+            id="loading-more"
+            class="flex-center"
+            style="padding: 24px; display: none"
+          >
+            <div class="ptr-spinner"></div>
+            <span class="ptr-text">Loading more...</span>
+          </div>
+          <div
+            id="end-message"
+            class="flex-center"
+            style="padding: 24px; display: none"
+          >
+            <span class="text-muted">You're all caught up!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="bottom-nav">
+      <a href="home.html" class="nav-item active">
+        <i class="ph-fill ph-house"></i>
+        <span>Home</span>
+      </a>
+      <a href="search.html" class="nav-item">
+        <i class="ph ph-magnifying-glass"></i>
+        <span>Search</span>
+      </a>
+      <a href="settings.html" class="nav-item">
+        <i class="ph ph-gear"></i>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+      function initTouchScroll(container) {
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        container.addEventListener("mousedown", (e) => {
+          isDown = true;
+          container.style.cursor = "grabbing";
+          startX = e.pageX - container.offsetLeft;
+          scrollLeft = container.scrollLeft;
+        });
+
+        container.addEventListener("mouseleave", () => {
+          isDown = false;
+          container.style.cursor = "grab";
+        });
+
+        container.addEventListener("mouseup", () => {
+          isDown = false;
+          container.style.cursor = "grab";
+        });
+
+        container.addEventListener("mousemove", (e) => {
+          if (!isDown) return;
+          e.preventDefault();
+          const x = e.pageX - container.offsetLeft;
+          const walk = (x - startX) * 2;
+          container.scrollLeft = scrollLeft - walk;
+        });
+
+        container.addEventListener("touchstart", (e) => {
+          isDown = true;
+          startX = e.touches[0].pageX - container.offsetLeft;
+          scrollLeft = container.scrollLeft;
+        });
+
+        container.addEventListener("touchend", () => {
+          isDown = false;
+        });
+
+        container.addEventListener("touchmove", (e) => {
+          if (!isDown) return;
+          const x = e.touches[0].pageX - container.offsetLeft;
+          const walk = (x - startX) * 2;
+          container.scrollLeft = scrollLeft - walk;
+        });
+      }
+
+      let isLoading = false;
+      let currentPage = 0;
+      const PER_PAGE = 10;
+      let hasMore = true;
+      let currentSources = localStorage.getItem("selectedSources")
+        ? JSON.parse(localStorage.getItem("selectedSources"))
+        : [];
+      const currentLanguage = localStorage.getItem("ceylon_news_lang") || "en";
+      let moreStoriesAdded = false;
+
+      function saveSelectedSources() {
+        localStorage.setItem("selectedSources", JSON.stringify(currentSources));
+      }
+
+      async function loadArticles(loadMore = false) {
+        if (isLoading) return;
+
+        isLoading = true;
+        const loadingEl = document.getElementById("loading-more");
+        const endMessageEl = document.getElementById("end-message");
+
+        if (!loadMore) {
+          currentPage = 0;
+          hasMore = true;
+          moreStoriesAdded = false;
+        } else {
+          loadingEl.style.display = "flex";
+        }
+
+        try {
+          const params = {
+            limit: PER_PAGE,
+            offset: currentPage * PER_PAGE,
+            languages: currentLanguage,
+          };
+
+          if (currentSources.length > 0) {
+            params.sourceNames = currentSources;
+          }
+
+          const response = await getArticles(params);
+
+          if (loadMore) {
+            loadingEl.style.display = "none";
+          }
+
+          if (!loadMore) {
+            const skeleton = document.getElementById("loading-skeleton");
+            const content = document.getElementById("news-content");
+            skeleton.style.display = "none";
+            content.classList.remove("hidden");
+            content.classList.add("animate-fade-in");
+
+            const newsContent = document.getElementById("news-content");
+            newsContent.innerHTML = "";
+          }
+
+          if (response.data && response.data.length > 0) {
+            renderArticles(response.data, loadMore);
+            currentPage++;
+            hasMore = response.has_next;
+          } else {
+            hasMore = false;
+          }
+
+          if (!hasMore) {
+            endMessageEl.style.display = "flex";
+          }
+        } catch (error) {
+          console.error("Failed to load articles:", error);
+          if (!loadMore) {
+            const skeleton = document.getElementById("loading-skeleton");
+            const content = document.getElementById("news-content");
+            skeleton.style.display = "none";
+            content.classList.remove("hidden");
+          }
+          loadingEl.style.display = "none";
+        }
+
+        isLoading = false;
+      }
+
+      function renderArticles(articles, append = false) {
+        const newsContent = document.getElementById("news-content");
+
+        if (!append) {
+          // First render: create all sections
+          let heroHTML = "";
+          let standardHTML = "";
+          let compactHTML = "";
+
+          articles.forEach((article, index) => {
+            if (index === 0) {
+              // Hero card
+              heroHTML = `
+                                <div class="card card-hero animate-fade-in-up stagger-1" onclick="window.location.href = 'article.html?id=${article.id}'">
+                                    <img src="${article.image_url || getFallbackImage()}" class="card-image" alt="${article.title}" onerror="this.src='${getFallbackImage()}'; this.onerror=null;" />
+                                    <span class="card-source">${article.source_name}</span>
+                                    <div class="card-overlay">
+                                        <h2 class="card-title">${article.title}</h2>
+                                        <div class="card-meta">
+                                            <span>${formatDate(article.published_at)}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+            } else if (index >= 1 && index <= 3) {
+              // Standard cards
+              standardHTML += `
+                                <div class="card card-standard animate-fade-in-up stagger-${index + 1}" onclick="window.location.href = 'article.html?id=${article.id}'">
+                                    <img src="${article.image_url || getFallbackImage()}" class="card-image" alt="${article.title}" onerror="this.src='${getFallbackImage()}'; this.onerror=null;" />
+                                    <div class="card-content">
+                                        <h3 class="card-title">${article.title}</h3>
+                                        <div class="card-footer">
+                                            <span class="badge">${article.source_name}</span>
+                                            <span class="text-sm text-muted">${formatDate(article.published_at)}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+            } else {
+              // Compact cards for More Stories
+              const imageHTML = article.image_url
+                ? `<img src="${article.image_url}" class="card-image" alt="${article.title}" onerror="this.src='${getFallbackImage()}'; this.onerror=null;" />`
+                : `<img src="${getFallbackImage()}" class="card-image" alt="${article.title}" />`;
+              compactHTML += `
+                                <div class="card card-compact article-item animate-fade-in-up" onclick="window.location.href = 'article.html?id=${article.id}'">
+                                    ${imageHTML}
+                                    <div style="flex: 1;">
+                                        <h3 class="card-title">${article.title}</h3>
+                                        <span class="text-xs text-muted mt-1">${article.source_name} • ${formatDate(article.published_at)}</span>
+                                    </div>
+                                </div>
+                            `;
+            }
+          });
+
+          // Build complete structure
+          newsContent.innerHTML = `
+                        ${heroHTML}
+                        ${standardHTML}
+                        <div class="section-header mt-5">
+                            <span class="section-title">More Stories</span>
+                        </div>
+                        <div id="articles-list">
+                            ${compactHTML}
+                        </div>
+                        <div id="loading-more" class="flex-center" style="padding: 24px; display: none;">
+                            <div class="ptr-spinner"></div>
+                            <span class="ptr-text">Loading more...</span>
+                        </div>
+                        <div id="end-message" class="flex-center" style="padding: 24px; display: none;">
+                            <span class="text-muted">You're all caught up!</span>
+                        </div>
+                    `;
+
+          moreStoriesAdded = true;
+        } else {
+          // Append mode: only add to More Stories section
+          const articlesList = document.getElementById("articles-list");
+
+          articles.forEach((article) => {
+            const imageHTML = article.image_url
+              ? `<img src="${article.image_url}" class="card-image" alt="${article.title}" onerror="this.src='${getFallbackImage()}'; this.onerror=null;" />`
+              : `<img src="${getFallbackImage()}" class="card-image" alt="${article.title}" />`;
+            const card = `
+                            <div class="card card-compact article-item animate-fade-in-up" onclick="window.location.href = 'article.html?id=${article.id}'">
+                                ${imageHTML}
+                                <div style="flex: 1;">
+                                    <h3 class="card-title">${article.title}</h3>
+                                    <span class="text-xs text-muted mt-1">${article.source_name} • ${formatDate(article.published_at)}</span>
+                                </div>
+                            </div>
+                        `;
+            articlesList.insertAdjacentHTML("beforeend", card);
+          });
+        }
+      }
+
+      function handleScroll() {
+        if (isLoading || !hasMore) return;
+
+        const scrollPosition = window.innerHeight + window.scrollY;
+        const threshold = document.documentElement.scrollHeight - 300;
+
+        if (scrollPosition >= threshold) {
+          loadArticles(true);
+        }
+      }
+
+      async function loadSources() {
+        try {
+          const sourcesByLang = await getSourcesByLanguage(currentLanguage);
+          const sourceFilters = document.getElementById("source-filters");
+
+          sourcesByLang.sources.forEach((source) => {
+            const pill = document.createElement("div");
+            pill.className = "source-pill";
+            pill.dataset.source = source;
+            pill.textContent = source;
+            sourceFilters.appendChild(pill);
+          });
+
+          applySavedSourceSelection();
+        } catch (error) {
+          console.error("Failed to load sources:", error);
+        }
+      }
+
+      function applySavedSourceSelection() {
+        const sourceFilters = document.getElementById("source-filters");
+        const allPill = sourceFilters.querySelector('[data-source="all"]');
+
+        if (currentSources.length === 0) {
+          allPill.classList.add("active");
+        } else {
+          allPill.classList.remove("active");
+          currentSources.forEach((source) => {
+            const pill = sourceFilters.querySelector(
+              `[data-source="${source}"]`,
+            );
+            if (pill) {
+              pill.classList.add("active");
+            }
+          });
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const sourceScroll = document.querySelector(".source-scroll");
+        if (sourceScroll) {
+          initTouchScroll(sourceScroll);
+        }
+
+        loadArticles();
+        loadSources();
+
+        document
+          .getElementById("source-filters")
+          .addEventListener("click", function (e) {
+            if (e.target.classList.contains("source-pill")) {
+              const clickedSource = e.target.dataset.source;
+
+              if (clickedSource === "all") {
+                // Deselect all other sources and select "All"
+                const pills = this.querySelectorAll(".source-pill");
+                pills.forEach((p) => p.classList.remove("active"));
+                e.target.classList.add("active");
+                currentSources = [];
+                saveSelectedSources();
+              } else {
+                // Deselect "All" button
+                const allPill = this.querySelector('[data-source="all"]');
+                allPill.classList.remove("active");
+
+                // Toggle the clicked source
+                if (e.target.classList.contains("active")) {
+                  // Deselect this source
+                  e.target.classList.remove("active");
+                  currentSources = currentSources.filter(
+                    (s) => s !== clickedSource,
+                  );
+
+                  // If no sources selected, select "All"
+                  if (currentSources.length === 0) {
+                    allPill.classList.add("active");
+                  }
+                } else {
+                  // Select this source
+                  e.target.classList.add("active");
+                  if (!currentSources.includes(clickedSource)) {
+                    currentSources.push(clickedSource);
+                  }
+                }
+                saveSelectedSources();
+              }
+
+              loadArticles();
+            }
+          });
+
+        window.addEventListener("scroll", handleScroll);
+        window.addEventListener("scroll", function () {
+          const header = document.querySelector(".glass-header");
+          if (window.scrollY > 10) {
+            header.classList.add("scrolled");
+          } else {
+            header.classList.remove("scrolled");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
