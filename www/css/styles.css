@@ -620,8 +620,22 @@ p {
 }
 
 .skeleton-hero {
-  height: 280px;
-  border-radius: var(--radius-xl);
+    height: 320px;
+    width: 100%;
+    border-radius: 0;
+    background: linear-gradient(90deg, var(--border-light) 25%, var(--border) 50%, var(--border-light) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+.skeleton-hero::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .skeleton-card {

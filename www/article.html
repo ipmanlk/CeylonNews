@@ -18,17 +18,20 @@
     </script>
   </head>
   <body>
-    <div class="article-hero">
+    <div id="hero-loading" class="article-hero skeleton-hero" style="display: flex; align-items: center; justify-content: center;">
+      <button class="article-back-btn" onclick="history.back()">
+        <i class="ph ph-arrow-left" style="font-size: 22px"></i>
+      </button>
+    </div>
+
+    <div class="article-hero" id="article-hero" style="display: none;">
       <button class="article-back-btn" onclick="history.back()">
         <i class="ph ph-arrow-left" style="font-size: 22px"></i>
       </button>
       <button id="bookmark-btn" class="article-bookmark-btn" style="display: none;">
         <i class="ph ph-bookmark-simple" id="bookmark-icon" style="font-size: 24px"></i>
       </button>
-      <img
-        src="https://images.unsplash.com/photo-1624823183492-2396150d912b?q=80&w=1200&auto=format&fit=crop"
-        alt="Article Hero"
-      />
+      <img id="article-hero-img" alt="Article Hero" />
     </div>
 
     <div id="article-loading" class="flex-center" style="min-height: 50vh">
@@ -123,11 +126,15 @@
       async function loadArticle(id) {
         const loadingEl = document.getElementById("article-loading");
         const contentEl = document.getElementById("article-content");
+        const heroLoading = document.getElementById("hero-loading");
+        const articleHero = document.getElementById("article-hero");
 
         try {
           const article = await getArticleById(id);
           currentArticle = article;
 
+          heroLoading.style.display = "none";
+          articleHero.style.display = "block";
           loadingEl.style.display = "none";
           contentEl.style.display = "block";
 
@@ -142,7 +149,7 @@
             year: "numeric",
           });
 
-          const heroImage = document.querySelector(".article-hero img");
+          const heroImage = document.getElementById("article-hero-img");
           heroImage.src = article.image_url || getFallbackImage();
           heroImage.alt = article.title;
           heroImage.onerror = function () {
@@ -161,6 +168,7 @@
           await loadRelatedArticles(article.source_name, article.language);
         } catch (error) {
           console.error("Failed to load article:", error);
+          heroLoading.style.display = "none";
           loadingEl.innerHTML = `
                         <div style="text-align: center; padding: 40px;">
                             <i class="ph ph-warning-circle" style="font-size: 48px; color: var(--text-muted);"></i>
@@ -238,7 +246,9 @@
         if (articleId) {
           loadArticle(articleId);
         } else {
+          const heroLoading = document.getElementById("hero-loading");
           const loadingEl = document.getElementById("article-loading");
+          heroLoading.style.display = "none";
           loadingEl.innerHTML = `
                         <div style="text-align: center; padding: 40px;">
                             <i class="ph ph-warning-circle" style="font-size: 48px; color: var(--text-muted);"></i>
