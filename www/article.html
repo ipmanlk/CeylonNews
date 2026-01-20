@@ -22,6 +22,9 @@
       <button class="article-back-btn" onclick="history.back()">
         <i class="ph ph-arrow-left" style="font-size: 22px"></i>
       </button>
+      <button id="bookmark-btn" class="article-bookmark-btn" style="display: none;">
+        <i class="ph ph-bookmark-simple" id="bookmark-icon" style="font-size: 24px"></i>
+      </button>
       <img
         src="https://images.unsplash.com/photo-1624823183492-2396150d912b?q=80&w=1200&auto=format&fit=crop"
         alt="Article Hero"
@@ -79,6 +82,25 @@
       <div style="margin-top: 40px; padding-bottom: 40px"></div>
     </div>
 
+    <nav class="bottom-nav">
+      <a href="home.html" class="nav-item">
+        <i class="ph ph-house"></i>
+        <span>Home</span>
+      </a>
+      <a href="search.html" class="nav-item">
+        <i class="ph ph-magnifying-glass"></i>
+        <span>Search</span>
+      </a>
+      <a href="saved-articles.html" class="nav-item">
+        <i class="ph ph-bookmark-simple"></i>
+        <span>Saved</span>
+      </a>
+      <a href="settings.html" class="nav-item">
+        <i class="ph ph-gear"></i>
+        <span>Settings</span>
+      </a>
+    </nav>
+
     <script src="js/api.js"></script>
     <script src="js/app.js"></script>
     <script>
@@ -96,12 +118,15 @@
         return doc.body.innerHTML;
       }
 
+      let currentArticle = null;
+
       async function loadArticle(id) {
         const loadingEl = document.getElementById("article-loading");
         const contentEl = document.getElementById("article-content");
 
         try {
           const article = await getArticleById(id);
+          currentArticle = article;
 
           loadingEl.style.display = "none";
           contentEl.style.display = "block";
@@ -132,6 +157,7 @@
           readOriginalBtn.onclick = () => window.open(article.url, "_system");
           readOriginalBtn.innerHTML = `Read Original on ${article.source_name}<i class="ph ph-arrow-square-out" style="font-size: 18px; margin-left: 8px;"></i>`;
 
+          updateBookmarkButton();
           await loadRelatedArticles(article.source_name, article.language);
         } catch (error) {
           console.error("Failed to load article:", error);
@@ -142,6 +168,30 @@
                             <button onclick="history.back()" class="btn btn-outline" style="margin-top: 16px;">Go Back</button>
                         </div>
                     `;
+        }
+      }
+
+      function updateBookmarkButton() {
+        const bookmarkBtn = document.getElementById("bookmark-btn");
+        const bookmarkIcon = document.getElementById("bookmark-icon");
+        
+        if (currentArticle) {
+          bookmarkBtn.style.display = "flex";
+          
+          if (isArticleSaved(currentArticle.id)) {
+            bookmarkIcon.classList.remove("ph-bookmark-simple");
+            bookmarkIcon.classList.add("ph-bookmark-simple", "ph-fill");
+          } else {
+            bookmarkIcon.classList.remove("ph-fill");
+            bookmarkIcon.classList.add("ph-bookmark-simple");
+          }
+        }
+      }
+
+      function handleBookmarkClick() {
+        if (currentArticle) {
+          const isSaved = toggleSavedArticle(currentArticle);
+          updateBookmarkButton();
         }
       }
 
@@ -182,6 +232,8 @@
       document.addEventListener("DOMContentLoaded", function () {
         const urlParams = new URLSearchParams(window.location.search);
         const articleId = urlParams.get("id");
+
+        document.getElementById("bookmark-btn").addEventListener("click", handleBookmarkClick);
 
         if (articleId) {
           loadArticle(articleId);

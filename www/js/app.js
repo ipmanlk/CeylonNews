@@ -29,6 +29,41 @@ function setLanguage(lang) {
   window.location.href = "home.html";
 }
 
+function getSavedArticles() {
+  const saved = localStorage.getItem("saved_articles");
+  return saved ? JSON.parse(saved) : [];
+}
+
+function saveArticle(article) {
+  const saved = getSavedArticles();
+  const exists = saved.find((a) => a.id === article.id);
+  if (!exists) {
+    saved.push(article);
+    localStorage.setItem("saved_articles", JSON.stringify(saved));
+  }
+}
+
+function removeArticle(articleId) {
+  let saved = getSavedArticles();
+  saved = saved.filter((a) => a.id !== articleId);
+  localStorage.setItem("saved_articles", JSON.stringify(saved));
+}
+
+function isArticleSaved(articleId) {
+  const saved = getSavedArticles();
+  return saved.some((a) => a.id === articleId);
+}
+
+function toggleSavedArticle(article) {
+  if (isArticleSaved(article.id)) {
+    removeArticle(article.id);
+    return false;
+  } else {
+    saveArticle(article);
+    return true;
+  }
+}
+
 // Initialize
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
