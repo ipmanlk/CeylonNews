@@ -292,6 +292,16 @@
         if (langElement) {
           langElement.textContent = langDisplay;
         }
+        
+        const settingItems = document.querySelectorAll('.setting-item');
+        settingItems.forEach(item => {
+          if (item.onclick && item.onclick.toString().includes('index.html')) {
+            const textElement = item.querySelector('.text-sm');
+            if (textElement) {
+              textElement.textContent = langDisplay;
+            }
+          }
+        });
       }
 
       function resetApp() {

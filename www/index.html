@@ -89,7 +89,7 @@
                 >EN</span
               >
             </div>
-            <span style="font-weight: 600; font-size: 16px">English</span>
+            <span style="font-weight: 600; font-size: 16px; color: var(--text-main)">English</span>
           </div>
           <i
             class="ph ph-caret-right"
@@ -124,7 +124,7 @@
                 >SI</span
               >
             </div>
-            <span style="font-weight: 600; font-size: 16px">Sinhala</span>
+            <span style="font-weight: 600; font-size: 16px; color: var(--text-main)">Sinhala</span>
           </div>
           <i
             class="ph ph-caret-right"
@@ -159,7 +159,7 @@
                 >TA</span
               >
             </div>
-            <span style="font-weight: 600; font-size: 16px">Tamil</span>
+            <span style="font-weight: 600; font-size: 16px; color: var(--text-main)">Tamil</span>
           </div>
           <i
             class="ph ph-caret-right"
@@ -168,11 +168,33 @@
         </button>
       </div>
 
+      <div class="animate-fade-in-up stagger-2" style="margin-top: 32px">
+        <div class="setting-item" style="padding: 16px 0; border-bottom: 1px solid var(--border);">
+          <div class="setting-label">
+            <div class="setting-icon">
+              <i class="ph-fill ph-moon" style="font-size: 20px"></i>
+            </div>
+            <span>Dark Mode</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="theme-toggle" onchange="toggleTheme()" />
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+      </div>
+
       <p class="text-sm text-muted mt-5" style="font-size: 12px">
-        By continuing, you agree to our Terms of Service
+        Content from public feeds; all rights reserved by respective sources.
       </p>
     </div>
 
     <script src="js/app.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        if (localStorage.getItem("theme") === "dark") {
+          document.getElementById("theme-toggle").checked = true;
+        }
+      });
+    </script>
   </body>
 </html>
