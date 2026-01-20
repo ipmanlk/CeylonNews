@@ -44,7 +44,7 @@
         <div
           class="setting-item"
           onclick="showLanguageModal()"
-          style="cursor: pointer; border-bottom: none"
+          style="cursor: pointer"
         >
           <div class="setting-label">
             <div class="setting-icon">
@@ -53,27 +53,15 @@
             <span>Language</span>
           </div>
           <div class="flex-center">
-            <span id="current-language" class="text-sm text-muted" style="margin-right: 8px"
+            <span
+              id="current-language"
+              class="text-sm text-muted"
+              style="margin-right: 8px"
               >English</span
             >
             <i class="ph ph-caret-right" style="color: var(--text-muted)"></i>
           </div>
         </div>
-
-        <div class="setting-item" style="display: none">
-          <div class="setting-label">
-            <div class="setting-icon">
-              <i class="ph-fill ph-bell" style="font-size: 20px"></i>
-            </div>
-            <span>Notifications</span>
-          </div>
-          <label class="switch">
-            <input type="checkbox" checked />
-            <span class="switch-slider"></span>
-          </label>
-        </div>
-
-        <!-- Wi-Fi Only removed -->
       </div>
 
       <p class="section-title mb-3 mt-5" style="display: none">Account</p>
@@ -121,11 +109,20 @@
           <span class="text-muted">Navinda Dissanayake</span>
         </div>
 
-        <a href="https://www.navinda.me" target="_blank" class="setting-item" style="text-decoration: none; color: inherit; display: flex;">
+        <a
+          href="https://www.navinda.me"
+          target="_blank"
+          class="setting-item"
+          style="text-decoration: none; color: inherit; display: flex"
+        >
           <span>Web</span>
           <span class="text-muted">www.navinda.me</span>
         </a>
-        <a href="mailto:hi@navinda.me" class="setting-item" style="text-decoration: none; color: inherit; display: flex;">
+        <a
+          href="mailto:hi@navinda.me"
+          class="setting-item"
+          style="text-decoration: none; color: inherit; display: flex"
+        >
           <span>Mail</span>
           <span class="text-muted">hi@navinda.me</span>
         </a>
@@ -175,18 +172,35 @@
       </a>
     </nav>
 
-    <div id="contact-modal" class="modal-overlay" onclick="hideContactModal(event)">
+    <div
+      id="contact-modal"
+      class="modal-overlay"
+      onclick="hideContactModal(event)"
+    >
       <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
           <h2>Contact</h2>
-          <i class="ph ph-x" style="font-size: 24px; cursor: pointer; color: var(--text-muted)" onclick="hideContactModal()"></i>
+          <i
+            class="ph ph-x"
+            style="font-size: 24px; cursor: pointer; color: var(--text-muted)"
+            onclick="hideContactModal()"
+          ></i>
         </div>
         <div class="modal-body">
-          <a href="https://www.navinda.me" target="_blank" class="setting-item" style="text-decoration: none; color: inherit;">
+          <a
+            href="https://www.navinda.me"
+            target="_blank"
+            class="setting-item"
+            style="text-decoration: none; color: inherit"
+          >
             <span>Web</span>
             <span class="text-muted">www.navinda.me</span>
           </a>
-          <a href="mailto:hi@navinda.me" class="setting-item" style="text-decoration: none; color: inherit;">
+          <a
+            href="mailto:hi@navinda.me"
+            class="setting-item"
+            style="text-decoration: none; color: inherit"
+          >
             <span>Mail</span>
             <span class="text-muted">hi@navinda.me</span>
           </a>
@@ -194,33 +208,74 @@
       </div>
     </div>
 
-    <div id="language-modal" class="modal-overlay" onclick="hideLanguageModal(event)">
+    <div
+      id="language-modal"
+      class="modal-overlay"
+      onclick="hideLanguageModal(event)"
+    >
       <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
           <h2>Select Language</h2>
-          <i class="ph ph-x" style="font-size: 24px; cursor: pointer; color: var(--text-muted)" onclick="hideLanguageModal()"></i>
+          <i
+            class="ph ph-x"
+            style="font-size: 24px; cursor: pointer; color: var(--text-muted)"
+            onclick="hideLanguageModal()"
+          ></i>
         </div>
         <div class="modal-body">
-          <div class="setting-item" onclick="changeLanguage('en')" style="cursor: pointer">
+          <div
+            class="setting-item"
+            onclick="changeLanguage('en')"
+            style="cursor: pointer"
+          >
             <div class="setting-label">
               <div class="setting-icon">
-                <span style="font-size: 16px; font-weight: 700; color: var(--accent)">EN</span>
+                <span
+                  style="
+                    font-size: 16px;
+                    font-weight: 700;
+                    color: var(--accent);
+                  "
+                  >EN</span
+                >
               </div>
               <span>English</span>
             </div>
           </div>
-          <div class="setting-item" onclick="changeLanguage('si')" style="cursor: pointer">
+          <div
+            class="setting-item"
+            onclick="changeLanguage('si')"
+            style="cursor: pointer"
+          >
             <div class="setting-label">
               <div class="setting-icon">
-                <span style="font-size: 16px; font-weight: 700; color: var(--accent)">SI</span>
+                <span
+                  style="
+                    font-size: 16px;
+                    font-weight: 700;
+                    color: var(--accent);
+                  "
+                  >SI</span
+                >
               </div>
               <span>Sinhala</span>
             </div>
           </div>
-          <div class="setting-item" onclick="changeLanguage('ta')" style="cursor: pointer">
+          <div
+            class="setting-item"
+            onclick="changeLanguage('ta')"
+            style="cursor: pointer"
+          >
             <div class="setting-label">
               <div class="setting-icon">
-                <span style="font-size: 16px; font-weight: 700; color: var(--accent)">TA</span>
+                <span
+                  style="
+                    font-size: 16px;
+                    font-weight: 700;
+                    color: var(--accent);
+                  "
+                  >TA</span
+                >
               </div>
               <span>Tamil</span>
             </div>
