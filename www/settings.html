@@ -43,7 +43,7 @@
 
         <div
           class="setting-item"
-          onclick="window.location.href = 'index.html'"
+          onclick="showLanguageModal()"
           style="cursor: pointer"
         >
           <div class="setting-label">
@@ -53,7 +53,7 @@
             <span>Language</span>
           </div>
           <div class="flex-center">
-            <span class="text-sm text-muted" style="margin-right: 8px"
+            <span id="current-language" class="text-sm text-muted" style="margin-right: 8px"
               >English</span
             >
             <i class="ph ph-caret-right" style="color: var(--text-muted)"></i>
@@ -194,6 +194,41 @@
       </div>
     </div>
 
+    <div id="language-modal" class="modal-overlay" onclick="hideLanguageModal(event)">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Select Language</h2>
+          <i class="ph ph-x" style="font-size: 24px; cursor: pointer; color: var(--text-muted)" onclick="hideLanguageModal()"></i>
+        </div>
+        <div class="modal-body">
+          <div class="setting-item" onclick="changeLanguage('en')" style="cursor: pointer">
+            <div class="setting-label">
+              <div class="setting-icon">
+                <span style="font-size: 16px; font-weight: 700; color: var(--accent)">EN</span>
+              </div>
+              <span>English</span>
+            </div>
+          </div>
+          <div class="setting-item" onclick="changeLanguage('si')" style="cursor: pointer">
+            <div class="setting-label">
+              <div class="setting-icon">
+                <span style="font-size: 16px; font-weight: 700; color: var(--accent)">SI</span>
+              </div>
+              <span>Sinhala</span>
+            </div>
+          </div>
+          <div class="setting-item" onclick="changeLanguage('ta')" style="cursor: pointer">
+            <div class="setting-label">
+              <div class="setting-icon">
+                <span style="font-size: 16px; font-weight: 700; color: var(--accent)">TA</span>
+              </div>
+              <span>Tamil</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <style>
       .modal-overlay {
         position: fixed;
@@ -286,22 +321,10 @@
         const lang = localStorage.getItem("ceylon_news_lang") || "en";
         const langDisplay =
           lang === "en" ? "English" : lang === "si" ? "Sinhala" : "Tamil";
-        const langElement = document.querySelector(
-          '.setting-item[onclick*="index.html"] .text-sm',
-        );
+        const langElement = document.getElementById("current-language");
         if (langElement) {
           langElement.textContent = langDisplay;
         }
-        
-        const settingItems = document.querySelectorAll('.setting-item');
-        settingItems.forEach(item => {
-          if (item.onclick && item.onclick.toString().includes('index.html')) {
-            const textElement = item.querySelector('.text-sm');
-            if (textElement) {
-              textElement.textContent = langDisplay;
-            }
-          }
-        });
       }
 
       function resetApp() {
@@ -318,6 +341,23 @@
         if (e && e.target !== e.currentTarget) return;
         document.getElementById("contact-modal").classList.remove("active");
         document.body.style.overflow = "";
+      }
+
+      function showLanguageModal() {
+        document.getElementById("language-modal").classList.add("active");
+        document.body.style.overflow = "hidden";
+      }
+
+      function hideLanguageModal(e) {
+        if (e && e.target !== e.currentTarget) return;
+        document.getElementById("language-modal").classList.remove("active");
+        document.body.style.overflow = "";
+      }
+
+      function changeLanguage(lang) {
+        localStorage.setItem("ceylon_news_lang", lang);
+        updateLanguageDisplay();
+        hideLanguageModal();
       }
     </script>
   </body>
