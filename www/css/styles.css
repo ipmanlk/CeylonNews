@@ -1024,7 +1024,7 @@ p {
   border: 1px solid var(--glass-border);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
@@ -1033,27 +1033,21 @@ p {
   z-index: 10;
 }
 
-.article-hero .article-bookmark-btn:hover {
-  transform: scale(1.05);
-  background: var(--accent);
-  border-color: var(--accent);
-}
-
-.article-hero .article-bookmark-btn:hover i {
-  color: white;
+.article-hero .article-bookmark-btn:active {
+  transform: scale(0.95);
 }
 
 .article-hero .article-bookmark-btn i {
   color: var(--text-main);
   font-size: 24px;
-  transition: color 0.2s ease;
 }
 
-.article-hero .article-bookmark-btn i.ph-fill {
-  color: var(--accent);
+.article-hero .article-bookmark-btn.bookmarked {
+  background: var(--accent);
+  border-color: var(--accent);
 }
 
-.article-hero .article-bookmark-btn:hover i.ph-fill {
+.article-hero .article-bookmark-btn.bookmarked i {
   color: white;
 }
 

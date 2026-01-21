@@ -1,4 +1,4 @@
-function createSavedArticleCard(article) {
+async function createSavedArticleCard(article) {
   const card = document.createElement("div");
   card.className = "card card-compact mb-3";
   const imgSrc = article.image_url || getFallbackImage();
@@ -23,9 +23,9 @@ function createSavedArticleCard(article) {
     window.location.href = `article.html?id=${article.id}`;
   });
 
-  card.querySelector(".unsave-btn").addEventListener("click", e => {
+  card.querySelector(".unsave-btn").addEventListener("click", async e => {
     e.stopPropagation();
-    removeArticle(article.id);
+    await removeArticle(article.id);
     card.style.opacity = "0";
     card.style.transform = "translateX(-20px)";
     setTimeout(() => {
@@ -37,8 +37,8 @@ function createSavedArticleCard(article) {
   return card;
 }
 
-function loadSavedArticlesUI() {
-  const saved = getSavedArticles();
+async function loadSavedArticlesUI() {
+  const saved = await getSavedArticles();
   const container = document.getElementById("articles-container");
   const emptyState = document.getElementById("empty-state");
 
@@ -50,8 +50,9 @@ function loadSavedArticlesUI() {
   }
 
   emptyState.classList.add("hidden");
-  saved.reverse().forEach(article => {
-    container.appendChild(createSavedArticleCard(article));
+  saved.reverse().forEach(async article => {
+    const card = await createSavedArticleCard(article);
+    container.appendChild(card);
   });
 }
 

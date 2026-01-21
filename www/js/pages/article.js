@@ -18,75 +18,75 @@ function applyArticleFont() {
   applyCustomFont([titleEl, bodyEl]);
 }
 
-function loadArticle(id) {
+async function loadArticle(id) {
   const loadingEl = document.getElementById("article-loading");
   const contentEl = document.getElementById("article-content");
   const heroLoading = document.getElementById("hero-loading");
   const articleHero = document.getElementById("article-hero");
 
-  getArticleById(id)
-    .then(article => {
-      currentArticle = article;
+  try {
+    const article = await getArticleById(id);
+    currentArticle = article;
 
-      heroLoading.classList.add("hidden");
-      articleHero.classList.remove("hidden");
-      loadingEl.classList.add("hidden");
-      contentEl.classList.remove("hidden");
+    heroLoading.classList.add("hidden");
+    articleHero.classList.remove("hidden");
+    loadingEl.classList.add("hidden");
+    contentEl.classList.remove("hidden");
 
-      document.getElementById("source-name").textContent = article.source_name;
-      document.getElementById("article-title").textContent = article.title;
-      document.getElementById("article-date").textContent = new Date(article.published_at)
-        .toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+    document.getElementById("source-name").textContent = article.source_name;
+    document.getElementById("article-title").textContent = article.title;
+    document.getElementById("article-date").textContent = new Date(article.published_at)
+      .toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 
-      const heroImage = document.getElementById("article-hero-img");
-      heroImage.src = article.image_url || getFallbackImage();
-      heroImage.alt = article.title;
-      heroImage.onerror = function() {
-        this.src = getFallbackImage();
-        this.onerror = null;
-      };
+    const heroImage = document.getElementById("article-hero-img");
+    heroImage.src = article.image_url || getFallbackImage();
+    heroImage.alt = article.title;
+    heroImage.onerror = function() {
+      this.src = getFallbackImage();
+      this.onerror = null;
+    };
 
-      document.getElementById("article-body").innerHTML = sanitizeContentHTML(article.content_html);
+    document.getElementById("article-body").innerHTML = sanitizeContentHTML(article.content_html);
 
-      const readOriginalBtn = document.getElementById("read-original-btn");
-      readOriginalBtn.onclick = () => window.open(article.url, "_system");
-      readOriginalBtn.innerHTML = `Read Original on ${article.source_name}<i class="ph ph-arrow-square-out icon-md ml-2"></i>`;
+    const readOriginalBtn = document.getElementById("read-original-btn");
+    readOriginalBtn.onclick = () => window.open(article.url, "_system");
+    readOriginalBtn.innerHTML = `Read Original on ${article.source_name}<i class="ph ph-arrow-square-out icon-md ml-2"></i>`;
 
-      updateBookmarkButton();
-      loadRelatedArticles(article.source_name, article.language);
-      applyArticleFont();
-    })
-    .catch(error => {
-      console.error("Failed to load article:", error);
-      heroLoading.classList.add("hidden");
-      loadingEl.innerHTML = `<div class="empty-state-container">
-        <i class="ph ph-warning-circle empty-state-icon"></i>
-        <p class="empty-state-text">Failed to load article</p>
-        <button onclick="history.back()" class="btn btn-outline mt-4 btn-auto-width">Go Back</button>
-      </div>`;
-    });
+    await updateBookmarkButton();
+    loadRelatedArticles(article.source_name, article.language);
+    applyArticleFont();
+  } catch (error) {
+    console.error("Failed to load article:", error);
+    heroLoading.classList.add("hidden");
+    loadingEl.innerHTML = `<div class="empty-state-container">
+      <i class="ph ph-warning-circle empty-state-icon"></i>
+      <p class="empty-state-text">Failed to load article</p>
+      <button onclick="history.back()" class="btn btn-outline mt-4 btn-auto-width">Go Back</button>
+    </div>`;
+  }
 }
 
-function updateBookmarkButton() {
+async function updateBookmarkButton() {
   const bookmarkBtn = document.getElementById("bookmark-btn");
   const bookmarkIcon = document.getElementById("bookmark-icon");
 
   if (currentArticle) {
     bookmarkBtn.classList.remove("hidden");
-    if (isArticleSaved(currentArticle.id)) {
-      bookmarkIcon.classList.remove("ph-bookmark-simple");
-      bookmarkIcon.classList.add("ph-bookmark-simple", "ph-fill");
+    const saved = await isArticleSaved(currentArticle.id);
+    if (saved) {
+      bookmarkBtn.classList.add("bookmarked");
+      bookmarkIcon.className = "ph-fill ph-bookmark-simple icon-lg";
     } else {
-      bookmarkIcon.classList.remove("ph-fill");
-      bookmarkIcon.classList.add("ph-bookmark-simple");
+      bookmarkBtn.classList.remove("bookmarked");
+      bookmarkIcon.className = "ph ph-bookmark-simple icon-lg";
     }
   }
 }
 
-function handleBookmarkClick() {
+async function handleBookmarkClick() {
   if (currentArticle) {
-    toggleSavedArticle(currentArticle);
-    updateBookmarkButton();
+    await toggleSavedArticle(currentArticle);
+    await updateBookmarkButton();
   }
 }
 
