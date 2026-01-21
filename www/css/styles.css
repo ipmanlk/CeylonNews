@@ -1,3 +1,7 @@
+/* ========================================
+   FONTS & IMPORTS
+   ======================================== */
+
 @font-face {
   font-family: "english";
   src: url("../fonts/english.ttf");
@@ -17,18 +21,37 @@
 }
 
 .en-font {
-  font-family: "english", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    "english",
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
 }
 
 .si-font {
-  font-family: "sinhala", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    "sinhala",
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
 }
 
 .ta-font {
-  font-family: "tamil", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    "tamil",
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
 }
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+
+/* ========================================
+   CSS VARIABLES (Theme)
+   ======================================== */
 
 :root {
   --bg-body: #fafafa;
@@ -77,6 +100,10 @@
   --glass-bg: rgba(10, 10, 10, 0.85);
   --glass-border: rgba(255, 255, 255, 0.08);
 }
+
+/* ========================================
+   BASE & RESET
+   ======================================== */
 
 * {
   box-sizing: border-box;
@@ -131,6 +158,10 @@ body {
   background: var(--text-muted);
 }
 
+/* ========================================
+   LAYOUT UTILITIES
+   ======================================== */
+
 .container {
   padding: 0 20px;
   max-width: 600px;
@@ -158,6 +189,10 @@ body {
 .hidden {
   display: none !important;
 }
+
+/* ========================================
+   TYPOGRAPHY
+   ======================================== */
 
 h1,
 h2,
@@ -244,6 +279,11 @@ p {
   text-decoration: none;
 }
 
+/* ========================================
+   COMPONENTS
+   ======================================== */
+
+/* Header & Navigation */
 .glass-header {
   position: sticky;
   top: 0;
@@ -315,6 +355,7 @@ p {
   transform: scale(0.9);
 }
 
+/* Cards */
 .card {
   background: var(--bg-card);
   border-radius: var(--radius-lg);
@@ -436,6 +477,7 @@ p {
   line-height: 1.35;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   color: var(--text-main);
@@ -474,6 +516,7 @@ p {
   line-height: 1.3;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -542,6 +585,7 @@ p {
   color: white;
 }
 
+/* Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -601,6 +645,7 @@ p {
   border-radius: var(--radius-lg);
 }
 
+/* Skeleton Loaders */
 .skeleton {
   background: linear-gradient(
     90deg,
@@ -650,22 +695,27 @@ p {
 }
 
 .skeleton-hero {
-    height: 320px;
-    width: 100%;
-    border-radius: 0;
-    background: linear-gradient(90deg, var(--border-light) 25%, var(--border) 50%, var(--border-light) 75%);
-    background-size: 200% 100%;
-    animation: skeleton-loading 1.5s infinite;
-    position: relative;
-    overflow: hidden;
+  height: 320px;
+  width: 100%;
+  border-radius: 0;
+  background: linear-gradient(
+    90deg,
+    var(--border-light) 25%,
+    var(--border) 50%,
+    var(--border-light) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  position: relative;
+  overflow: hidden;
 }
 
 .skeleton-hero::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .skeleton-card {
@@ -715,6 +765,10 @@ p {
   color: var(--text-muted);
   font-weight: 500;
 }
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
 
 @keyframes fadeInUp {
   from {
@@ -785,6 +839,7 @@ p {
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -792,10 +847,12 @@ p {
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
+/* Forms */
 .search-box {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -909,6 +966,11 @@ p {
   transform: translateX(22px);
 }
 
+/* ========================================
+   PAGE-SPECIFIC STYLES
+   ======================================== */
+
+/* Article Page */
 .article-hero {
   position: relative;
   width: 100%;
@@ -1184,6 +1246,10 @@ p {
   margin: 20px 0;
 }
 
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
 .mt-1 {
   margin-top: 4px;
 }
@@ -1230,4 +1296,327 @@ p {
 }
 .gap-5 {
   gap: 24px;
+}
+
+/* Icon Sizing */
+.icon-sm {
+  font-size: 16px;
+}
+.icon-md {
+  font-size: 20px;
+}
+.icon-lg {
+  font-size: 24px;
+}
+.icon-xl {
+  font-size: 32px;
+}
+
+/* Interactive Elements */
+.clickable {
+  cursor: pointer;
+}
+
+/* Card Variants */
+.card-padded {
+  padding: 12px 16px;
+}
+
+/* Empty States & Loading */
+.empty-state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-state-icon {
+  font-size: 56px;
+  color: var(--border);
+  margin-bottom: 16px;
+}
+
+.empty-state-text {
+  font-size: 16px;
+  color: var(--text-muted);
+  margin-top: 20px;
+}
+
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+/* Modal Close Button */
+.modal-close {
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+/* Links styled as setting items */
+.setting-link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+}
+
+/* Button Variants */
+.btn-danger {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.btn-contact {
+  border-color: var(--border);
+  color: var(--text-main);
+}
+
+/* Language Icon */
+.lang-icon {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* Search Page */
+.search-header {
+  padding-bottom: 8px;
+}
+
+/* Index Page */
+.lang-select-container {
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.lang-icon-box {
+  width: 44px;
+  height: 44px;
+  background: var(--accent-light);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lang-icon-box-lg {
+  width: 80px;
+  height: 80px;
+  background: var(--accent-light);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+
+.lang-btn {
+  width: 100%;
+  cursor: pointer;
+  padding: 16px 20px;
+  transition: all 0.2s ease;
+}
+
+.lang-btn-text {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text-main);
+}
+
+/* Additional Layout */
+.page-container {
+  padding-top: 24px;
+}
+
+.page-container-narrow {
+  padding-top: 24px;
+  max-width: 600px;
+}
+
+.lang-select-page {
+  min-height: 100vh;
+  padding-bottom: 0;
+}
+
+.lang-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.setting-item-standalone {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.no-events {
+  pointer-events: none;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+/* Skeleton widths */
+.w-80 {
+  width: 80px;
+}
+.w-70 {
+  width: 70%;
+}
+.w-60 {
+  width: 60%;
+}
+
+/* Article page */
+.article-loading {
+  min-height: 50vh;
+}
+
+.article-content-container {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.article-spacer {
+  margin-top: 40px;
+  padding-bottom: 40px;
+}
+
+.article-btn-container {
+  margin-top: 24px;
+}
+
+/* Margins */
+.mr-2 {
+  margin-right: 8px;
+}
+
+/* Clear button */
+.btn-clear {
+  background: none;
+  border: none;
+  padding: 4px;
+}
+
+/* Footer text */
+.footer-text {
+  font-size: 12px;
+}
+
+/* Letter spacing */
+.tracking-wide {
+  letter-spacing: 0.05em;
+}
+
+/* Header subtitle */
+.header-subtitle {
+  margin-bottom: 2px;
+  letter-spacing: 0.05em;
+}
+
+/* App icon */
+.app-icon-lg {
+  font-size: 40px;
+  color: var(--accent);
+}
+
+/* Saved articles page */
+.saved-empty-icon {
+  font-size: 64px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.btn-auto-width {
+  width: auto;
+}
+
+/* Modal in styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.modal-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-content {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  width: 90%;
+  max-width: 320px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  transform: scale(0.95);
+  transition: transform 0.2s ease;
+}
+
+.modal-overlay.active .modal-content {
+  transform: scale(1);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.modal-body {
+  padding: 8px 0;
+}
+
+.modal-body .setting-item {
+  padding: 14px 20px;
+}
+
+.modal-body a.setting-item:hover {
+  background: var(--bg-card-hover);
+}
+
+/* Additional margins */
+.ml-2 {
+  margin-left: 8px;
+}
+
+.ml-3 {
+  margin-left: 12px;
+}
+
+/* Text utilities */
+.text-center {
+  text-align: center;
+}
+
+/* Card inner layout */
+.card-compact.clickable {
+  padding: 0;
 }

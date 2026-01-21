@@ -3,19 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' data: blob:; img-src * 'unsafe-inline' data: blob:; font-src * 'unsafe-inline' data: blob:; connect-src * 'unsafe-inline' data: blob:; media-src * 'unsafe-inline' data: blob:; object-src * 'unsafe-inline' data: blob:; frame-src * 'unsafe-inline' data: blob:; worker-src * 'unsafe-inline' data: blob:; manifest-src * 'unsafe-inline' data: blob:;"
-    />
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' data: blob:; img-src * 'unsafe-inline' data: blob:; font-src * 'unsafe-inline' data: blob:; connect-src * 'unsafe-inline' data: blob:; media-src * 'unsafe-inline' data: blob:; object-src * 'unsafe-inline' data: blob:; frame-src * 'unsafe-inline' data: blob:; worker-src * 'unsafe-inline' data: blob:; manifest-src * 'unsafe-inline' data: blob:;" />
     <title>Settings</title>
     <link rel="stylesheet" href="css/styles.css" />
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script>
-      (function () {
-        const savedTheme = localStorage.getItem("app_theme") || "light";
-        document.documentElement.setAttribute("data-theme", savedTheme);
-      })();
-    </script>
+    <script src="js/core.js"></script>
   </head>
   <body>
     <header class="glass-header">
@@ -24,14 +16,14 @@
       </div>
     </header>
 
-    <div class="container" style="padding-top: 24px; max-width: 600px">
+    <div class="container page-container-narrow">
       <p class="section-title mb-3">Preferences</p>
 
-      <div class="card" style="padding: 12px 16px">
+      <div class="card card-padded">
         <div class="setting-item">
           <div class="setting-label">
             <div class="setting-icon">
-              <i class="ph-fill ph-moon" style="font-size: 20px"></i>
+              <i class="ph-fill ph-moon icon-md"></i>
             </div>
             <span>Dark Mode</span>
           </div>
@@ -41,36 +33,27 @@
           </label>
         </div>
 
-        <div
-          class="setting-item"
-          onclick="showLanguageModal()"
-          style="cursor: pointer"
-        >
+        <div class="setting-item clickable" onclick="showLanguageModal()">
           <div class="setting-label">
             <div class="setting-icon">
-              <i class="ph-fill ph-translate" style="font-size: 20px"></i>
+              <i class="ph-fill ph-translate icon-md"></i>
             </div>
             <span>Language</span>
           </div>
           <div class="flex-center">
-            <span
-              id="current-language"
-              class="text-sm text-muted"
-              style="margin-right: 8px"
-              >English</span
-            >
-            <i class="ph ph-caret-right" style="color: var(--text-muted)"></i>
+            <span id="current-language" class="text-sm text-muted mr-2">English</span>
+            <i class="ph ph-caret-right text-muted"></i>
           </div>
         </div>
       </div>
 
       <p class="section-title mb-3 mt-5">Display</p>
 
-      <div class="card" style="padding: 12px 16px">
+      <div class="card card-padded">
         <div class="setting-item">
           <div class="setting-label">
             <div class="setting-icon">
-              <i class="ph-fill ph-text-aa" style="font-size: 20px"></i>
+              <i class="ph-fill ph-text-aa icon-md"></i>
             </div>
             <span>Custom Font</span>
           </div>
@@ -83,70 +66,43 @@
 
       <p class="section-title mb-3 mt-5">Library</p>
 
-      <div class="card" style="padding: 12px 16px">
-        <div class="setting-item" onclick="window.location.href='saved-articles.html'" style="cursor: pointer">
+      <div class="card card-padded">
+        <div class="setting-item clickable" onclick="window.location.href='saved-articles.html'">
           <div class="setting-label">
             <div class="setting-icon">
-              <i class="ph-fill ph-bookmark" style="font-size: 20px"></i>
+              <i class="ph-fill ph-bookmark icon-md"></i>
             </div>
             <span>Saved Articles</span>
           </div>
-          <i class="ph ph-caret-right" style="color: var(--text-muted)"></i>
+          <i class="ph ph-caret-right text-muted"></i>
         </div>
       </div>
 
       <p class="section-title mb-3 mt-5">About</p>
 
-      <div class="card" style="padding: 12px 16px">
+      <div class="card card-padded">
         <div class="setting-item">
           <span>Developed By</span>
           <span class="text-muted">Navinda Dissanayake</span>
         </div>
 
-        <a
-          href="https://www.navinda.me"
-          target="_blank"
-          class="setting-item"
-          style="text-decoration: none; color: inherit; display: flex"
-        >
+        <a href="https://www.navinda.me" target="_blank" class="setting-item setting-link">
           <span>Web</span>
           <span class="text-muted">www.navinda.me</span>
         </a>
-        <a
-          href="mailto:hi@navinda.me"
-          class="setting-item"
-          style="text-decoration: none; color: inherit; display: flex"
-        >
+        <a href="mailto:hi@navinda.me" class="setting-item setting-link">
           <span>Mail</span>
           <span class="text-muted">hi@navinda.me</span>
         </a>
       </div>
 
-      <button
-        class="btn btn-outline"
-        style="
-          margin-top: 16px;
-          border-color: var(--border);
-          color: var(--text-main);
-          font-weight: 600;
-        "
-        onclick="showContactModal()"
-      >
-        <i class="ph ph-envelope" style="margin-right: 8px"></i>
+      <button class="btn btn-outline btn-contact mt-4 font-semibold" onclick="showContactModal()">
+        <i class="ph ph-envelope mr-2"></i>
         Contact
       </button>
 
-      <button
-        class="btn btn-outline"
-        style="
-          margin-top: 16px;
-          border-color: #ef4444;
-          color: #ef4444;
-          font-weight: 600;
-        "
-        onclick="resetApp()"
-      >
-        <i class="ph ph-trash" style="margin-right: 8px"></i>
+      <button class="btn btn-outline btn-danger mt-4 font-semibold" onclick="resetApp()">
+        <i class="ph ph-trash mr-2"></i>
         Reset
       </button>
     </div>
@@ -170,35 +126,18 @@
       </a>
     </nav>
 
-    <div
-      id="contact-modal"
-      class="modal-overlay"
-      onclick="hideContactModal(event)"
-    >
+    <div id="contact-modal" class="modal-overlay" onclick="hideContactModal(event)">
       <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
           <h2>Contact</h2>
-          <i
-            class="ph ph-x"
-            style="font-size: 24px; cursor: pointer; color: var(--text-muted)"
-            onclick="hideContactModal()"
-          ></i>
+          <i class="ph ph-x modal-close" onclick="hideContactModal()"></i>
         </div>
         <div class="modal-body">
-          <a
-            href="https://www.navinda.me"
-            target="_blank"
-            class="setting-item"
-            style="text-decoration: none; color: inherit"
-          >
+          <a href="https://www.navinda.me" target="_blank" class="setting-item setting-link">
             <span>Web</span>
             <span class="text-muted">www.navinda.me</span>
           </a>
-          <a
-            href="mailto:hi@navinda.me"
-            class="setting-item"
-            style="text-decoration: none; color: inherit"
-          >
+          <a href="mailto:hi@navinda.me" class="setting-item setting-link">
             <span>Mail</span>
             <span class="text-muted">hi@navinda.me</span>
           </a>
@@ -206,74 +145,33 @@
       </div>
     </div>
 
-    <div
-      id="language-modal"
-      class="modal-overlay"
-      onclick="hideLanguageModal(event)"
-    >
+    <div id="language-modal" class="modal-overlay" onclick="hideLanguageModal(event)">
       <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
           <h2 class="en-font">Select Language / භාෂාව තෝරන්න / மொழியைத் தேர்ந்தெடுக்கவும்</h2>
-          <i
-            class="ph ph-x"
-            style="font-size: 24px; cursor: pointer; color: var(--text-muted)"
-            onclick="hideLanguageModal()"
-          ></i>
+          <i class="ph ph-x modal-close" onclick="hideLanguageModal()"></i>
         </div>
         <div class="modal-body">
-          <div
-            class="setting-item"
-            onclick="changeLanguage('en')"
-            style="cursor: pointer"
-          >
+          <div class="setting-item clickable" onclick="changeLanguage('en')">
             <div class="setting-label">
               <div class="setting-icon">
-                <span
-                  style="
-                    font-size: 16px;
-                    font-weight: 700;
-                    color: var(--accent);
-                  "
-                  >EN</span
-                >
+                <span class="lang-icon">EN</span>
               </div>
               <span class="en-font">English</span>
             </div>
           </div>
-          <div
-            class="setting-item"
-            onclick="changeLanguage('si')"
-            style="cursor: pointer"
-          >
+          <div class="setting-item clickable" onclick="changeLanguage('si')">
             <div class="setting-label">
               <div class="setting-icon">
-                <span
-                  style="
-                    font-size: 16px;
-                    font-weight: 700;
-                    color: var(--accent);
-                  "
-                  >SI</span
-                >
+                <span class="lang-icon">SI</span>
               </div>
               <span class="si-font">සිංහල</span>
             </div>
           </div>
-          <div
-            class="setting-item"
-            onclick="changeLanguage('ta')"
-            style="cursor: pointer"
-          >
+          <div class="setting-item clickable" onclick="changeLanguage('ta')">
             <div class="setting-label">
               <div class="setting-icon">
-                <span
-                  style="
-                    font-size: 16px;
-                    font-weight: 700;
-                    color: var(--accent);
-                  "
-                  >TA</span
-                >
+                <span class="lang-icon">TA</span>
               </div>
               <span class="ta-font">தமிழ்</span>
             </div>
@@ -282,164 +180,8 @@
       </div>
     </div>
 
-    <style>
-      .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 200;
-        opacity: 0;
-        transition: opacity 0.2s ease;
-      }
-
-      .modal-overlay.active {
-        display: flex;
-        opacity: 1;
-      }
-
-      .modal-content {
-        background: var(--bg-card);
-        border-radius: var(--radius-lg);
-        width: 90%;
-        max-width: 320px;
-        overflow: hidden;
-        box-shadow: var(--shadow-lg);
-        transform: scale(0.95);
-        transition: transform 0.2s ease;
-      }
-
-      .modal-overlay.active .modal-content {
-        transform: scale(1);
-      }
-
-      .modal-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 16px 20px;
-        border-bottom: 1px solid var(--border);
-      }
-
-      .modal-header h2 {
-        font-size: 18px;
-        font-weight: 600;
-      }
-
-      .modal-body {
-        padding: 8px 0;
-      }
-
-      .modal-body .setting-item {
-        padding: 14px 20px;
-      }
-
-      .modal-body a.setting-item:hover {
-        background: var(--bg-card-hover);
-      }
-    </style>
-
-      <script src="js/api.js"></script>
-      <script src="js/app.js"></script>
-      <script>
-        document.addEventListener("DOMContentLoaded", function () {
-          if (localStorage.getItem("app_theme") === "dark") {
-            document.getElementById("theme-toggle").checked = true;
-          }
-
-          if (localStorage.getItem("use_custom_font") === "true") {
-            document.getElementById("custom-font-toggle").checked = true;
-          }
-
-          checkApiStatus();
-          updateLanguageDisplay();
-        });
-
-        async function checkApiStatus() {
-          const statusEl = document.getElementById("api-status");
-          try {
-            await healthCheck();
-            statusEl.style.background = "#10b981";
-            statusEl.textContent = "Online";
-          } catch (error) {
-            statusEl.style.background = "#ef4444";
-            statusEl.textContent = "Offline";
-          }
-        }
-
-        function updateLanguageDisplay() {
-          const lang = localStorage.getItem("ceylon_news_lang") || "en";
-          const langNames = {
-            en: "English",
-            si: "සිංහල",
-            ta: "தமிழ்"
-          };
-          const langElement = document.getElementById("current-language");
-          if (langElement) {
-            langElement.textContent = langNames[lang];
-          }
-        }
-
-        function toggleCustomFont() {
-          const isEnabled = document.getElementById("custom-font-toggle").checked;
-          localStorage.setItem("use_custom_font", isEnabled);
-          applyFontToContent();
-        }
-
-        function applyFontToContent() {
-          const lang = localStorage.getItem("ceylon_news_lang") || "en";
-          const useCustomFont = localStorage.getItem("use_custom_font") === "true";
-          const fontClass = useCustomFont ? `${lang}-font` : "";
-
-          const contentElements = document.querySelectorAll('.card-title, .article-title, .article-body, .card-content');
-          contentElements.forEach(el => {
-            el.classList.remove('en-font', 'si-font', 'ta-font');
-            if (fontClass) {
-              el.classList.add(fontClass);
-            }
-          });
-        }
-
-        function resetApp() {
-          localStorage.clear();
-          window.location.href = "index.html";
-        }
-
-        function showContactModal() {
-          document.getElementById("contact-modal").classList.add("active");
-          document.body.style.overflow = "hidden";
-        }
-
-        function hideContactModal(e) {
-          if (e && e.target !== e.currentTarget) return;
-          document.getElementById("contact-modal").classList.remove("active");
-          document.body.style.overflow = "";
-        }
-
-        function showLanguageModal() {
-          document.getElementById("language-modal").classList.add("active");
-          document.body.style.overflow = "hidden";
-        }
-
-        function hideLanguageModal(e) {
-          if (e && e.target !== e.currentTarget) return;
-          document.getElementById("language-modal").classList.remove("active");
-          document.body.style.overflow = "";
-        }
-
-        function changeLanguage(lang) {
-          localStorage.setItem("ceylon_news_lang", lang);
-          updateLanguageDisplay();
-          hideLanguageModal();
-          window.location.reload();
-        }
-      </script>
+    <script src="js/storage.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/pages/settings.js"></script>
   </body>
 </html>

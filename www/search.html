@@ -3,103 +3,51 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' data: blob:; img-src * 'unsafe-inline' data: blob:; font-src * 'unsafe-inline' data: blob:; connect-src * 'unsafe-inline' data: blob:; media-src * 'unsafe-inline' data: blob:; object-src * 'unsafe-inline' data: blob:; frame-src * 'unsafe-inline' data: blob:; worker-src * 'unsafe-inline' data: blob:; manifest-src * 'unsafe-inline' data: blob:;"
-    />
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' data: blob:; img-src * 'unsafe-inline' data: blob:; font-src * 'unsafe-inline' data: blob:; connect-src * 'unsafe-inline' data: blob:; media-src * 'unsafe-inline' data: blob:; object-src * 'unsafe-inline' data: blob:; frame-src * 'unsafe-inline' data: blob:; worker-src * 'unsafe-inline' data: blob:; manifest-src * 'unsafe-inline' data: blob:;" />
     <title>Search</title>
     <link rel="stylesheet" href="css/styles.css" />
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script>
-      (function () {
-        const savedTheme = localStorage.getItem("app_theme") || "light";
-        document.documentElement.setAttribute("data-theme", savedTheme);
-      })();
-    </script>
+    <script src="js/core.js"></script>
   </head>
   <body>
-    <div class="glass-header" style="padding-bottom: 8px">
+    <div class="glass-header search-header">
       <div class="container">
-        <h1 style="margin-bottom: 16px">Search</h1>
+        <h1 class="mb-4">Search</h1>
         <div class="search-box">
-          <i class="ph ph-magnifying-glass" style="font-size: 20px"></i>
-          <input
-            type="text"
-            id="search-input"
-            placeholder="Search news, topics, sources..."
-          />
-          <button
-            id="search-clear"
-            class="flex-center"
-            style="
-              background: none;
-              border: none;
-              cursor: pointer;
-              display: none;
-              padding: 4px;
-            "
-          >
-            <i
-              class="ph ph-x-circle"
-              style="color: var(--text-muted); font-size: 18px"
-            ></i>
+          <i class="ph ph-magnifying-glass icon-md"></i>
+          <input type="text" id="search-input" placeholder="Search news, topics, sources..." />
+          <button id="search-clear" class="flex-center hidden btn-clear">
+            <i class="ph ph-x-circle text-muted icon-md"></i>
           </button>
         </div>
       </div>
     </div>
 
-    <div class="container" id="search-results" style="max-width: 600px">
+    <div class="container page-container-narrow" id="search-results">
       <div id="recent-searches">
         <div class="flex-between mb-3 mt-4">
-          <span class="section-title" style="margin: 0">Recent Searches</span>
-          <span
-            class="text-sm text-accent"
-            style="cursor: pointer; font-weight: 600"
-            id="clear-all"
-            >Clear</span
-          >
+          <span class="section-title">Recent Searches</span>
+          <span class="text-sm text-accent clickable font-semibold" id="clear-all">Clear</span>
         </div>
         <div id="recent-searches-list"></div>
       </div>
 
-      <div id="results-container" style="display: none">
+      <div id="results-container" class="hidden">
         <p class="section-title mb-3 mt-4" id="results-title">Search Results</p>
         <div id="search-results-list"></div>
-        <div
-          id="search-loading"
-          class="flex-center"
-          style="padding: 24px; display: none"
-        >
+        <div id="search-loading" class="loading-indicator hidden">
           <div class="ptr-spinner"></div>
           <span class="ptr-text">Searching...</span>
         </div>
-        <div
-          id="no-results"
-          style="display: none; text-align: center; padding: 60px 20px"
-        >
-          <i
-            class="ph ph-magnifying-glass"
-            style="font-size: 56px; color: var(--border)"
-          ></i>
-          <p
-            style="margin-top: 20px; font-size: 16px; color: var(--text-muted)"
-          >
-            No results found
-          </p>
+        <div id="no-results" class="empty-state-container hidden">
+          <i class="ph ph-magnifying-glass empty-state-icon"></i>
+          <p class="empty-state-text">No results found</p>
         </div>
       </div>
 
-      <div
-        id="empty-state"
-        style="display: none; text-align: center; padding: 60px 20px"
-      >
-        <i
-          class="ph ph-magnifying-glass"
-          style="font-size: 56px; color: var(--border)"
-        ></i>
-        <p style="margin-top: 20px; font-size: 16px; color: var(--text-muted)">
-          Type above to search across 12+ local news sources
-        </p>
+      <div id="empty-state" class="empty-state-container hidden">
+        <i class="ph ph-magnifying-glass empty-state-icon"></i>
+        <p class="empty-state-text">Type above to search across 12+ local news sources</p>
       </div>
     </div>
 
@@ -122,175 +70,8 @@
       </a>
     </nav>
 
+    <script src="js/storage.js"></script>
     <script src="js/api.js"></script>
-    <script src="js/app.js"></script>
-    <script>
-      function getFontClass() {
-        const lang = localStorage.getItem("ceylon_news_lang") || "en";
-        const useCustomFont = localStorage.getItem("use_custom_font") === "true";
-        return useCustomFont ? `${lang}-font` : "";
-      }
-
-      const searchInput = document.getElementById("search-input");
-      const searchClear = document.getElementById("search-clear");
-      const recentSearches = document.getElementById("recent-searches");
-      const resultsContainer = document.getElementById("results-container");
-      const emptyState = document.getElementById("empty-state");
-      const searchResultsList = document.getElementById("search-results-list");
-      const searchLoading = document.getElementById("search-loading");
-      const noResults = document.getElementById("no-results");
-      const recentSearchesList = document.getElementById(
-        "recent-searches-list",
-      );
-      let searchTimeout;
-      const currentLanguage = localStorage.getItem("ceylon_news_lang") || "en";
-
-      function loadRecentSearches() {
-        const searches = JSON.parse(
-          localStorage.getItem("recent_searches") || "[]",
-        );
-        recentSearchesList.innerHTML = "";
-
-        if (searches.length === 0) {
-          recentSearches.style.display = "none";
-          emptyState.style.display = "block";
-          return;
-        }
-
-        recentSearches.style.display = "block";
-        emptyState.style.display = "none";
-
-        searches.forEach((search) => {
-          const card = document.createElement("div");
-          card.className = "card";
-          card.style.cssText = "padding: 12px 16px; margin-bottom: 16px;";
-          card.innerHTML = `
-                        <div class="card-compact" style="padding: 0; cursor: pointer;" data-query="${search}">
-                            <i class="ph ph-clock-counter-clockwise" style="color: var(--text-muted); font-size: 18px;"></i>
-                            <span style="flex: 1; margin-left: 12px; font-weight: 500;">${search}</span>
-                            <i class="ph ph-x" style="color: var(--text-muted); font-size: 14px;"></i>
-                        </div>
-                    `;
-          recentSearchesList.appendChild(card);
-        });
-      }
-
-      function saveRecentSearch(query) {
-        let searches = JSON.parse(
-          localStorage.getItem("recent_searches") || "[]",
-        );
-        searches = searches.filter(
-          (s) => s.toLowerCase() !== query.toLowerCase(),
-        );
-        searches.unshift(query);
-        searches = searches.slice(0, 5);
-        localStorage.setItem("recent_searches", JSON.stringify(searches));
-      }
-
-      async function performSearch(query) {
-        if (!query.trim()) return;
-
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(async () => {
-          searchLoading.style.display = "flex";
-          recentSearches.style.display = "none";
-          resultsContainer.style.display = "block";
-          emptyState.style.display = "none";
-          noResults.style.display = "none";
-          searchResultsList.innerHTML = "";
-
-          try {
-            const response = await searchArticles({
-              query: query,
-              languages: currentLanguage,
-              limit: 20,
-            });
-
-            searchLoading.style.display = "none";
-
-            if (response.data && response.data.length > 0) {
-              renderSearchResults(response.data);
-              saveRecentSearch(query);
-            } else {
-              noResults.style.display = "block";
-            }
-          } catch (error) {
-            console.error("Search failed:", error);
-            searchLoading.style.display = "none";
-            noResults.style.display = "block";
-          }
-        }, 300);
-      }
-
-      function renderSearchResults(articles) {
-        const fontClass = getFontClass();
-        articles.forEach((article) => {
-          const card = document.createElement("div");
-          card.className = "card card-standard mb-3";
-          card.innerHTML = `
-                        ${article.image_url ? `<img src="${article.image_url}" class="card-image" alt="${article.title}" />` : ""}
-                        <div class="card-content">
-                            <h3 class="card-title ${fontClass}">${article.title}</h3>
-                            <div class="card-footer">
-                                <span class="badge">${article.source_name}</span>
-                                <span class="text-sm text-muted">${formatDate(article.published_at)}</span>
-                            </div>
-                        </div>
-                    `;
-          card.onclick = () =>
-            (window.location.href = `article.html?id=${article.id}`);
-          searchResultsList.appendChild(card);
-        });
-      }
-
-      searchInput.addEventListener("input", function () {
-        const value = this.value.trim();
-        searchClear.style.display = value ? "flex" : "none";
-
-        if (value.length > 0) {
-          performSearch(value);
-        } else {
-          recentSearches.style.display = "block";
-          resultsContainer.style.display = "none";
-          emptyState.style.display = "none";
-        }
-      });
-
-      searchClear.addEventListener("click", function () {
-        searchInput.value = "";
-        searchClear.style.display = "none";
-        recentSearches.style.display = "block";
-        resultsContainer.style.display = "none";
-        emptyState.style.display = "none";
-        searchInput.focus();
-      });
-
-      document
-        .getElementById("clear-all")
-        .addEventListener("click", function () {
-          localStorage.removeItem("recent_searches");
-          loadRecentSearches();
-        });
-
-      recentSearchesList.addEventListener("click", function (e) {
-        const card = e.target.closest(".card-compact");
-        if (card && !e.target.classList.contains("ph-x")) {
-          searchInput.value = card.dataset.query;
-          searchInput.dispatchEvent(new Event("input"));
-        } else if (e.target.classList.contains("ph-x")) {
-          const query = e.target.closest(".card-compact").dataset.query;
-          let searches = JSON.parse(
-            localStorage.getItem("recent_searches") || "[]",
-          );
-          searches = searches.filter((s) => s !== query);
-          localStorage.setItem("recent_searches", JSON.stringify(searches));
-          loadRecentSearches();
-        }
-      });
-
-      document.addEventListener("DOMContentLoaded", function () {
-        loadRecentSearches();
-      });
-    </script>
+    <script src="js/pages/search.js"></script>
   </body>
 </html>
