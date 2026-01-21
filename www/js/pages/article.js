@@ -53,6 +53,7 @@ async function loadArticle(id) {
     readOriginalBtn.innerHTML = `Read Original on ${article.source_name}<i class="ph ph-arrow-square-out icon-md ml-2"></i>`;
 
     await updateBookmarkButton();
+    addToReadHistory(article);
     loadRelatedArticles(article.source_name, article.language);
     applyArticleFont();
   } catch (error) {

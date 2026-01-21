@@ -1,6 +1,8 @@
 const DB_NAME = 'ceylon_news_db';
-const DB_VERSION = 1;
-const STORE_NAME = 'saved_articles';
+const DB_VERSION = 2;
+const SAVED_ARTICLES_STORE = 'saved_articles';
+const READ_HISTORY_STORE = 'read_history';
+const READ_HISTORY_LIMIT = 30;
 
 let db = null;
 
@@ -24,9 +26,15 @@ function openDB() {
 
     request.onupgradeneeded = (event) => {
       const database = event.target.result;
-      if (!database.objectStoreNames.contains(STORE_NAME)) {
-        const store = database.createObjectStore(STORE_NAME, { keyPath: 'id' });
+      
+      if (!database.objectStoreNames.contains(SAVED_ARTICLES_STORE)) {
+        const store = database.createObjectStore(SAVED_ARTICLES_STORE, { keyPath: 'id' });
         store.createIndex('saved_at', 'saved_at', { unique: false });
+      }
+      
+      if (!database.objectStoreNames.contains(READ_HISTORY_STORE)) {
+        const store = database.createObjectStore(READ_HISTORY_STORE, { keyPath: 'id' });
+        store.createIndex('read_at', 'read_at', { unique: false });
       }
     };
   });
@@ -36,8 +44,8 @@ const savedArticles = {
   async getAll() {
     const database = await openDB();
     return new Promise((resolve, reject) => {
-      const transaction = database.transaction(STORE_NAME, 'readonly');
-      const store = transaction.objectStore(STORE_NAME);
+      const transaction = database.transaction(SAVED_ARTICLES_STORE, 'readonly');
+      const store = transaction.objectStore(SAVED_ARTICLES_STORE);
       const request = store.getAll();
 
       request.onsuccess = () => resolve(request.result);
@@ -48,8 +56,8 @@ const savedArticles = {
   async get(id) {
     const database = await openDB();
     return new Promise((resolve, reject) => {
-      const transaction = database.transaction(STORE_NAME, 'readonly');
-      const store = transaction.objectStore(STORE_NAME);
+      const transaction = database.transaction(SAVED_ARTICLES_STORE, 'readonly');
+      const store = transaction.objectStore(SAVED_ARTICLES_STORE);
       const request = store.get(id);
 
       request.onsuccess = () => resolve(request.result);
@@ -60,8 +68,8 @@ const savedArticles = {
   async save(article) {
     const database = await openDB();
     return new Promise((resolve, reject) => {
-      const transaction = database.transaction(STORE_NAME, 'readwrite');
-      const store = transaction.objectStore(STORE_NAME);
+      const transaction = database.transaction(SAVED_ARTICLES_STORE, 'readwrite');
+      const store = transaction.objectStore(SAVED_ARTICLES_STORE);
       article.saved_at = new Date().toISOString();
       const request = store.put(article);
 
@@ -73,8 +81,8 @@ const savedArticles = {
   async remove(id) {
     const database = await openDB();
     return new Promise((resolve, reject) => {
-      const transaction = database.transaction(STORE_NAME, 'readwrite');
-      const store = transaction.objectStore(STORE_NAME);
+      const transaction = database.transaction(SAVED_ARTICLES_STORE, 'readwrite');
+      const store = transaction.objectStore(SAVED_ARTICLES_STORE);
       const request = store.delete(id);
 
       request.onsuccess = () => resolve(true);
@@ -96,5 +104,86 @@ const savedArticles = {
       await this.save(article);
       return true;
     }
+  }
+};
+
+const readHistory = {
+  async getAll() {
+    const database = await openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = database.transaction(READ_HISTORY_STORE, 'readonly');
+      const store = transaction.objectStore(READ_HISTORY_STORE);
+      const index = store.index('read_at');
+      const request = index.getAll();
+
+      request.onsuccess = () => {
+        const results = request.result.sort((a, b) => 
+          new Date(b.read_at) - new Date(a.read_at)
+        );
+        resolve(results);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  },
+
+  async add(article) {
+    const database = await openDB();
+    
+    const articleToSave = {
+      id: article.id,
+      title: article.title,
+      source_name: article.source_name,
+      image_url: article.image_url,
+      published_at: article.published_at,
+      read_at: new Date().toISOString()
+    };
+
+    return new Promise((resolve, reject) => {
+      const transaction = database.transaction(READ_HISTORY_STORE, 'readwrite');
+      const store = transaction.objectStore(READ_HISTORY_STORE);
+      
+      store.put(articleToSave);
+
+      transaction.oncomplete = async () => {
+        await this._trimToLimit();
+        resolve(true);
+      };
+      transaction.onerror = () => reject(transaction.error);
+    });
+  },
+
+  async _trimToLimit() {
+    const database = await openDB();
+    const all = await this.getAll();
+    
+    if (all.length <= READ_HISTORY_LIMIT) {
+      return;
+    }
+
+    const toRemove = all.slice(READ_HISTORY_LIMIT);
+    
+    return new Promise((resolve, reject) => {
+      const transaction = database.transaction(READ_HISTORY_STORE, 'readwrite');
+      const store = transaction.objectStore(READ_HISTORY_STORE);
+      
+      toRemove.forEach(article => {
+        store.delete(article.id);
+      });
+
+      transaction.oncomplete = () => resolve(true);
+      transaction.onerror = () => reject(transaction.error);
+    });
+  },
+
+  async clear() {
+    const database = await openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = database.transaction(READ_HISTORY_STORE, 'readwrite');
+      const store = transaction.objectStore(READ_HISTORY_STORE);
+      const request = store.clear();
+
+      request.onsuccess = () => resolve(true);
+      request.onerror = () => reject(request.error);
+    });
   }
 };

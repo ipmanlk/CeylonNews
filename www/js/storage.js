@@ -75,3 +75,15 @@ function resetApp() {
   localStorage.clear();
   window.location.href = "index.html";
 }
+
+function getReadHistory() {
+  return readHistory.getAll();
+}
+
+function addToReadHistory(article) {
+  return readHistory.add(article);
+}
+
+function clearReadHistory() {
+  return readHistory.clear();
+}
