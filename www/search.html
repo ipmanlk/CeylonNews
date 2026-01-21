@@ -12,7 +12,7 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
       (function () {
-        var savedTheme = localStorage.getItem("theme") || "light";
+        const savedTheme = localStorage.getItem("app_theme") || "light";
         document.documentElement.setAttribute("data-theme", savedTheme);
       })();
     </script>
@@ -125,6 +125,12 @@
     <script src="js/api.js"></script>
     <script src="js/app.js"></script>
     <script>
+      function getFontClass() {
+        const lang = localStorage.getItem("ceylon_news_lang") || "en";
+        const useCustomFont = localStorage.getItem("use_custom_font") === "true";
+        return useCustomFont ? `${lang}-font` : "";
+      }
+
       const searchInput = document.getElementById("search-input");
       const searchClear = document.getElementById("search-clear");
       const recentSearches = document.getElementById("recent-searches");
@@ -217,13 +223,14 @@
       }
 
       function renderSearchResults(articles) {
+        const fontClass = getFontClass();
         articles.forEach((article) => {
           const card = document.createElement("div");
           card.className = "card card-standard mb-3";
           card.innerHTML = `
                         ${article.image_url ? `<img src="${article.image_url}" class="card-image" alt="${article.title}" />` : ""}
                         <div class="card-content">
-                            <h3 class="card-title">${article.title}</h3>
+                            <h3 class="card-title ${fontClass}">${article.title}</h3>
                             <div class="card-footer">
                                 <span class="badge">${article.source_name}</span>
                                 <span class="text-sm text-muted">${formatDate(article.published_at)}</span>

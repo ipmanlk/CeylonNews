@@ -12,7 +12,7 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
       (function () {
-        var savedTheme = localStorage.getItem("theme") || "light";
+        const savedTheme = localStorage.getItem("app_theme") || "light";
         document.documentElement.setAttribute("data-theme", savedTheme);
       })();
     </script>
@@ -113,10 +113,16 @@
       </a>
     </nav>
 
-    <script src="js/api.js"></script>
-    <script src="js/app.js"></script>
-    <script>
-      function initTouchScroll(container) {
+      <script src="js/api.js"></script>
+      <script src="js/app.js"></script>
+      <script>
+        function getFontClass() {
+          const lang = localStorage.getItem("ceylon_news_lang") || "en";
+          const useCustomFont = localStorage.getItem("use_custom_font") === "true";
+          return useCustomFont ? `${lang}-font` : "";
+        }
+
+        function initTouchScroll(container) {
         let isDown = false;
         let startX;
         let scrollLeft;
@@ -168,14 +174,14 @@
       let currentPage = 0;
       const PER_PAGE = 10;
       let hasMore = true;
-      let currentSources = localStorage.getItem("selectedSources")
-        ? JSON.parse(localStorage.getItem("selectedSources"))
+      let currentSources = localStorage.getItem("selected_sources")
+        ? JSON.parse(localStorage.getItem("selected_sources"))
         : [];
       const currentLanguage = localStorage.getItem("ceylon_news_lang") || "en";
       let moreStoriesAdded = false;
 
       function saveSelectedSources() {
-        localStorage.setItem("selectedSources", JSON.stringify(currentSources));
+        localStorage.setItem("selected_sources", JSON.stringify(currentSources));
       }
 
       async function loadArticles(loadMore = false) {
@@ -256,6 +262,7 @@
           let compactHTML = "";
 
           articles.forEach((article, index) => {
+            const fontClass = getFontClass();
             if (index === 0) {
               // Hero card
               heroHTML = `
@@ -263,7 +270,7 @@
                                     <img src="${article.image_url || getFallbackImage()}" class="card-image" alt="${article.title}" onerror="this.src='${getFallbackImage()}'; this.onerror=null;" />
                                     <span class="card-source">${article.source_name}</span>
                                     <div class="card-overlay">
-                                        <h2 class="card-title">${article.title}</h2>
+                                        <h2 class="card-title ${fontClass}">${article.title}</h2>
                                         <div class="card-meta">
                                             <span>${formatDate(article.published_at)}</span>
                                         </div>
@@ -276,7 +283,7 @@
                                 <div class="card card-standard animate-fade-in-up stagger-${index + 1}" onclick="window.location.href = 'article.html?id=${article.id}'">
                                     <img src="${article.image_url || getFallbackImage()}" class="card-image" alt="${article.title}" onerror="this.src='${getFallbackImage()}'; this.onerror=null;" />
                                     <div class="card-content">
-                                        <h3 class="card-title">${article.title}</h3>
+                                        <h3 class="card-title ${fontClass}">${article.title}</h3>
                                         <div class="card-footer">
                                             <span class="badge">${article.source_name}</span>
                                             <span class="text-sm text-muted">${formatDate(article.published_at)}</span>
@@ -293,7 +300,7 @@
                                 <div class="card card-compact article-item animate-fade-in-up" onclick="window.location.href = 'article.html?id=${article.id}'">
                                     ${imageHTML}
                                     <div style="flex: 1;">
-                                        <h3 class="card-title">${article.title}</h3>
+                                        <h3 class="card-title ${fontClass}">${article.title}</h3>
                                         <span class="text-xs text-muted mt-1">${article.source_name} • ${formatDate(article.published_at)}</span>
                                     </div>
                                 </div>
@@ -329,11 +336,12 @@
             const imageHTML = article.image_url
               ? `<img src="${article.image_url}" class="card-image" alt="${article.title}" onerror="this.src='${getFallbackImage()}'; this.onerror=null;" />`
               : `<img src="${getFallbackImage()}" class="card-image" alt="${article.title}" />`;
+            const fontClass = getFontClass();
             const card = `
                             <div class="card card-compact article-item animate-fade-in-up" onclick="window.location.href = 'article.html?id=${article.id}'">
                                 ${imageHTML}
                                 <div style="flex: 1;">
-                                    <h3 class="card-title">${article.title}</h3>
+                                    <h3 class="card-title ${fontClass}">${article.title}</h3>
                                     <span class="text-xs text-muted mt-1">${article.source_name} • ${formatDate(article.published_at)}</span>
                                 </div>
                             </div>
@@ -453,7 +461,7 @@
           } else {
             header.classList.remove("scrolled");
           }
-        });
+          });
       });
     </script>
   </body>

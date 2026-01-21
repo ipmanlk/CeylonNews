@@ -12,7 +12,7 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
       (function () {
-        var savedTheme = localStorage.getItem("theme") || "light";
+        const savedTheme = localStorage.getItem("app_theme") || "light";
         document.documentElement.setAttribute("data-theme", savedTheme);
       })();
     </script>
@@ -64,38 +64,32 @@
         </div>
       </div>
 
-      <p class="section-title mb-3 mt-5">Account</p>
+      <p class="section-title mb-3 mt-5">Display</p>
 
       <div class="card" style="padding: 12px 16px">
         <div class="setting-item">
           <div class="setting-label">
             <div class="setting-icon">
-              <i class="ph-fill ph-user" style="font-size: 20px"></i>
+              <i class="ph-fill ph-text-aa" style="font-size: 20px"></i>
             </div>
-            <span>Profile</span>
+            <span>Custom Font</span>
           </div>
-          <i class="ph ph-caret-right" style="color: var(--text-muted)"></i>
+          <label class="switch">
+            <input type="checkbox" id="custom-font-toggle" onchange="toggleCustomFont()" />
+            <span class="switch-slider"></span>
+          </label>
         </div>
+      </div>
 
+      <p class="section-title mb-3 mt-5">Library</p>
+
+      <div class="card" style="padding: 12px 16px">
         <div class="setting-item" onclick="window.location.href='saved-articles.html'" style="cursor: pointer">
           <div class="setting-label">
             <div class="setting-icon">
               <i class="ph-fill ph-bookmark" style="font-size: 20px"></i>
             </div>
             <span>Saved Articles</span>
-          </div>
-          <i class="ph ph-caret-right" style="color: var(--text-muted)"></i>
-        </div>
-
-        <div class="setting-item">
-          <div class="setting-label">
-            <div class="setting-icon">
-              <i
-                class="ph-fill ph-clock-counter-clockwise"
-                style="font-size: 20px"
-              ></i>
-            </div>
-            <span>Reading History</span>
           </div>
           <i class="ph ph-caret-right" style="color: var(--text-muted)"></i>
         </div>
@@ -219,7 +213,7 @@
     >
       <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
-          <h2>Select Language</h2>
+          <h2 class="en-font">Select Language / භාෂාව තෝරන්න / மொழியைத் தேர்ந்தெடுக்கவும்</h2>
           <i
             class="ph ph-x"
             style="font-size: 24px; cursor: pointer; color: var(--text-muted)"
@@ -243,7 +237,7 @@
                   >EN</span
                 >
               </div>
-              <span>English</span>
+              <span class="en-font">English</span>
             </div>
           </div>
           <div
@@ -262,7 +256,7 @@
                   >SI</span
                 >
               </div>
-              <span>Sinhala</span>
+              <span class="si-font">සිංහල</span>
             </div>
           </div>
           <div
@@ -281,7 +275,7 @@
                   >TA</span
                 >
               </div>
-              <span>Tamil</span>
+              <span class="ta-font">தமிழ்</span>
             </div>
           </div>
         </div>
@@ -352,72 +346,100 @@
       }
     </style>
 
-    <script src="js/api.js"></script>
-    <script src="js/app.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        if (localStorage.getItem("theme") === "dark") {
-          document.getElementById("theme-toggle").checked = true;
+      <script src="js/api.js"></script>
+      <script src="js/app.js"></script>
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          if (localStorage.getItem("app_theme") === "dark") {
+            document.getElementById("theme-toggle").checked = true;
+          }
+
+          if (localStorage.getItem("use_custom_font") === "true") {
+            document.getElementById("custom-font-toggle").checked = true;
+          }
+
+          checkApiStatus();
+          updateLanguageDisplay();
+        });
+
+        async function checkApiStatus() {
+          const statusEl = document.getElementById("api-status");
+          try {
+            await healthCheck();
+            statusEl.style.background = "#10b981";
+            statusEl.textContent = "Online";
+          } catch (error) {
+            statusEl.style.background = "#ef4444";
+            statusEl.textContent = "Offline";
+          }
         }
 
-        checkApiStatus();
-        updateLanguageDisplay();
-      });
-
-      async function checkApiStatus() {
-        const statusEl = document.getElementById("api-status");
-        try {
-          await healthCheck();
-          statusEl.style.background = "#10b981";
-          statusEl.textContent = "Online";
-        } catch (error) {
-          statusEl.style.background = "#ef4444";
-          statusEl.textContent = "Offline";
+        function updateLanguageDisplay() {
+          const lang = localStorage.getItem("ceylon_news_lang") || "en";
+          const langNames = {
+            en: "English",
+            si: "සිංහල",
+            ta: "தமிழ்"
+          };
+          const langElement = document.getElementById("current-language");
+          if (langElement) {
+            langElement.textContent = langNames[lang];
+          }
         }
-      }
 
-      function updateLanguageDisplay() {
-        const lang = localStorage.getItem("ceylon_news_lang") || "en";
-        const langDisplay =
-          lang === "en" ? "English" : lang === "si" ? "Sinhala" : "Tamil";
-        const langElement = document.getElementById("current-language");
-        if (langElement) {
-          langElement.textContent = langDisplay;
+        function toggleCustomFont() {
+          const isEnabled = document.getElementById("custom-font-toggle").checked;
+          localStorage.setItem("use_custom_font", isEnabled);
+          applyFontToContent();
         }
-      }
 
-      function resetApp() {
-        localStorage.clear();
-        window.location.href = "index.html";
-      }
+        function applyFontToContent() {
+          const lang = localStorage.getItem("ceylon_news_lang") || "en";
+          const useCustomFont = localStorage.getItem("use_custom_font") === "true";
+          const fontClass = useCustomFont ? `${lang}-font` : "";
 
-      function showContactModal() {
-        document.getElementById("contact-modal").classList.add("active");
-        document.body.style.overflow = "hidden";
-      }
+          const contentElements = document.querySelectorAll('.card-title, .article-title, .article-body, .card-content');
+          contentElements.forEach(el => {
+            el.classList.remove('en-font', 'si-font', 'ta-font');
+            if (fontClass) {
+              el.classList.add(fontClass);
+            }
+          });
+        }
 
-      function hideContactModal(e) {
-        if (e && e.target !== e.currentTarget) return;
-        document.getElementById("contact-modal").classList.remove("active");
-        document.body.style.overflow = "";
-      }
+        function resetApp() {
+          localStorage.clear();
+          window.location.href = "index.html";
+        }
 
-      function showLanguageModal() {
-        document.getElementById("language-modal").classList.add("active");
-        document.body.style.overflow = "hidden";
-      }
+        function showContactModal() {
+          document.getElementById("contact-modal").classList.add("active");
+          document.body.style.overflow = "hidden";
+        }
 
-      function hideLanguageModal(e) {
-        if (e && e.target !== e.currentTarget) return;
-        document.getElementById("language-modal").classList.remove("active");
-        document.body.style.overflow = "";
-      }
+        function hideContactModal(e) {
+          if (e && e.target !== e.currentTarget) return;
+          document.getElementById("contact-modal").classList.remove("active");
+          document.body.style.overflow = "";
+        }
 
-      function changeLanguage(lang) {
-        localStorage.setItem("ceylon_news_lang", lang);
-        updateLanguageDisplay();
-        hideLanguageModal();
-      }
-    </script>
+        function showLanguageModal() {
+          document.getElementById("language-modal").classList.add("active");
+          document.body.style.overflow = "hidden";
+        }
+
+        function hideLanguageModal(e) {
+          if (e && e.target !== e.currentTarget) return;
+          document.getElementById("language-modal").classList.remove("active");
+          document.body.style.overflow = "";
+        }
+
+        function changeLanguage(lang) {
+          localStorage.setItem("ceylon_news_lang", lang);
+          updateLanguageDisplay();
+          hideLanguageModal();
+          window.location.reload();
+        }
+      </script>
   </body>
 </html>

@@ -1,6 +1,6 @@
 // Theme Manager
 function initTheme() {
-  const savedTheme = localStorage.getItem("theme") || "light";
+  const savedTheme = localStorage.getItem("app_theme") || "light";
   document.documentElement.setAttribute("data-theme", savedTheme);
 }
 
@@ -8,7 +8,7 @@ function toggleTheme() {
   const current = document.documentElement.getAttribute("data-theme");
   const next = current === "light" ? "dark" : "light";
   document.documentElement.setAttribute("data-theme", next);
-  localStorage.setItem("theme", next);
+  localStorage.setItem("app_theme", next);
 }
 
 // Language Manager
@@ -26,6 +26,9 @@ function checkLanguage() {
 
 function setLanguage(lang) {
   localStorage.setItem("ceylon_news_lang", lang);
+  if (localStorage.getItem("use_custom_font") === null) {
+    localStorage.setItem("use_custom_font", "true");
+  }
   window.location.href = "home.html";
 }
 
@@ -62,6 +65,25 @@ function toggleSavedArticle(article) {
     saveArticle(article);
     return true;
   }
+}
+
+function applyCustomFontToContent() {
+  const lang = localStorage.getItem("ceylon_news_lang") || "en";
+  const useCustomFont = localStorage.getItem("use_custom_font") === "true";
+  const fontClass = useCustomFont ? `${lang}-font` : "";
+
+  const titles = document.querySelectorAll('.card-title, .article-title');
+  const bodies = document.querySelectorAll('.article-body, .card-content');
+
+  titles.forEach(el => {
+    el.classList.remove('en-font', 'si-font', 'ta-font');
+    if (fontClass) el.classList.add(fontClass);
+  });
+
+  bodies.forEach(el => {
+    el.classList.remove('en-font', 'si-font', 'ta-font');
+    if (fontClass) el.classList.add(fontClass);
+  });
 }
 
 // Initialize

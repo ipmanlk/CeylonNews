@@ -1,3 +1,33 @@
+@font-face {
+  font-family: "english";
+  src: url("../fonts/english.ttf");
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "sinhala";
+  src: url("../fonts/sinhala.ttf");
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "tamil";
+  src: url("../fonts/tamil.ttf");
+  font-weight: normal;
+}
+
+.en-font {
+  font-family: "english", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.si-font {
+  font-family: "sinhala", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.ta-font {
+  font-family: "tamil", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
 
 :root {
