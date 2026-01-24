@@ -2,10 +2,19 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' data: blob:; img-src * 'unsafe-inline' data: blob:; font-src * 'unsafe-inline' data: blob:; connect-src * 'unsafe-inline' data: blob:; media-src * 'unsafe-inline' data: blob:; object-src * 'unsafe-inline' data: blob:; frame-src * 'unsafe-inline' data: blob:; worker-src * 'unsafe-inline' data: blob:; manifest-src * 'unsafe-inline' data: blob:;" />
+    <meta
+      name="viewport"
+      content="initial-scale=1, width=device-width, viewport-fit=cover"
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' data: blob:; img-src * 'unsafe-inline' data: blob:; font-src * 'unsafe-inline' data: blob:; connect-src * 'unsafe-inline' data: blob:; media-src * 'unsafe-inline' data: blob:; object-src * 'unsafe-inline' data: blob:; frame-src * 'unsafe-inline' data: blob:; worker-src * 'unsafe-inline' data: blob:; manifest-src * 'unsafe-inline' data: blob:;"
+    />
     <title>Settings</title>
     <link rel="stylesheet" href="css/styles.css" />
+
+    <script src="cordova.js"></script>
+
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="js/core.js"></script>
   </head>
@@ -41,7 +50,9 @@
             <span>Language</span>
           </div>
           <div class="flex-center">
-            <span id="current-language" class="text-sm text-muted mr-2">English</span>
+            <span id="current-language" class="text-sm text-muted mr-2"
+              >English</span
+            >
             <i class="ph ph-caret-right text-muted"></i>
           </div>
         </div>
@@ -58,7 +69,11 @@
             <span>Custom Font</span>
           </div>
           <label class="switch">
-            <input type="checkbox" id="custom-font-toggle" onchange="toggleCustomFont()" />
+            <input
+              type="checkbox"
+              id="custom-font-toggle"
+              onchange="toggleCustomFont()"
+            />
             <span class="switch-slider"></span>
           </label>
         </div>
@@ -67,7 +82,10 @@
       <p class="section-title mb-3 mt-5">Library</p>
 
       <div class="card card-padded">
-        <div class="setting-item clickable" onclick="window.location.href='saved-articles.html'">
+        <div
+          class="setting-item clickable"
+          onclick="window.location.href = 'saved-articles.html'"
+        >
           <div class="setting-label">
             <div class="setting-icon">
               <i class="ph-fill ph-bookmark icon-md"></i>
@@ -77,12 +95,39 @@
           <i class="ph ph-caret-right text-muted"></i>
         </div>
 
-        <div class="setting-item clickable" onclick="window.location.href='read-history.html'">
+        <div
+          class="setting-item clickable"
+          onclick="window.location.href = 'read-history.html'"
+        >
           <div class="setting-label">
             <div class="setting-icon">
               <i class="ph-fill ph-clock-counter-clockwise icon-md"></i>
             </div>
             <span>Read History</span>
+          </div>
+          <i class="ph ph-caret-right text-muted"></i>
+        </div>
+      </div>
+
+      <p class="section-title mb-3 mt-5">Storage</p>
+
+      <div class="card card-padded">
+        <div class="setting-item">
+          <div class="setting-label">
+            <div class="setting-icon">
+              <i class="ph-fill ph-hard-drive icon-md"></i>
+            </div>
+            <span>Cache Size</span>
+          </div>
+          <span id="cache-size" class="text-sm text-muted">Calculating...</span>
+        </div>
+
+        <div class="setting-item clickable" onclick="clearCacheData()">
+          <div class="setting-label">
+            <div class="setting-icon">
+              <i class="ph-fill ph-broom icon-md"></i>
+            </div>
+            <span>Clear Cache</span>
           </div>
           <i class="ph ph-caret-right text-muted"></i>
         </div>
@@ -96,7 +141,11 @@
           <span class="text-muted">Navinda Dissanayake</span>
         </div>
 
-        <a href="https://www.navinda.me" target="_blank" class="setting-item setting-link">
+        <a
+          href="https://www.navinda.me"
+          target="_blank"
+          class="setting-item setting-link"
+        >
           <span>Web</span>
           <span class="text-muted">www.navinda.me</span>
         </a>
@@ -106,12 +155,18 @@
         </a>
       </div>
 
-      <button class="btn btn-outline btn-contact mt-4 font-semibold" onclick="showContactModal()">
+      <button
+        class="btn btn-outline btn-contact mt-4 font-semibold"
+        onclick="showContactModal()"
+      >
         <i class="ph ph-envelope mr-2"></i>
         Contact
       </button>
 
-      <button class="btn btn-outline btn-danger mt-4 font-semibold" onclick="resetApp()">
+      <button
+        class="btn btn-outline btn-danger mt-4 font-semibold"
+        onclick="resetApp()"
+      >
         <i class="ph ph-trash mr-2"></i>
         Reset
       </button>
@@ -136,14 +191,22 @@
       </a>
     </nav>
 
-    <div id="contact-modal" class="modal-overlay" onclick="hideContactModal(event)">
+    <div
+      id="contact-modal"
+      class="modal-overlay"
+      onclick="hideContactModal(event)"
+    >
       <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
           <h2>Contact</h2>
           <i class="ph ph-x modal-close" onclick="hideContactModal()"></i>
         </div>
         <div class="modal-body">
-          <a href="https://www.navinda.me" target="_blank" class="setting-item setting-link">
+          <a
+            href="https://www.navinda.me"
+            target="_blank"
+            class="setting-item setting-link"
+          >
             <span>Web</span>
             <span class="text-muted">www.navinda.me</span>
           </a>
@@ -155,10 +218,16 @@
       </div>
     </div>
 
-    <div id="language-modal" class="modal-overlay" onclick="hideLanguageModal(event)">
+    <div
+      id="language-modal"
+      class="modal-overlay"
+      onclick="hideLanguageModal(event)"
+    >
       <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
-          <h2 class="en-font">Select Language / භාෂාව තෝරන්න / மொழியைத் தேர்ந்தெடுக்கவும்</h2>
+          <h2 class="en-font">
+            Select Language / භාෂාව තෝරන්න / மொழியைத் தேர்ந்தெடுக்கவும்
+          </h2>
           <i class="ph ph-x modal-close" onclick="hideLanguageModal()"></i>
         </div>
         <div class="modal-body">

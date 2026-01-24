@@ -41,6 +41,41 @@ function changeLanguage(lang) {
   window.location.reload();
 }
 
+function updateCacheSize() {
+  getCacheSize()
+    .then(function (bytes) {
+      const cacheSizeElement = document.getElementById("cache-size");
+      if (cacheSizeElement) {
+        cacheSizeElement.textContent = formatBytes(bytes);
+      }
+    })
+    .catch(function (error) {
+      console.error("Error getting cache size:", error);
+      const cacheSizeElement = document.getElementById("cache-size");
+      if (cacheSizeElement) {
+        cacheSizeElement.textContent = "Not available";
+      }
+    });
+}
+
+function clearCacheData() {
+  if (
+    confirm(
+      "Are you sure you want to clear all cached data? This may slow down the app initially.",
+    )
+  ) {
+    clearCache()
+      .then(function () {
+        alert("Cache cleared successfully!");
+        updateCacheSize();
+      })
+      .catch(function (error) {
+        console.error("Error clearing cache:", error);
+        alert("Failed to clear cache: " + error.message);
+      });
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   if (localStorage.getItem("app_theme") === "dark") {
     document.getElementById("theme-toggle").checked = true;
@@ -50,5 +85,5 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("custom-font-toggle").checked = true;
   }
 
-  updateLanguageDisplay();
+  updateCacheSize();
 });

@@ -2,10 +2,19 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' data: blob:; img-src * 'unsafe-inline' data: blob:; font-src * 'unsafe-inline' data: blob:; connect-src * 'unsafe-inline' data: blob:; media-src * 'unsafe-inline' data: blob:; object-src * 'unsafe-inline' data: blob:; frame-src * 'unsafe-inline' data: blob:; worker-src * 'unsafe-inline' data: blob:; manifest-src * 'unsafe-inline' data: blob:;" />
+    <meta
+      name="viewport"
+      content="initial-scale=1, width=device-width, viewport-fit=cover"
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' data: blob:; img-src * 'unsafe-inline' data: blob:; font-src * 'unsafe-inline' data: blob:; connect-src * 'unsafe-inline' data: blob:; media-src * 'unsafe-inline' data: blob:; object-src * 'unsafe-inline' data: blob:; frame-src * 'unsafe-inline' data: blob:; worker-src * 'unsafe-inline' data: blob:; manifest-src * 'unsafe-inline' data: blob:;"
+    />
     <title>Read History</title>
     <link rel="stylesheet" href="css/styles.css" />
+
+    <script src="cordova.js"></script>
+
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="js/core.js"></script>
   </head>
@@ -13,7 +22,11 @@
     <header class="glass-header">
       <div class="container flex-between">
         <h1>Read History</h1>
-        <button id="clear-history-btn" class="btn-clear clickable hidden" onclick="confirmClearHistory()">
+        <button
+          id="clear-history-btn"
+          class="btn-clear clickable hidden"
+          onclick="confirmClearHistory()"
+        >
           <i class="ph ph-trash icon-lg text-muted"></i>
         </button>
       </div>
@@ -23,8 +36,15 @@
       <div id="empty-state" class="empty-state-container hidden">
         <i class="ph ph-clock-counter-clockwise saved-empty-icon"></i>
         <p class="text-muted text-center">No read history yet</p>
-        <p class="text-sm text-muted mt-2">Articles you read will appear here</p>
-        <button onclick="window.location.href='home.html'" class="btn btn-outline mt-5 btn-auto-width">Browse Articles</button>
+        <p class="text-sm text-muted mt-2">
+          Articles you read will appear here
+        </p>
+        <button
+          onclick="window.location.href = 'home.html'"
+          class="btn btn-outline mt-5 btn-auto-width"
+        >
+          Browse Articles
+        </button>
       </div>
 
       <div id="articles-container" class="mb-5"></div>

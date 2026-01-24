@@ -1,189 +1,154 @@
-const DB_NAME = 'ceylon_news_db';
-const DB_VERSION = 2;
-const SAVED_ARTICLES_STORE = 'saved_articles';
-const READ_HISTORY_STORE = 'read_history';
-const READ_HISTORY_LIMIT = 30;
+const DB_CONFIG = {
+  NAME: "ceylon_news_db",
+  VERSION: 2,
+  STORES: {
+    SAVED: "saved_articles",
+    HISTORY: "read_history",
+  },
+  LIMITS: {
+    HISTORY: 30,
+  },
+};
 
-let db = null;
+let dbInstance = null;
 
-function openDB() {
+function getDB() {
+  if (dbInstance) return Promise.resolve(dbInstance);
+
   return new Promise((resolve, reject) => {
-    if (db) {
-      resolve(db);
-      return;
-    }
+    const request = indexedDB.open(DB_CONFIG.NAME, DB_CONFIG.VERSION);
 
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-
-    request.onerror = () => {
-      reject(request.error);
-    };
-
+    request.onerror = () => reject(request.error);
     request.onsuccess = () => {
-      db = request.result;
-      resolve(db);
+      dbInstance = request.result;
+      resolve(dbInstance);
     };
 
     request.onupgradeneeded = (event) => {
-      const database = event.target.result;
-      
-      if (!database.objectStoreNames.contains(SAVED_ARTICLES_STORE)) {
-        const store = database.createObjectStore(SAVED_ARTICLES_STORE, { keyPath: 'id' });
-        store.createIndex('saved_at', 'saved_at', { unique: false });
+      const db = event.target.result;
+
+      if (!db.objectStoreNames.contains(DB_CONFIG.STORES.SAVED)) {
+        const store = db.createObjectStore(DB_CONFIG.STORES.SAVED, {
+          keyPath: "id",
+        });
+        store.createIndex("saved_at", "saved_at", { unique: false });
       }
-      
-      if (!database.objectStoreNames.contains(READ_HISTORY_STORE)) {
-        const store = database.createObjectStore(READ_HISTORY_STORE, { keyPath: 'id' });
-        store.createIndex('read_at', 'read_at', { unique: false });
+
+      if (!db.objectStoreNames.contains(DB_CONFIG.STORES.HISTORY)) {
+        const store = db.createObjectStore(DB_CONFIG.STORES.HISTORY, {
+          keyPath: "id",
+        });
+        store.createIndex("read_at", "read_at", { unique: false });
       }
     };
   });
 }
 
+async function queryDB(storeName, mode, callback) {
+  const db = await getDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(storeName, mode);
+    const store = tx.objectStore(storeName);
+
+    // Execute the IDB operation (get, put, delete, getAll)
+    const request = callback(store);
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
 const savedArticles = {
-  async getAll() {
-    const database = await openDB();
-    return new Promise((resolve, reject) => {
-      const transaction = database.transaction(SAVED_ARTICLES_STORE, 'readonly');
-      const store = transaction.objectStore(SAVED_ARTICLES_STORE);
-      const request = store.getAll();
-
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
-    });
+  getAll() {
+    return queryDB(DB_CONFIG.STORES.SAVED, "readonly", (store) =>
+      store.getAll(),
+    );
   },
 
-  async get(id) {
-    const database = await openDB();
-    return new Promise((resolve, reject) => {
-      const transaction = database.transaction(SAVED_ARTICLES_STORE, 'readonly');
-      const store = transaction.objectStore(SAVED_ARTICLES_STORE);
-      const request = store.get(id);
-
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
-    });
+  get(id) {
+    return queryDB(DB_CONFIG.STORES.SAVED, "readonly", (store) =>
+      store.get(id),
+    );
   },
 
-  async save(article) {
-    const database = await openDB();
-    return new Promise((resolve, reject) => {
-      const transaction = database.transaction(SAVED_ARTICLES_STORE, 'readwrite');
-      const store = transaction.objectStore(SAVED_ARTICLES_STORE);
-      article.saved_at = new Date().toISOString();
-      const request = store.put(article);
-
-      request.onsuccess = () => resolve(true);
-      request.onerror = () => reject(request.error);
-    });
+  save(article) {
+    const data = { ...article, saved_at: new Date().toISOString() };
+    return queryDB(DB_CONFIG.STORES.SAVED, "readwrite", (store) =>
+      store.put(data),
+    );
   },
 
-  async remove(id) {
-    const database = await openDB();
-    return new Promise((resolve, reject) => {
-      const transaction = database.transaction(SAVED_ARTICLES_STORE, 'readwrite');
-      const store = transaction.objectStore(SAVED_ARTICLES_STORE);
-      const request = store.delete(id);
-
-      request.onsuccess = () => resolve(true);
-      request.onerror = () => reject(request.error);
-    });
+  remove(id) {
+    return queryDB(DB_CONFIG.STORES.SAVED, "readwrite", (store) =>
+      store.delete(id),
+    );
   },
 
   async has(id) {
-    const article = await this.get(id);
-    return !!article;
+    const result = await this.get(id);
+    return !!result;
   },
 
   async toggle(article) {
-    const saved = await this.has(article.id);
-    if (saved) {
+    const exists = await this.has(article.id);
+    if (exists) {
       await this.remove(article.id);
       return false;
-    } else {
-      await this.save(article);
-      return true;
     }
-  }
+    await this.save(article);
+    return true;
+  },
 };
 
 const readHistory = {
   async getAll() {
-    const database = await openDB();
-    return new Promise((resolve, reject) => {
-      const transaction = database.transaction(READ_HISTORY_STORE, 'readonly');
-      const store = transaction.objectStore(READ_HISTORY_STORE);
-      const index = store.index('read_at');
-      const request = index.getAll();
+    const results = await queryDB(
+      DB_CONFIG.STORES.HISTORY,
+      "readonly",
+      (store) => {
+        return store.index("read_at").getAll();
+      },
+    );
 
-      request.onsuccess = () => {
-        const results = request.result.sort((a, b) => 
-          new Date(b.read_at) - new Date(a.read_at)
-        );
-        resolve(results);
-      };
-      request.onerror = () => reject(request.error);
-    });
+    // Sort mostly recent first
+    return results.sort((a, b) => new Date(b.read_at) - new Date(a.read_at));
   },
 
   async add(article) {
-    const database = await openDB();
-    
-    const articleToSave = {
+    const entry = {
       id: article.id,
       title: article.title,
       source_name: article.source_name,
       image_url: article.image_url,
       published_at: article.published_at,
-      read_at: new Date().toISOString()
+      read_at: new Date().toISOString(),
     };
 
-    return new Promise((resolve, reject) => {
-      const transaction = database.transaction(READ_HISTORY_STORE, 'readwrite');
-      const store = transaction.objectStore(READ_HISTORY_STORE);
-      
-      store.put(articleToSave);
+    await queryDB(DB_CONFIG.STORES.HISTORY, "readwrite", (store) =>
+      store.put(entry),
+    );
 
-      transaction.oncomplete = async () => {
-        await this._trimToLimit();
-        resolve(true);
-      };
-      transaction.onerror = () => reject(transaction.error);
-    });
+    return this._trim();
   },
 
-  async _trimToLimit() {
-    const database = await openDB();
+  async _trim() {
     const all = await this.getAll();
-    
-    if (all.length <= READ_HISTORY_LIMIT) {
-      return;
-    }
+    if (all.length <= DB_CONFIG.LIMITS.HISTORY) return;
 
-    const toRemove = all.slice(READ_HISTORY_LIMIT);
-    
-    return new Promise((resolve, reject) => {
-      const transaction = database.transaction(READ_HISTORY_STORE, 'readwrite');
-      const store = transaction.objectStore(READ_HISTORY_STORE);
-      
-      toRemove.forEach(article => {
-        store.delete(article.id);
-      });
+    const toDelete = all.slice(DB_CONFIG.LIMITS.HISTORY);
 
-      transaction.oncomplete = () => resolve(true);
-      transaction.onerror = () => reject(transaction.error);
-    });
+    const deletePromises = toDelete.map((item) =>
+      queryDB(DB_CONFIG.STORES.HISTORY, "readwrite", (store) =>
+        store.delete(item.id),
+      ),
+    );
+
+    return Promise.all(deletePromises);
   },
 
-  async clear() {
-    const database = await openDB();
-    return new Promise((resolve, reject) => {
-      const transaction = database.transaction(READ_HISTORY_STORE, 'readwrite');
-      const store = transaction.objectStore(READ_HISTORY_STORE);
-      const request = store.clear();
-
-      request.onsuccess = () => resolve(true);
-      request.onerror = () => reject(request.error);
-    });
-  }
+  clear() {
+    return queryDB(DB_CONFIG.STORES.HISTORY, "readwrite", (store) =>
+      store.clear(),
+    );
+  },
 };
