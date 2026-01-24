@@ -22,17 +22,7 @@ const CONFIG = {
 };
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches
-      .open(CONFIG.caches.static)
-      .then((cache) =>
-        cache.addAll([
-          "/css/styles.css",
-          "https://unpkg.com/@phosphor-icons/web",
-        ]),
-      )
-      .then(() => self.skipWaiting()),
-  );
+  event.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener("activate", (event) => {
@@ -60,13 +50,12 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // 1. API Strategy
   if (url.origin === CONFIG.apiBase) {
     event.respondWith(routeApiRequest(event.request, url));
     return;
   }
 
-  // 2. Image Strategy (External or Content Images)
+  // check for image extensions to catch external CDN URLs
   if (url.pathname.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)) {
     event.respondWith(
       cacheFirst(
@@ -81,24 +70,22 @@ self.addEventListener("fetch", (event) => {
 });
 
 function shouldIgnore(url) {
-  if (url.hostname === "localhost" || url.hostname === "127.0.0.1") {
-    return true;
-  }
+  // Localhost/Loopback (Dev environment)
+  if (["localhost", "127.0.0.1"].includes(url.hostname)) return true;
 
-  if (
-    url.protocol === "file:" ||
-    url.pathname.includes("cordova") ||
-    url.pathname === "/" ||
-    url.pathname.endsWith(".html")
-  ) {
-    return true;
-  }
+  // Cordova / File Protocol
+  if (url.protocol === "file:" || url.pathname.includes("cordova")) return true;
 
-  if (
-    url.origin === self.location.origin &&
-    url.pathname.match(/\.(css|js)$/i)
-  ) {
-    return true;
+  // Bundled Assets
+  const isLocalOrigin =
+    url.origin === self.location.origin || url.protocol === "file:";
+
+  if (isLocalOrigin) {
+    // root or HTML files
+    if (url.pathname === "/" || url.pathname.endsWith(".html")) return true;
+
+    // local assets
+    if (/^\/(js|css|fonts|img|res)\//i.test(url.pathname)) return true;
   }
 
   return false;
@@ -169,18 +156,30 @@ function cacheFirst(request, cacheName, maxAge, maxEntries) {
 
 function fetchAndCache(request, cacheName, maxEntries) {
   return fetch(request).then((networkResp) => {
-    if (!networkResp || !networkResp.ok) {
+    // Allow Opaque responses for cross-origin images
+    // Opaque responses have status 0 and ok: false, but contain valid image data
+    const isOpaque = networkResp.type === "opaque";
+
+    if (!networkResp.ok && !isOpaque) {
       throw new Error("Network response invalid");
     }
 
-    const headers = new Headers(networkResp.headers);
-    headers.append("sw-fetched-on", Date.now().toString());
+    // We can only clone and modify headers for NON-opaque responses.
+    // Opaque responses must be stored "as is".
+    let respToCache;
 
-    const respToCache = new Response(networkResp.clone().body, {
-      status: networkResp.status,
-      statusText: networkResp.statusText,
-      headers: headers,
-    });
+    if (isOpaque) {
+      respToCache = networkResp.clone();
+    } else {
+      const headers = new Headers(networkResp.headers);
+      headers.append("sw-fetched-on", Date.now().toString());
+
+      respToCache = new Response(networkResp.clone().body, {
+        status: networkResp.status,
+        statusText: networkResp.statusText,
+        headers: headers,
+      });
+    }
 
     caches.open(cacheName).then((cache) => {
       cache.put(request, respToCache);
@@ -192,8 +191,13 @@ function fetchAndCache(request, cacheName, maxEntries) {
 }
 
 function isCacheValid(response, maxAgeSeconds) {
+  // If response is Opaque (CORS image), we cannot read headers.
+  // We assume it's valid and let the LRU (Cache Limit) handle cleanup.
+  if (response.type === "opaque") return true;
+
   const timestamp = response.headers.get("sw-fetched-on");
   if (!timestamp) return false;
+
   return (Date.now() - parseInt(timestamp, 10)) / 1000 < maxAgeSeconds;
 }
 
