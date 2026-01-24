@@ -201,3 +201,21 @@ function formatBytes(bytes) {
   const mb = bytes / (1024 * 1024);
   return mb.toFixed(2) + ' MB';
 }
+
+// Font size management
+function getArticleFontSize() {
+  return localStorage.getItem("article_font_size") || "medium";
+}
+
+function setArticleFontSize(size) {
+  localStorage.setItem("article_font_size", size);
+  applyArticleFontSize(size);
+}
+
+function applyArticleFontSize(size) {
+  const articleBody = document.querySelector(".article-body");
+  if (articleBody) {
+    articleBody.classList.remove("text-size-small", "text-size-medium", "text-size-large", "text-size-extra-large");
+    articleBody.classList.add(`text-size-${size}`);
+  }
+}

@@ -1107,6 +1107,27 @@ p {
   color: var(--text-secondary);
 }
 
+/* Article text size variations */
+.article-body.text-size-small,
+.article-body.text-size-small * {
+  font-size: 15px;
+}
+
+.article-body.text-size-medium,
+.article-body.text-size-medium * {
+  font-size: 17px;
+}
+
+.article-body.text-size-large,
+.article-body.text-size-large * {
+  font-size: 19px;
+}
+
+.article-body.text-size-extra-large,
+.article-body.text-size-extra-large * {
+  font-size: 21px;
+}
+
 .article-body * {
   max-width: 100%;
   box-sizing: border-box;

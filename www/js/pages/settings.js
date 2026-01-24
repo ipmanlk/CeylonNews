@@ -76,6 +76,37 @@ function clearCacheData() {
   }
 }
 
+function showFontSizeModal() {
+  document.getElementById("font-size-modal").classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function hideFontSizeModal(e) {
+  if (e && e.target !== e.currentTarget) return;
+  document.getElementById("font-size-modal").classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+function setArticleSize(size) {
+  setArticleFontSize(size);
+  updateFontSizeDisplay();
+  hideFontSizeModal();
+}
+
+function updateFontSizeDisplay() {
+  const size = getArticleFontSize();
+  const sizeNames = { 
+    small: "Small", 
+    medium: "Medium", 
+    large: "Large", 
+    "extra-large": "Extra Large" 
+  };
+  const fontSizeElement = document.getElementById("current-font-size");
+  if (fontSizeElement) {
+    fontSizeElement.textContent = sizeNames[size];
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   if (localStorage.getItem("app_theme") === "dark") {
     document.getElementById("theme-toggle").checked = true;
@@ -86,4 +117,5 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   updateCacheSize();
+  updateFontSizeDisplay();
 });

@@ -77,6 +77,19 @@
             <span class="switch-slider"></span>
           </label>
         </div>
+
+        <div class="setting-item clickable" onclick="showFontSizeModal()">
+          <div class="setting-label">
+            <div class="setting-icon">
+              <i class="ph-fill ph-text-t icon-md"></i>
+            </div>
+            <span>Article Text Size</span>
+          </div>
+          <div class="flex-center">
+            <span id="current-font-size" class="text-sm text-muted mr-2">Medium</span>
+            <i class="ph ph-caret-right text-muted"></i>
+          </div>
+        </div>
       </div>
 
       <p class="section-title mb-3 mt-5">Library</p>
@@ -253,6 +266,53 @@
                 <span class="lang-icon">TA</span>
               </div>
               <span class="ta-font">தமிழ்</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="font-size-modal"
+      class="modal-overlay"
+      onclick="hideFontSizeModal(event)"
+    >
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Article Text Size</h2>
+          <i class="ph ph-x modal-close" onclick="hideFontSizeModal()"></i>
+        </div>
+        <div class="modal-body">
+          <div class="setting-item clickable" onclick="setArticleSize('small')">
+            <div class="setting-label">
+              <div class="setting-icon">
+                <span class="font-size-icon">A</span>
+              </div>
+              <span>Small</span>
+            </div>
+          </div>
+          <div class="setting-item clickable" onclick="setArticleSize('medium')">
+            <div class="setting-label">
+              <div class="setting-icon">
+                <span class="font-size-icon" style="font-size: 17px;">A</span>
+              </div>
+              <span>Medium</span>
+            </div>
+          </div>
+          <div class="setting-item clickable" onclick="setArticleSize('large')">
+            <div class="setting-label">
+              <div class="setting-icon">
+                <span class="font-size-icon" style="font-size: 20px;">A</span>
+              </div>
+              <span>Large</span>
+            </div>
+          </div>
+          <div class="setting-item clickable" onclick="setArticleSize('extra-large')">
+            <div class="setting-label">
+              <div class="setting-icon">
+                <span class="font-size-icon" style="font-size: 23px;">A</span>
+              </div>
+              <span>Extra Large</span>
             </div>
           </div>
         </div>

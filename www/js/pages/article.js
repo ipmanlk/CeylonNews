@@ -16,6 +16,7 @@ function applyArticleFont() {
   const titleEl = document.getElementById("article-title");
   const bodyEl = document.getElementById("article-body");
   applyCustomFont([titleEl, bodyEl]);
+  applyArticleFontSize(getArticleFontSize());
 }
 
 async function loadArticle(id) {
@@ -51,6 +52,9 @@ async function loadArticle(id) {
     const readOriginalBtn = document.getElementById("read-original-btn");
     readOriginalBtn.onclick = () => window.open(article.url, "_system");
     readOriginalBtn.innerHTML = `Read Original on ${article.source_name}<i class="ph ph-arrow-square-out icon-md ml-2"></i>`;
+
+    // Apply font size right after content is set
+    applyArticleFontSize(getArticleFontSize());
 
     await updateBookmarkButton();
     addToReadHistory(article);
