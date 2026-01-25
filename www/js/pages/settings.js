@@ -42,6 +42,20 @@ function changeLanguage(lang) {
 }
 
 function updateCacheSize() {
+  if (window.serviceWorkerSupported === false) {
+    const cacheSizeElement = document.getElementById("cache-size");
+    if (cacheSizeElement) {
+      cacheSizeElement.textContent = "Not supported";
+    }
+    const clearButton = document.querySelector('[onclick="clearCacheData()"]');
+    if (clearButton) {
+      clearButton.disabled = true;
+      clearButton.style.opacity = "0.5";
+      clearButton.style.cursor = "not-allowed";
+    }
+    return;
+  }
+  
   getCacheSize()
     .then(function (bytes) {
       const cacheSizeElement = document.getElementById("cache-size");
@@ -59,6 +73,11 @@ function updateCacheSize() {
 }
 
 function clearCacheData() {
+  if (window.serviceWorkerSupported === false) {
+    alert("Cache functionality is not available in this environment.");
+    return;
+  }
+  
   if (
     confirm(
       "Are you sure you want to clear all cached data? This may slow down the app initially.",
@@ -116,6 +135,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("custom-font-toggle").checked = true;
   }
 
-  updateCacheSize();
   updateFontSizeDisplay();
+  
+  if (typeof window.serviceWorkerSupported !== 'undefined') {
+    updateCacheSize();
+  } else {
+    setTimeout(updateCacheSize, 500);
+  }
 });

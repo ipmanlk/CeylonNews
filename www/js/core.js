@@ -142,10 +142,15 @@ document.addEventListener(
             "Service Worker registered with scope:",
             registration.scope,
           );
+          window.serviceWorkerSupported = true;
         })
         .catch(function (error) {
           console.log("Service Worker registration failed:", error);
+          window.serviceWorkerSupported = false;
         });
+    } else {
+      console.log("Service Worker not supported in this environment");
+      window.serviceWorkerSupported = false;
     }
   },
   false,
@@ -153,7 +158,7 @@ document.addEventListener(
 
 // Cache management functions
 function getCacheSize() {
-  if (!("caches" in window)) return Promise.resolve(0);
+  if (!("caches" in window) || window.serviceWorkerSupported === false) return Promise.resolve(0);
   
   return caches.keys().then(function(cacheNames) {
     const sizePromises = cacheNames.map(function(cacheName) {
@@ -185,7 +190,9 @@ function getCacheSize() {
 }
 
 function clearCache() {
-  if (!("caches" in window)) return Promise.reject(new Error("Cache API not supported"));
+  if (!("caches" in window) || window.serviceWorkerSupported === false) {
+    return Promise.reject(new Error("Cache API not supported"));
+  }
   
   return caches.keys().then(function(cacheNames) {
     return Promise.all(
