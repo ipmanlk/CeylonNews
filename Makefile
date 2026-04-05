@@ -1,4 +1,4 @@
-.PHONY: api-build api-dev api-test help android-build android-platform android-release
+.PHONY: api-build api-dev api-test help android-build android-platform android-release android-run
 
 help:
 	@echo "Ceylon News - Available Commands"
@@ -8,6 +8,7 @@ help:
 	@echo "  make android-build       - Build Android debug APK"
 	@echo "  make android-platform    - Refresh Android platform (remove/add)"
 	@echo "  make android-release     - Build Android release APK (requires mobile/build.json)"
+	@echo "  make android-run         - Run Android app on device/emulator"
 
 api-build:
 	cd api && go build --tags "fts5" -o build/cnapi ./cmd/server
@@ -30,3 +31,6 @@ android-release:
 		exit 1; \
 	fi
 	cd mobile && cordova build android --release
+
+android-run:
+	cd mobile && cordova run android
