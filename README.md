@@ -5,7 +5,7 @@
 Ceylon News
 ======================
 
-This app brings you the latest local news in Sri Lanka. It's built using my [CeylonNewsBackend](https://github.com/ipmanlk/CeylonNewsBackend) project and couple of other open source tools.
+Your daily aggregator for Sri Lankan news. Built with Apache Cordova and Go.
 
 ## Project Structure
 
@@ -19,25 +19,41 @@ ceylonnews/
 
 ### Prerequisites
 - Android Studio
-- Node.js v18 or above.
-- Apache Cordova ([Docs](https://cordova.apache.org/docs/en/latest/)).
-- Go 1.24+ (for backend)
+- Node.js v18+
+- Apache Cordova
+- Go 1.24+
 
 ### Building
 
-#### Mobile App
+All builds use the Makefile:
+
 ```bash
-cordova build android
+# Mobile App
+make android-build      # Debug APK
+make android-release   # Release APK (requires mobile/build.json)
+make android-platform  # Refresh Android platform
+
+# Backend API
+make api-build         # Production binary
+make api-dev           # Run development server
+make api-test          # Run tests
 ```
 
-Or with release signing:
-```bash
-make mobile-release
-```
+### Release Build Setup
 
-#### Backend API
-```bash
-make api-build
+For release builds, create `mobile/build.json`:
+
+```json
+{
+  "android": {
+    "release": {
+      "keystore": "/path/to/your/keystore.jks",
+      "alias": "your-key-alias",
+      "storePassword": "your-store-password",
+      "password": "your-key-password"
+    }
+  }
+}
 ```
 
 ## Technologies
@@ -45,6 +61,8 @@ make api-build
 - Onsen UI
 - jQuery
 - Go
+- SQLite
+- Goose
 
 ## License
 
