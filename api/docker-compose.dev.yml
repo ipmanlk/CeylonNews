@@ -52,8 +52,6 @@ services:
     container_name: browser-api-dev
     ports:
       - "8000:8000"
-    volumes:
-      - ./browser-api:/app
     networks:
       - ceylonnews
     restart: unless-stopped
