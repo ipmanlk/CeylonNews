@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1, width=device-width, viewport-fit=cover"
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' data: blob:; img-src * 'unsafe-inline' data: blob:; font-src * 'unsafe-inline' data: blob:; connect-src * 'unsafe-inline' data: blob:; media-src * 'unsafe-inline' data: blob:; object-src * 'unsafe-inline' data: blob:; frame-src * 'unsafe-inline' data: blob:; worker-src * 'unsafe-inline' data: blob:; manifest-src * 'unsafe-inline' data: blob:;"
+    />
+    <title>Settings</title>
+    <link rel="stylesheet" href="css/styles.css" />
+
+    <script src="cordova.js"></script>
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="js/core.js"></script>
+  </head>
+  <body>
+    <header class="glass-header">
+      <div class="container">
+        <h1>Settings</h1>
+      </div>
+    </header>
+
+    <div class="container page-container-narrow">
+      <p class="section-title mb-3">Preferences</p>
+
+      <div class="card card-padded">
+        <div class="setting-item">
+          <div class="setting-label">
+            <div class="setting-icon">
+              <i class="ph-fill ph-moon icon-md"></i>
+            </div>
+            <span>Dark Mode</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="theme-toggle" onchange="toggleTheme()" />
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-item clickable" onclick="showLanguageModal()">
+          <div class="setting-label">
+            <div class="setting-icon">
+              <i class="ph-fill ph-translate icon-md"></i>
+            </div>
+            <span>Language</span>
+          </div>
+          <div class="flex-center">
+            <span id="current-language" class="text-sm text-muted mr-2"
+              >English</span
+            >
+            <i class="ph ph-caret-right text-muted"></i>
+          </div>
+        </div>
+      </div>
+
+      <p class="section-title mb-3 mt-5">Display</p>
+
+      <div class="card card-padded">
+        <div class="setting-item">
+          <div class="setting-label">
+            <div class="setting-icon">
+              <i class="ph-fill ph-text-aa icon-md"></i>
+            </div>
+            <span>Custom Font</span>
+          </div>
+          <label class="switch">
+            <input
+              type="checkbox"
+              id="custom-font-toggle"
+              onchange="toggleCustomFont()"
+            />
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-item clickable" onclick="showFontSizeModal()">
+          <div class="setting-label">
+            <div class="setting-icon">
+              <i class="ph-fill ph-text-t icon-md"></i>
+            </div>
+            <span>Article Text Size</span>
+          </div>
+          <div class="flex-center">
+            <span id="current-font-size" class="text-sm text-muted mr-2">Medium</span>
+            <i class="ph ph-caret-right text-muted"></i>
+          </div>
+        </div>
+      </div>
+
+      <p class="section-title mb-3 mt-5">Library</p>
+
+      <div class="card card-padded">
+        <div
+          class="setting-item clickable"
+          onclick="window.location.href = 'saved-articles.html'"
+        >
+          <div class="setting-label">
+            <div class="setting-icon">
+              <i class="ph-fill ph-bookmark icon-md"></i>
+            </div>
+            <span>Saved Articles</span>
+          </div>
+          <i class="ph ph-caret-right text-muted"></i>
+        </div>
+
+        <div
+          class="setting-item clickable"
+          onclick="window.location.href = 'read-history.html'"
+        >
+          <div class="setting-label">
+            <div class="setting-icon">
+              <i class="ph-fill ph-clock-counter-clockwise icon-md"></i>
+            </div>
+            <span>Read History</span>
+          </div>
+          <i class="ph ph-caret-right text-muted"></i>
+        </div>
+      </div>
+
+      <p class="section-title mb-3 mt-5">Storage</p>
+
+      <div class="card card-padded">
+        <div class="setting-item">
+          <div class="setting-label">
+            <div class="setting-icon">
+              <i class="ph-fill ph-hard-drive icon-md"></i>
+            </div>
+            <span>Cache Size</span>
+          </div>
+          <span id="cache-size" class="text-sm text-muted">Calculating...</span>
+        </div>
+
+        <div class="setting-item clickable" onclick="clearCacheData()">
+          <div class="setting-label">
+            <div class="setting-icon">
+              <i class="ph-fill ph-broom icon-md"></i>
+            </div>
+            <span>Clear Cache</span>
+          </div>
+          <i class="ph ph-caret-right text-muted"></i>
+        </div>
+      </div>
+
+      <p class="section-title mb-3 mt-5">About</p>
+
+      <div class="card card-padded">
+        <div class="setting-item">
+          <span>Developed By</span>
+          <span class="text-muted">Navinda Dissanayake</span>
+        </div>
+
+        <a
+          href="https://www.navinda.me"
+          target="_blank"
+          class="setting-item setting-link"
+        >
+          <span>Web</span>
+          <span class="text-muted">www.navinda.me</span>
+        </a>
+        <a href="mailto:hi@navinda.me" class="setting-item setting-link">
+          <span>Mail</span>
+          <span class="text-muted">hi@navinda.me</span>
+        </a>
+      </div>
+
+      <button
+        class="btn btn-outline btn-contact mt-4 font-semibold"
+        onclick="showContactModal()"
+      >
+        <i class="ph ph-envelope mr-2"></i>
+        Contact
+      </button>
+
+      <button
+        class="btn btn-outline btn-danger mt-4 font-semibold"
+        onclick="resetApp()"
+      >
+        <i class="ph ph-trash mr-2"></i>
+        Reset
+      </button>
+    </div>
+
+    <nav class="bottom-nav">
+      <a href="home.html" class="nav-item">
+        <i class="ph ph-house"></i>
+        <span>Home</span>
+      </a>
+      <a href="search.html" class="nav-item">
+        <i class="ph ph-magnifying-glass"></i>
+        <span>Search</span>
+      </a>
+      <a href="saved-articles.html" class="nav-item">
+        <i class="ph ph-bookmark-simple"></i>
+        <span>Saved</span>
+      </a>
+      <a href="settings.html" class="nav-item active">
+        <i class="ph-fill ph-gear"></i>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <div
+      id="contact-modal"
+      class="modal-overlay"
+      onclick="hideContactModal(event)"
+    >
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Contact</h2>
+          <i class="ph ph-x modal-close" onclick="hideContactModal()"></i>
+        </div>
+        <div class="modal-body">
+          <a
+            href="https://www.navinda.me"
+            target="_blank"
+            class="setting-item setting-link"
+          >
+            <span>Web</span>
+            <span class="text-muted">www.navinda.me</span>
+          </a>
+          <a href="mailto:hi@navinda.me" class="setting-item setting-link">
+            <span>Mail</span>
+            <span class="text-muted">hi@navinda.me</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="language-modal"
+      class="modal-overlay"
+      onclick="hideLanguageModal(event)"
+    >
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <h2 class="en-font">
+            Select Language / භාෂාව තෝරන්න / மொழியைத் தேர்ந்தெடுக்கவும்
+          </h2>
+          <i class="ph ph-x modal-close" onclick="hideLanguageModal()"></i>
+        </div>
+        <div class="modal-body">
+          <div class="setting-item clickable" onclick="changeLanguage('en')">
+            <div class="setting-label">
+              <div class="setting-icon">
+                <span class="lang-icon">EN</span>
+              </div>
+              <span class="en-font">English</span>
+            </div>
+          </div>
+          <div class="setting-item clickable" onclick="changeLanguage('si')">
+            <div class="setting-label">
+              <div class="setting-icon">
+                <span class="lang-icon">SI</span>
+              </div>
+              <span class="si-font">සිංහල</span>
+            </div>
+          </div>
+          <div class="setting-item clickable" onclick="changeLanguage('ta')">
+            <div class="setting-label">
+              <div class="setting-icon">
+                <span class="lang-icon">TA</span>
+              </div>
+              <span class="ta-font">தமிழ்</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="font-size-modal"
+      class="modal-overlay"
+      onclick="hideFontSizeModal(event)"
+    >
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Article Text Size</h2>
+          <i class="ph ph-x modal-close" onclick="hideFontSizeModal()"></i>
+        </div>
+        <div class="modal-body">
+          <div class="setting-item clickable" onclick="setArticleSize('small')">
+            <div class="setting-label">
+              <div class="setting-icon">
+                <span class="font-size-icon">A</span>
+              </div>
+              <span>Small</span>
+            </div>
+          </div>
+          <div class="setting-item clickable" onclick="setArticleSize('medium')">
+            <div class="setting-label">
+              <div class="setting-icon">
+                <span class="font-size-icon" style="font-size: 17px;">A</span>
+              </div>
+              <span>Medium</span>
+            </div>
+          </div>
+          <div class="setting-item clickable" onclick="setArticleSize('large')">
+            <div class="setting-label">
+              <div class="setting-icon">
+                <span class="font-size-icon" style="font-size: 20px;">A</span>
+              </div>
+              <span>Large</span>
+            </div>
+          </div>
+          <div class="setting-item clickable" onclick="setArticleSize('extra-large')">
+            <div class="setting-label">
+              <div class="setting-icon">
+                <span class="font-size-icon" style="font-size: 23px;">A</span>
+              </div>
+              <span>Extra Large</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/indexeddb.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/pages/settings.js"></script>
+  </body>
+</html>

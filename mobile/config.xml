@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="xyz.navinda.ceylonnews" version="9.2.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Ceylon News</name>
+    <description>
+        Your daily aggregator for Sri Lankan news
+    </description>
+    <author email="io@navinda.me" href="https://navinda.me">
+        Navinda Dissanayake
+    </author>
+    <content src="index.html" />
+    
+    <preference name="Orientation" value="portrait" />
+    <preference name="Fullscreen" value="false" />
+    <preference name="KeepRunning" value="false" />
+    <preference name="AndroidLaunchMode" value="singleTask" />
+    <preference name="android-minSdkVersion" value="28" />
+    <preference name="android-targetSdkVersion" value="35" />
+    <preference name="android-windowSoftInputMode" value="adjustResize" />
+    <preference name="DisallowOverscroll" value="true" />
+    <platform name="android">
+        <preference name="android-usesCleartextTraffic" value="true" />
+        <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,assets,root" />
+    </platform>
+    
+    <access origin="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    
+    <platform name="android">
+        <allow-intent href="market:*" />
+
+        <!-- app icons -->
+        <icon src="res/android/icon/ldpi.png" density="ldpi" />
+        <icon src="res/android/icon/mdpi.png" density="mdpi" />
+        <icon src="res/android/icon/hdpi.png" density="hdpi" />
+        <icon src="res/android/icon/xhdpi.png" density="xhdpi" />
+        <icon src="res/android/icon/xxhdpi.png" density="xxhdpi" />
+        <icon src="res/android/icon/xxxhdpi.png" density="xxxhdpi" />
+
+        <!-- Default -->
+        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/android/splash/logo.png" />
+        <resource-file src="res/android/xml/colors.xml" target="/app/src/main/res/values/colors.xml" />
+    </platform>
+</widget>

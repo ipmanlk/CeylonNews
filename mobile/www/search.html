@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1, width=device-width, viewport-fit=cover"
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' data: blob:; img-src * 'unsafe-inline' data: blob:; font-src * 'unsafe-inline' data: blob:; connect-src * 'unsafe-inline' data: blob:; media-src * 'unsafe-inline' data: blob:; object-src * 'unsafe-inline' data: blob:; frame-src * 'unsafe-inline' data: blob:; worker-src * 'unsafe-inline' data: blob:; manifest-src * 'unsafe-inline' data: blob:;"
+    />
+    <title>Search</title>
+    <link rel="stylesheet" href="css/styles.css" />
+
+    <script src="cordova.js"></script>
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="js/core.js"></script>
+  </head>
+  <body>
+    <div class="glass-header search-header">
+      <div class="container">
+        <h1 class="mb-4">Search</h1>
+        <div class="search-box">
+          <i class="ph ph-magnifying-glass icon-md"></i>
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Search news, topics, sources..."
+          />
+          <button id="search-clear" class="flex-center hidden btn-clear">
+            <i class="ph ph-x-circle text-muted icon-md"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container page-container-narrow" id="search-results">
+      <div id="recent-searches">
+        <div class="flex-between mb-3 mt-4">
+          <span class="section-title">Recent Searches</span>
+          <span
+            class="text-sm text-accent clickable font-semibold"
+            id="clear-all"
+            >Clear</span
+          >
+        </div>
+        <div id="recent-searches-list"></div>
+      </div>
+
+      <div id="results-container" class="hidden">
+        <p class="section-title mb-3 mt-4" id="results-title">Search Results</p>
+        <div id="search-results-list"></div>
+        <div id="search-loading" class="loading-indicator hidden">
+          <div class="ptr-spinner"></div>
+          <span class="ptr-text">Searching...</span>
+        </div>
+        <div id="no-results" class="empty-state-container hidden">
+          <i class="ph ph-magnifying-glass empty-state-icon"></i>
+          <p class="empty-state-text">No results found</p>
+        </div>
+      </div>
+
+      <div id="empty-state" class="empty-state-container hidden">
+        <i class="ph ph-magnifying-glass empty-state-icon"></i>
+        <p class="empty-state-text">
+          Type above to search across 12+ local news sources
+        </p>
+      </div>
+    </div>
+
+    <nav class="bottom-nav">
+      <a href="home.html" class="nav-item">
+        <i class="ph ph-house"></i>
+        <span>Home</span>
+      </a>
+      <a href="search.html" class="nav-item active">
+        <i class="ph-fill ph-magnifying-glass"></i>
+        <span>Search</span>
+      </a>
+      <a href="saved-articles.html" class="nav-item">
+        <i class="ph ph-bookmark-simple"></i>
+        <span>Saved</span>
+      </a>
+      <a href="settings.html" class="nav-item">
+        <i class="ph ph-gear"></i>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <script src="js/indexeddb.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/pages/search.js"></script>
+  </body>
+</html>

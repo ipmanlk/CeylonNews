@@ -1,0 +1,26 @@
+name = "Derana"
+
+[[languages]]
+language = "en"
+max_items = 5
+
+[languages.listing]
+type = "rss"
+url = "https://www.adaderana.lk/rss.php"
+
+[[languages]]
+language = "si"
+max_items = 5
+
+[languages.listing]
+type = "rss"
+url = "https://sinhala.adaderana.lk/rsshotnews.php"
+
+[[languages]]
+language = "ta"
+max_items = 5
+
+[languages.listing]
+type = "rss"
+url = "http://tamil.adaderana.lk/rss.php"
+browser = true

@@ -1,0 +1,9 @@
+name = "Lankadeepa"
+
+[[languages]]
+language = "si"
+max_items = 5
+
+[languages.listing]
+type = "rss"
+url = "https://www.lankadeepa.lk/rss/latest_news/1"

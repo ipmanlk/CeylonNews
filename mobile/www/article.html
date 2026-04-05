@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1, width=device-width, viewport-fit=cover"
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' data: blob:; img-src * 'unsafe-inline' data: blob:; font-src * 'unsafe-inline' data: blob:; connect-src * 'unsafe-inline' data: blob:; media-src * 'unsafe-inline' data: blob:; object-src * 'unsafe-inline' data: blob:; frame-src * 'unsafe-inline' data: blob:; worker-src * 'unsafe-inline' data: blob:; manifest-src * 'unsafe-inline' data: blob:;"
+    />
+    <title>Article Detail</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="js/core.js"></script>
+  </head>
+  <body>
+    <div id="hero-loading" class="article-hero skeleton-hero flex-center">
+      <button class="article-back-btn" onclick="history.back()">
+        <i class="ph ph-arrow-left icon-lg"></i>
+      </button>
+    </div>
+
+    <div class="article-hero hidden" id="article-hero">
+      <button class="article-back-btn" onclick="history.back()">
+        <i class="ph ph-arrow-left icon-lg"></i>
+      </button>
+      <button id="bookmark-btn" class="article-bookmark-btn hidden">
+        <i class="ph ph-bookmark-simple icon-lg" id="bookmark-icon"></i>
+      </button>
+      <img id="article-hero-img" alt="Article Hero" />
+    </div>
+
+    <div id="article-loading" class="flex-center article-loading">
+      <div class="ptr-spinner"></div>
+      <span class="ptr-text">Loading article...</span>
+    </div>
+
+    <div
+      class="article-content article-content-container hidden"
+      id="article-content"
+    >
+      <div class="article-header animate-fade-in-up">
+        <span class="article-source" id="article-source">
+          <i class="ph-fill ph-newspaper"></i>
+          <span id="source-name">Loading...</span>
+        </span>
+        <h1 class="article-title" id="article-title">Loading...</h1>
+        <div class="article-meta">
+          <div class="article-meta-item">
+            <i class="ph ph-calendar-blank"></i>
+            <span id="article-date">Loading...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="article-divider"></div>
+
+      <div
+        class="article-body animate-fade-in-up stagger-1"
+        id="article-body"
+      ></div>
+
+      <div class="article-btn-container">
+        <button class="btn btn-outline btn-lg" id="read-original-btn">
+          Read Original
+          <i class="ph ph-arrow-square-out icon-md"></i>
+        </button>
+      </div>
+
+      <div class="article-read-more animate-fade-in-up stagger-2">
+        <p class="article-read-more-title">Related Stories</p>
+        <div id="related-articles"></div>
+      </div>
+
+      <div class="article-spacer"></div>
+    </div>
+
+    <nav class="bottom-nav">
+      <a href="home.html" class="nav-item">
+        <i class="ph ph-house"></i>
+        <span>Home</span>
+      </a>
+      <a href="search.html" class="nav-item">
+        <i class="ph ph-magnifying-glass"></i>
+        <span>Search</span>
+      </a>
+      <a href="saved-articles.html" class="nav-item">
+        <i class="ph ph-bookmark-simple"></i>
+        <span>Saved</span>
+      </a>
+      <a href="settings.html" class="nav-item">
+        <i class="ph ph-gear"></i>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <script src="js/indexeddb.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/pages/article.js"></script>
+  </body>
+</html>

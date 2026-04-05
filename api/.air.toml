@@ -1,0 +1,25 @@
+
+root = "."
+tmp_dir = ".tmp" # hidden tmp folder
+
+[build]
+  bin = ".tmp/main"
+  cmd = "go build --tags \"fts5\" -o .tmp/main ./cmd/server"
+  include_ext = ["go"]
+  exclude_dir = ["browser-api", "data", "node_modules", "dist", ".tmp"]
+  exclude_file = []
+  exclude_regex = ["_test.go"]
+  follow_symlink = true
+  full_bin = ".tmp/main"
+  log = ".tmp/air.log"
+  stop_on_error = true
+  delay = 1000 # ms
+
+[log]
+  time = true
+
+[color]
+  main = "yellow"
+
+[misc]
+  clean_on_exit = true

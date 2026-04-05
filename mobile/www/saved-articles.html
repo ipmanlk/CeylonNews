@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1, width=device-width, viewport-fit=cover"
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' data: blob:; img-src * 'unsafe-inline' data: blob:; font-src * 'unsafe-inline' data: blob:; connect-src * 'unsafe-inline' data: blob:; media-src * 'unsafe-inline' data: blob:; object-src * 'unsafe-inline' data: blob:; frame-src * 'unsafe-inline' data: blob:; worker-src * 'unsafe-inline' data: blob:; manifest-src * 'unsafe-inline' data: blob:;"
+    />
+    <title>Saved Articles</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script src="cordova.js"></script>
+
+    <script src="js/core.js"></script>
+  </head>
+  <body>
+    <header class="glass-header">
+      <div class="container">
+        <h1>Saved Articles</h1>
+      </div>
+    </header>
+
+    <div class="container page-container">
+      <div id="empty-state" class="empty-state-container hidden">
+        <i class="ph ph-bookmark-simple saved-empty-icon"></i>
+        <p class="text-muted text-center">No saved articles yet</p>
+        <p class="text-sm text-muted mt-2">
+          Tap the bookmark icon on any article to save it
+        </p>
+        <button
+          onclick="window.location.href = 'home.html'"
+          class="btn btn-outline mt-5 btn-auto-width"
+        >
+          Browse Articles
+        </button>
+      </div>
+
+      <div id="articles-container" class="mb-5"></div>
+    </div>
+
+    <nav class="bottom-nav">
+      <a href="home.html" class="nav-item">
+        <i class="ph ph-house"></i>
+        <span>Home</span>
+      </a>
+      <a href="search.html" class="nav-item">
+        <i class="ph ph-magnifying-glass"></i>
+        <span>Search</span>
+      </a>
+      <a href="saved-articles.html" class="nav-item active">
+        <i class="ph-fill ph-bookmark-simple"></i>
+        <span>Saved</span>
+      </a>
+      <a href="settings.html" class="nav-item">
+        <i class="ph ph-gear"></i>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <script src="js/indexeddb.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/pages/saved.js"></script>
+  </body>
+</html>

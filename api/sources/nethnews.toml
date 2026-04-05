@@ -1,0 +1,9 @@
+name = "Neth News"
+
+[[languages]]
+language = "si"
+max_items = 5
+
+[languages.listing]
+type = "rss"
+url = "https://www.nethnews.lk/feed/"

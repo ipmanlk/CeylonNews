@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' data: blob:; img-src * 'unsafe-inline' data: blob:; font-src * 'unsafe-inline' data: blob:; connect-src * 'unsafe-inline' data: blob:; media-src * 'unsafe-inline' data: blob:; object-src * 'unsafe-inline' data: blob:; frame-src * 'unsafe-inline' data: blob:; worker-src * 'unsafe-inline' data: blob:; manifest-src * 'unsafe-inline' data: blob:;"
+    />
+    <title>Ceylon News - Select Language</title>
+    <link rel="stylesheet" href="css/styles.css" />
+
+    <script src="cordova.js"></script>
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="js/core.js"></script>
+  </head>
+  <body id="lang-select-page" class="flex-center lang-select-page">
+    <div class="container lang-select-container">
+      <div class="animate-fade-in-up mb-5">
+        <div class="lang-icon-box-lg">
+          <i class="ph-fill ph-newspaper-clipping app-icon-lg"></i>
+        </div>
+        <h1 class="mb-2">Ceylon News</h1>
+        <p class="text-muted">Your daily aggregator for Sri Lankan news</p>
+      </div>
+
+      <div class="animate-fade-in-up stagger-1 lang-options">
+        <p class="text-sm text-muted mb-2 font-semibold tracking-wide">
+          SELECT YOUR LANGUAGE / කරුණාකර ඔබගේ භාෂාව තෝරන්න / உங்கள் மொழியைத்
+          தேர்ந்தெடுக்கவும்
+        </p>
+
+        <button
+          onclick="selectLanguage('en')"
+          class="card flex-between lang-btn"
+        >
+          <div class="flex-center gap-3">
+            <div class="lang-icon-box">
+              <span class="lang-icon">EN</span>
+            </div>
+            <span class="lang-btn-text">English</span>
+          </div>
+          <i class="ph ph-caret-right text-muted icon-md"></i>
+        </button>
+
+        <button
+          onclick="selectLanguage('si')"
+          class="card flex-between lang-btn"
+        >
+          <div class="flex-center gap-3">
+            <div class="lang-icon-box">
+              <span class="lang-icon">SI</span>
+            </div>
+            <span class="lang-btn-text">සිංහල</span>
+          </div>
+          <i class="ph ph-caret-right text-muted icon-md"></i>
+        </button>
+
+        <button
+          onclick="selectLanguage('ta')"
+          class="card flex-between lang-btn"
+        >
+          <div class="flex-center gap-3">
+            <div class="lang-icon-box">
+              <span class="lang-icon">TA</span>
+            </div>
+            <span class="lang-btn-text">தமிழ்</span>
+          </div>
+          <i class="ph ph-caret-right text-muted icon-md"></i>
+        </button>
+      </div>
+
+      <div class="animate-fade-in-up stagger-2 mt-5">
+        <div class="setting-item setting-item-standalone">
+          <div class="setting-label">
+            <div class="setting-icon">
+              <i class="ph-fill ph-moon icon-md"></i>
+            </div>
+            <span>Dark Mode</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="theme-toggle" onchange="toggleTheme()" />
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <p class="text-sm text-muted mt-5 footer-text">
+        Content from public feeds; all rights reserved by respective sources.
+      </p>
+    </div>
+
+    <script src="js/indexeddb.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/pages/index.js"></script>
+  </body>
+</html>

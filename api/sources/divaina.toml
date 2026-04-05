@@ -1,0 +1,11 @@
+name = "Divaina"
+
+[[languages]]
+language = "si"
+max_items = 5
+
+[languages.listing]
+type = "html"
+url = "https://www.divaina.lk/category/breaking-news"
+selectors = ["a.p-url"]
+url_prefix = "https://www.divaina.lk/"

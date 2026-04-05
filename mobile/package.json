@@ -1,0 +1,30 @@
+{
+  "name": "xyz.navinda.ceylonnews",
+  "displayName": "Ceylon News",
+  "version": "1.0.0",
+  "description": "Your daily aggregator for Sri Lankan news",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "news",
+    "sri-lanka",
+    "cordova-android"
+  ],
+  "author": "Navinda",
+  "license": "Apache-2.0",
+  "cordova": {
+    "platforms": [
+      "android"
+    ],
+    "plugins": {
+      "cordova-plugin-network-information": {}
+    }
+  },
+  "devDependencies": {
+    "cordova-android": "^14.0.1",
+    "cordova-plugin-network-information": "^3.0.0"
+  }
+}

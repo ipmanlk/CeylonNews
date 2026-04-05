@@ -1,0 +1,17 @@
+name = "Lankapuvath"
+
+[[languages]]
+language = "en"
+max_items = 5
+
+[languages.listing]
+type = "rss"
+url = "https://english.lankapuvath.lk/feed/"
+
+[[languages]]
+language = "si"
+max_items = 5
+
+[languages.listing]
+type = "rss"
+url = "https://sinhala.lankapuvath.lk/feed/"

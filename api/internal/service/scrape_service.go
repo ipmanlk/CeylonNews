@@ -1,0 +1,237 @@
+package service
+
+import (
+	"context"
+	"fmt"
+	"log/slog"
+	"sync"
+
+	"ipmanlk/cnapi/internal/model"
+	"ipmanlk/cnapi/internal/scraper"
+)
+
+type ScrapeResult struct {
+	Articles     []model.ScrapedArticle
+	Source       string
+	Language     model.Language
+	ArticleCount int
+	Success      bool
+	Error        error
+}
+
+type scrapeService struct {
+	registry *scraper.Registry
+}
+
+func NewScrapeService(registry *scraper.Registry) *scrapeService {
+	return &scrapeService{
+		registry: registry,
+	}
+}
+
+type scrapeTask struct {
+	scraper  scraper.SourceScraper
+	language model.Language
+}
+
+func (s *scrapeService) ScrapeAllConcurrent(ctx context.Context, httpWorkers int, browserWorkers int, batchSize int) <-chan ScrapeResult {
+	resultChan := make(chan ScrapeResult, httpWorkers+browserWorkers)
+
+	var httpTasks []scrapeTask
+	var browserTasks []scrapeTask
+
+	scrapers := s.registry.GetScrapers()
+	for _, scraper := range scrapers {
+		for _, lang := range scraper.Languages() {
+			task := scrapeTask{scraper: scraper, language: lang}
+			if scraper.UsesBrowser(lang) {
+				browserTasks = append(browserTasks, task)
+			} else {
+				httpTasks = append(httpTasks, task)
+			}
+		}
+	}
+
+	go func() {
+		defer close(resultChan)
+
+		var wg sync.WaitGroup
+
+		httpCh := make(chan scrapeTask, len(httpTasks))
+		for i := 0; i < httpWorkers; i++ {
+			wg.Add(1)
+			go s.worker(ctx, httpCh, resultChan, batchSize, &wg)
+		}
+
+		browserCh := make(chan scrapeTask, len(browserTasks))
+		for i := 0; i < browserWorkers; i++ {
+			wg.Add(1)
+			go s.worker(ctx, browserCh, resultChan, batchSize, &wg)
+		}
+
+		for _, task := range httpTasks {
+			select {
+			case httpCh <- task:
+			case <-ctx.Done():
+				close(httpCh)
+				close(browserCh)
+				wg.Wait()
+				return
+			}
+		}
+		close(httpCh)
+
+		for _, task := range browserTasks {
+			select {
+			case browserCh <- task:
+			case <-ctx.Done():
+				close(browserCh)
+				wg.Wait()
+				return
+			}
+		}
+		close(browserCh)
+
+		wg.Wait()
+	}()
+
+	return resultChan
+}
+
+func (s *scrapeService) worker(ctx context.Context, tasks <-chan scrapeTask, results chan<- ScrapeResult, batchSize int, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	for task := range tasks {
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			articles, err := task.scraper.Scrape(ctx, task.language)
+
+			result := ScrapeResult{
+				Source:   task.scraper.Name(),
+				Language: task.language,
+				Success:  err == nil,
+				Error:    err,
+			}
+
+			if err != nil {
+				slog.Warn("failed to scrape from source",
+					"source", task.scraper.Name(),
+					"language", task.language,
+					"error", err,
+				)
+				result.ArticleCount = 0
+				result.Articles = nil
+				results <- result
+				continue
+			}
+
+			slog.Info("successfully scraped articles",
+				"source", task.scraper.Name(),
+				"language", task.language,
+				"count", len(articles),
+			)
+
+			if batchSize <= 0 || len(articles) <= batchSize {
+				result.Articles = articles
+				result.ArticleCount = len(articles)
+				results <- result
+			} else {
+				for i := 0; i < len(articles); i += batchSize {
+					end := i + batchSize
+					if end > len(articles) {
+						end = len(articles)
+					}
+
+					batchResult := ScrapeResult{
+						Source:       task.scraper.Name(),
+						Language:     task.language,
+						Articles:     articles[i:end],
+						ArticleCount: end - i,
+						Success:      true,
+						Error:        nil,
+					}
+
+					select {
+					case results <- batchResult:
+					case <-ctx.Done():
+						return
+					}
+				}
+			}
+		}
+	}
+}
+
+func (s *scrapeService) ScrapeBySource(ctx context.Context, sourceName string) ([]model.ScrapedArticle, error) {
+	scraper := s.registry.GetScraperByName(sourceName)
+	if scraper == nil {
+		return nil, fmt.Errorf("scraper not found: %s", sourceName)
+	}
+
+	var allArticles []model.ScrapedArticle
+	for _, lang := range scraper.Languages() {
+		articles, err := scraper.Scrape(ctx, lang)
+		if err != nil {
+			slog.Warn("failed to scrape from source",
+				"source", sourceName,
+				"language", lang,
+				"error", err,
+			)
+			continue
+		}
+
+		allArticles = append(allArticles, articles...)
+	}
+
+	return allArticles, nil
+}
+
+func (s *scrapeService) ScrapeByLanguage(ctx context.Context, language model.Language) ([]model.ScrapedArticle, error) {
+	var allArticles []model.ScrapedArticle
+	scrapers := s.registry.GetScrapersByLanguage(string(language))
+
+	for _, scraper := range scrapers {
+		articles, err := scraper.Scrape(ctx, language)
+		if err != nil {
+			slog.Warn("failed to scrape from source",
+				"source", scraper.Name(),
+				"language", language,
+				"error", err,
+			)
+			continue
+		}
+
+		allArticles = append(allArticles, articles...)
+	}
+
+	return allArticles, nil
+}
+
+func (s *scrapeService) GetAvailableSources() []string {
+	scrapers := s.registry.GetScrapers()
+	sources := make([]string, len(scrapers))
+	for i, scraper := range scrapers {
+		sources[i] = scraper.Name()
+	}
+	return sources
+}
+
+func (s *scrapeService) GetAvailableLanguages() []model.Language {
+	scrapers := s.registry.GetScrapers()
+	languageMap := make(map[model.Language]bool)
+
+	for _, scraper := range scrapers {
+		for _, lang := range scraper.Languages() {
+			languageMap[lang] = true
+		}
+	}
+
+	languages := make([]model.Language, 0, len(languageMap))
+	for lang := range languageMap {
+		languages = append(languages, lang)
+	}
+
+	return languages
+}

@@ -1,0 +1,70 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Build artifacts
+build/
+bin/
+.tmp/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go workspace file
+go.work
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Documentation
+*.md
+!README.md
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Logs
+*.log
+
+# Database file
+data/*.sqlite
+data/*.sqlite3
+
+# Keep gitkeep for directory structure
+!data/.gitkeep
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Docker files (exclude from context to prevent recursive issues)
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# Testing
+coverage.txt
+coverage.html
+
+# Misc
+Makefile
+.air.toml
+
+browser-api

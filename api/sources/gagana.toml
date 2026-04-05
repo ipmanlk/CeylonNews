@@ -1,0 +1,12 @@
+name = "Gagana"
+
+[[languages]]
+language = "si"
+max_items = 5
+
+[languages.listing]
+type = "html"
+url = "https://gagana.lk/news/srilanka"
+selectors = ["div.a-item h4 a"]
+url_prefix = "https://gagana.lk/article/"
+base_url = "https://gagana.lk"

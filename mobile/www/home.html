@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1, width=device-width, viewport-fit=cover"
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' data: blob:; img-src * 'unsafe-inline' data: blob:; font-src * 'unsafe-inline' data: blob:; connect-src * 'unsafe-inline' data: blob:; media-src * 'unsafe-inline' data: blob:; object-src * 'unsafe-inline' data: blob:; frame-src * 'unsafe-inline' data: blob:; worker-src * 'unsafe-inline' data: blob:; manifest-src * 'unsafe-inline' data: blob:;"
+    />
+    <title>Ceylon News</title>
+    <link rel="stylesheet" href="css/styles.css" />
+
+    <script src="cordova.js"></script>
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="js/core.js"></script>
+  </head>
+  <body>
+    <header class="glass-header">
+      <div class="container">
+        <div class="flex-between">
+          <div>
+            <p class="text-sm text-muted font-semibold header-subtitle">
+              TODAY
+            </p>
+            <h1>Ceylon News</h1>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="source-scroll" id="source-filters">
+      <div class="source-pill active" data-source="all">All</div>
+    </div>
+
+    <div class="container" id="feed-container">
+      <div id="loading-skeleton" class="animate-fade-in">
+        <div class="skeleton skeleton-hero mb-4"></div>
+        <div class="flex-between mb-4">
+          <div class="flex-center gap-3">
+            <div class="skeleton skeleton-avatar"></div>
+            <div>
+              <div class="skeleton skeleton-text w-80"></div>
+              <div class="skeleton skeleton-text w-60"></div>
+            </div>
+          </div>
+        </div>
+        <div class="skeleton skeleton-title"></div>
+        <div class="skeleton skeleton-text"></div>
+        <div class="skeleton skeleton-text w-70"></div>
+        <div class="divider"></div>
+        <div class="card card-standard mb-3 no-events">
+          <div class="skeleton skeleton-card"></div>
+          <div class="flex-1">
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text w-60"></div>
+          </div>
+        </div>
+        <div class="card card-standard no-events">
+          <div class="skeleton skeleton-card"></div>
+          <div class="flex-1">
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text w-60"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="news-content" class="hidden"></div>
+    </div>
+
+    <nav class="bottom-nav">
+      <a href="home.html" class="nav-item active">
+        <i class="ph-fill ph-house"></i>
+        <span>Home</span>
+      </a>
+      <a href="search.html" class="nav-item">
+        <i class="ph ph-magnifying-glass"></i>
+        <span>Search</span>
+      </a>
+      <a href="saved-articles.html" class="nav-item">
+        <i class="ph ph-bookmark-simple"></i>
+        <span>Saved</span>
+      </a>
+      <a href="settings.html" class="nav-item">
+        <i class="ph ph-gear"></i>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <script src="js/indexeddb.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/pages/home.js"></script>
+  </body>
+</html>

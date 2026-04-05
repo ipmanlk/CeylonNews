@@ -1,0 +1,68 @@
+services:
+  cnapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cnapi
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      - DB_DRIVER=sqlite3
+      - DB_DSN=./data/db.sqlite
+      - DB_MAX_OPEN_CONNS=25
+      - DB_MAX_IDLE_CONNS=5
+      - DB_CONN_MAX_LIFETIME=5m
+      - FETCHER_HTTP_TIMEOUT=15s
+      - FETCHER_BROWSER_API_URL=http://browser-api:8000
+      - FETCHER_BROWSER_TIMEOUT=60s
+      - FETCHER_BROWSER_WAIT_TIME=15
+      - LOG_LEVEL=info
+      - LOG_FORMAT=json
+      - LOG_ADD_SOURCE=true
+      - SCHEDULER_ENABLED=true
+      - SCHEDULER_SCRAPE_INTERVAL=1h
+      - HTTP_HOST=0.0.0.0
+      - HTTP_PORT=8080
+      - HTTP_READ_TIMEOUT=30s
+      - HTTP_WRITE_TIMEOUT=30s
+      - HTTP_IDLE_TIMEOUT=120s
+      - HTTP_SHUTDOWN_TIMEOUT=15s
+    volumes:
+      - ./data:/app/data
+    networks:
+      - ceylonnews
+    restart: unless-stopped
+    depends_on:
+      browser-api:
+        condition: service_healthy
+
+  browser-api:
+    build:
+      context: ./browser-api
+      dockerfile: Dockerfile
+    container_name: browser-api
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ./browser-api:/app
+    networks:
+      - ceylonnews
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:8000/health",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+networks:
+  ceylonnews:
+    driver: bridge
