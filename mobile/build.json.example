@@ -1,0 +1,10 @@
+{
+  "android": {
+    "release": {
+      "keystore": "local.properties",
+      "alias": "$(ANDROID_KEY_ALIAS)",
+      "storePassword": "$(ANDROID_STORE_PASSWORD)",
+      "password": "$(ANDROID_KEY_PASSWORD)"
+    }
+  }
+}
