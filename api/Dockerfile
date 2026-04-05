@@ -21,7 +21,7 @@ WORKDIR /app
 
 COPY --from=builder /app/cnapi .
 
-COPY --from=builder /app/internal/database/migrations ./internal/database/migrations
+COPY --from=builder /app/sources ./sources
 
 RUN mkdir -p data
 
