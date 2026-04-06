@@ -136,7 +136,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   updateFontSizeDisplay();
-  
+  updateLanguageDisplay();
+
   if (typeof window.serviceWorkerSupported !== 'undefined') {
     updateCacheSize();
   } else {
