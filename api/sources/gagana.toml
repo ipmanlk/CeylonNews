@@ -4,9 +4,18 @@ name = "Gagana"
 language = "si"
 max_items = 5
 
-[languages.listing]
+[languages.discovery]
 type = "html"
 url = "https://gagana.lk/news/srilanka"
-selectors = ["div.a-item h4 a"]
-url_prefix = "https://gagana.lk/article/"
-base_url = "https://gagana.lk"
+
+[languages.discovery.html]
+link_selectors = ["div.a-item h4 a"]
+
+[[languages.discovery.html.url_rules]]
+type = "filter_prefix"
+value = "https://gagana.lk/article/"
+
+[[languages.discovery.html.url_rules]]
+type = "prepend"
+value = "https://gagana.lk"
+condition = "if_relative"

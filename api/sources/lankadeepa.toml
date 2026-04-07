@@ -4,6 +4,6 @@ name = "Lankadeepa"
 language = "si"
 max_items = 5
 
-[languages.listing]
+[languages.discovery]
 type = "rss"
 url = "https://www.lankadeepa.lk/rss/latest_news/1"

@@ -5,8 +5,6 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
-
-	"github.com/BurntSushi/toml"
 )
 
 func LoadConfigs(sourcesPath string) ([]Config, error) {
@@ -21,19 +19,14 @@ func LoadConfigs(sourcesPath string) ([]Config, error) {
 			continue
 		}
 
-		data, err := os.ReadFile(filepath.Join(sourcesPath, entry.Name()))
+		path := filepath.Join(sourcesPath, entry.Name())
+		cfg, err := LoadConfig(path)
 		if err != nil {
-			slog.Warn("failed to read source file", "file", entry.Name(), "error", err)
+			slog.Warn("failed to load source file", "file", entry.Name(), "error", err)
 			continue
 		}
 
-		var cfg Config
-		if err := toml.Unmarshal(data, &cfg); err != nil {
-			slog.Warn("failed to parse source file", "file", entry.Name(), "error", err)
-			continue
-		}
-
-		configs = append(configs, cfg)
+		configs = append(configs, *cfg)
 	}
 
 	return configs, nil

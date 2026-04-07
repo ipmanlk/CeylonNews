@@ -257,3 +257,117 @@ func (f *Fetcher) extractNodeWithSelector(doc *goquery.Document, selector string
 	}
 	return selection, nil
 }
+
+// ContentConfig defines field-specific extraction selectors
+type ContentConfig struct {
+	ScopeSelector string
+	TitleSelector string
+	BodySelector  string
+	ImageSelector string
+	DateSelector  string
+}
+
+// ExtractFieldFromDoc extracts a field value from a document using a selector
+func (f *Fetcher) ExtractFieldFromDoc(doc interface{}, selector string) string {
+	if selector == "" {
+		return ""
+	}
+
+	// Handle goquery.Document
+	if gdoc, ok := doc.(*goquery.Document); ok {
+		return gdoc.Find(selector).First().Text()
+	}
+
+	return ""
+}
+
+// ExtractArticleWithContentConfig extracts article using specific field selectors
+func (f *Fetcher) ExtractArticleWithContentConfig(ctx context.Context, url string, config ContentConfig, useBrowser bool) (model.ScrapedArticle, error) {
+	doc, err := f.FetchHTMLDoc(ctx, url, useBrowser)
+	if err != nil {
+		return model.ScrapedArticle{}, fmt.Errorf("failed to fetch HTML doc: %w", err)
+	}
+
+	article := model.ScrapedArticle{
+		URL: url,
+	}
+
+	// Extract title
+	if config.TitleSelector != "" {
+		article.Title = doc.Find(config.TitleSelector).First().Text()
+	}
+
+	// Extract image
+	if config.ImageSelector != "" {
+		if imgURL, exists := doc.Find(config.ImageSelector).First().Attr("src"); exists {
+			article.ImageURL = &imgURL
+		}
+	}
+
+	// Extract date
+	if config.DateSelector != "" {
+		dateStr := doc.Find(config.DateSelector).First().AttrOr("datetime", "")
+		if dateStr == "" {
+			dateStr = doc.Find(config.DateSelector).First().Text()
+		}
+		// Try to parse date
+		if t, err := time.Parse(time.RFC3339, dateStr); err == nil {
+			article.PublishedAt = t
+		} else {
+			article.PublishedAt = time.Now()
+		}
+	} else {
+		article.PublishedAt = time.Now()
+	}
+
+	// Extract content using scope selector or body selector
+	var contentNode *goquery.Selection
+	if config.ScopeSelector != "" {
+		contentNode = doc.Find(config.ScopeSelector)
+	} else if config.BodySelector != "" {
+		contentNode = doc.Find(config.BodySelector)
+	}
+
+	if contentNode != nil && contentNode.Length() > 0 {
+		opts := trafilatura.Options{
+			IncludeLinks:    true,
+			IncludeImages:   true,
+			ExcludeComments: true,
+			EnableFallback:  true,
+			Deduplicate:     true,
+		}
+
+		result, err := trafilatura.ExtractDocument(contentNode.Get(0), opts)
+		if err != nil {
+			return model.ScrapedArticle{}, fmt.Errorf("failed to extract content: %w", err)
+		}
+
+		// If title not extracted by selector, use trafilatura's
+		if article.Title == "" {
+			article.Title = result.Metadata.Title
+		}
+
+		article.ContentText = result.ContentText
+		docResult := trafilatura.CreateReadableDocument(result)
+		article.ContentHTML = dom.OuterHTML(docResult)
+	} else {
+		// Fallback to full page extraction
+		result, err := f.ExtractArticle(ctx, url, useBrowser)
+		if err != nil {
+			return model.ScrapedArticle{}, err
+		}
+
+		if article.Title == "" {
+			article.Title = result.Metadata.Title
+		}
+		if article.ImageURL == nil && result.Metadata.Image != "" {
+			article.ImageURL = &result.Metadata.Image
+		}
+
+		article.ContentText = result.ContentText
+		docResult := trafilatura.CreateReadableDocument(result)
+		article.ContentHTML = dom.OuterHTML(docResult)
+	}
+
+	return article, nil
+}

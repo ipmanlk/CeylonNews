@@ -4,8 +4,13 @@ name = "Divaina"
 language = "si"
 max_items = 5
 
-[languages.listing]
+[languages.discovery]
 type = "html"
 url = "https://www.divaina.lk/category/breaking-news"
-selectors = ["a.p-url"]
-url_prefix = "https://www.divaina.lk/"
+
+[languages.discovery.html]
+link_selectors = ["a.p-url"]
+
+[[languages.discovery.html.url_rules]]
+type = "filter_prefix"
+value = "https://www.divaina.lk/"
