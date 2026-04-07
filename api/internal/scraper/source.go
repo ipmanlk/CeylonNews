@@ -260,13 +260,15 @@ func (s *Source) extractSingleArticle(ctx context.Context, lc LanguageConfig, ur
 	// Use content-specific extraction if selectors are provided
 	if lc.Extraction.Content.TitleSelector != "" ||
 		lc.Extraction.Content.BodySelector != "" ||
-		lc.Extraction.Content.ScopeSelector != "" {
+		lc.Extraction.Content.ScopeSelector != "" ||
+		lc.Extraction.Content.PruneSelector != "" {
 		contentConfig := fetcher.ContentConfig{
 			ScopeSelector: lc.Extraction.Content.ScopeSelector,
 			TitleSelector: lc.Extraction.Content.TitleSelector,
 			BodySelector:  lc.Extraction.Content.BodySelector,
 			ImageSelector: lc.Extraction.Content.ImageSelector,
 			DateSelector:  lc.Extraction.Content.DateSelector,
+			PruneSelector: lc.Extraction.Content.PruneSelector,
 		}
 		return s.fetcher.ExtractArticleWithContentConfig(ctx, url, contentConfig, lc.Extraction.Browser)
 	}

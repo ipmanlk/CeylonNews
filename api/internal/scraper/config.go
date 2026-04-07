@@ -41,6 +41,7 @@ type ContentConfig struct {
 	BodySelector  string `toml:"body_selector"`
 	ImageSelector string `toml:"image_selector"`
 	DateSelector  string `toml:"date_selector"`
+	PruneSelector string `toml:"prune_selector"`
 }
 
 // ExtractionConfig defines how to extract article content
@@ -221,6 +222,9 @@ func mergeContentConfig(specific, shared ContentConfig) ContentConfig {
 	}
 	if specific.DateSelector == "" {
 		specific.DateSelector = shared.DateSelector
+	}
+	if specific.PruneSelector == "" {
+		specific.PruneSelector = shared.PruneSelector
 	}
 	return specific
 }

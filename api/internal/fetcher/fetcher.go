@@ -265,6 +265,7 @@ type ContentConfig struct {
 	BodySelector  string
 	ImageSelector string
 	DateSelector  string
+	PruneSelector string
 }
 
 // ExtractFieldFromDoc extracts a field value from a document using a selector
@@ -335,6 +336,7 @@ func (f *Fetcher) ExtractArticleWithContentConfig(ctx context.Context, url strin
 			ExcludeComments: true,
 			EnableFallback:  true,
 			Deduplicate:     true,
+			PruneSelector:   config.PruneSelector,
 		}
 
 		result, err := trafilatura.ExtractDocument(contentNode.Get(0), opts)
@@ -351,10 +353,24 @@ func (f *Fetcher) ExtractArticleWithContentConfig(ctx context.Context, url strin
 		docResult := trafilatura.CreateReadableDocument(result)
 		article.ContentHTML = dom.OuterHTML(docResult)
 	} else {
-		// Fallback to full page extraction
-		result, err := f.ExtractArticle(ctx, url, useBrowser)
+		// Fallback to full page extraction with PruneSelector
+		html, err := f.FetchHTML(ctx, url, useBrowser)
 		if err != nil {
-			return model.ScrapedArticle{}, err
+			return model.ScrapedArticle{}, fmt.Errorf("failed to fetch HTML: %w", err)
+		}
+
+		opts := trafilatura.Options{
+			IncludeLinks:    true,
+			IncludeImages:   true,
+			ExcludeComments: true,
+			EnableFallback:  true,
+			Deduplicate:     true,
+			PruneSelector:   config.PruneSelector,
+		}
+
+		result, err := trafilatura.Extract(bytes.NewReader(html), opts)
+		if err != nil {
+			return model.ScrapedArticle{}, fmt.Errorf("failed to extract content: %w", err)
 		}
 
 		if article.Title == "" {

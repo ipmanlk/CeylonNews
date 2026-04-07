@@ -144,6 +144,9 @@ body_selector = ".article-body"
 image_selector = "img.featured-image"
 date_selector = "time[datetime]"
 
+# Option C: Remove unwanted HTML elements before extraction
+prune_selector = ".advertisement, .social-share, aside.related-articles"
+
 # If no selectors specified, trafilatura auto-extracts from full page
 ```
 
@@ -151,7 +154,8 @@ date_selector = "time[datetime]"
 1. If field selector specified → use selector
 2. Else if scope_selector specified → trafilatura within scope
 3. Else → trafilatura on full page
-4. For RSS: title/date from feed item takes precedence
+4. If prune_selector specified → remove matching elements before extraction
+5. For RSS: title/date from feed item takes precedence
 
 ---
 
@@ -527,6 +531,34 @@ scope_selector = ".article-main-si"  # Sinhala-specific structure (different!)
 field = "body"
 type = "min_length"
 value = 200
+```
+
+### Example 6: Remove Unwanted Content with Prune Selector
+
+```toml
+name = "Daily Mirror"
+
+[[languages]]
+language = "en"
+max_items = 5
+
+[languages.discovery]
+type = "rss"
+url = "https://www.dailymirror.lk/rss/todays_headlines/419"
+
+[languages.extraction]
+browser = true
+
+[languages.extraction.content]
+# Remove ads, social widgets, and related articles before content extraction
+prune_selector = ".advertisement, .social-share-buttons, aside.related-articles, .newsletter-signup"
+
+[languages.validation]
+[[languages.validation.skip]]
+field = "title"
+type = "contains"
+value = "An Error Was"
+case_sensitive = false
 ```
 
 ---
