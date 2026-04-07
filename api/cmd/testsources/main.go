@@ -15,6 +15,10 @@ import (
 	"ipmanlk/cnapi/internal/scraper"
 )
 
+var (
+	sourceFilter = flag.String("source", "", "filter by source name (e.g., hiru)")
+)
+
 func main() {
 	flag.Parse()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
@@ -43,7 +47,19 @@ func main() {
 		os.Exit(1)
 	}
 
-	scrapers := registry.GetScrapers()
+	var scrapers []scraper.Scraper
+
+	if *sourceFilter != "" {
+		s := registry.GetScraperByName(*sourceFilter)
+		if s == nil {
+			fmt.Printf("Source %q not found\n", *sourceFilter)
+			os.Exit(1)
+		}
+		scrapers = []scraper.Scraper{s}
+	} else {
+		scrapers = registry.GetScrapers()
+	}
+
 	fmt.Printf("Testing %d sources...\n\n", len(scrapers))
 
 	var wg sync.WaitGroup
