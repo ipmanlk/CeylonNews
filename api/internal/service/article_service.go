@@ -12,9 +12,7 @@ type articleService struct {
 }
 
 func NewArticleService(store database.ArticlesStore) *articleService {
-	return &articleService{
-		store: store,
-	}
+	return &articleService{store: store}
 }
 
 func (s *articleService) Create(ctx context.Context, article model.ScrapedArticle) (int64, error) {
@@ -45,7 +43,7 @@ func (s *articleService) List(ctx context.Context, filter model.ArticleFilter) (
 	return s.store.List(filter)
 }
 
-func (s *articleService) ListPaginated(ctx context.Context, filter model.ArticleFilter) (*model.PaginatedResult[*model.Article], error) {
+func (s *articleService) ListPaginated(ctx context.Context, filter model.ArticleFilter) (*model.Paginated[*model.Article], error) {
 	return s.store.ListPaginated(filter)
 }
 

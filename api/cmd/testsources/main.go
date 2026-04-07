@@ -91,7 +91,7 @@ type result struct {
 	error    string
 }
 
-func testScraper(ctx context.Context, s scraper.SourceScraper, lang model.Language, results chan<- result, wg *sync.WaitGroup) {
+func testScraper(ctx context.Context, s scraper.Scraper, lang model.Language, results chan<- result, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)

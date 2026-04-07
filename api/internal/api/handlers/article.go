@@ -12,7 +12,7 @@ import (
 
 type ArticleService interface {
 	GetByIDWithFilter(ctx context.Context, id int64, filter model.ArticleFilter) (*model.Article, error)
-	ListPaginated(ctx context.Context, filter model.ArticleFilter) (*model.PaginatedResult[*model.Article], error)
+	ListPaginated(ctx context.Context, filter model.ArticleFilter) (*model.Paginated[*model.Article], error)
 }
 
 type ArticleListResponse struct {
@@ -42,9 +42,7 @@ type ArticleHandler struct {
 }
 
 func NewArticleHandler(articleService ArticleService) *ArticleHandler {
-	return &ArticleHandler{
-		articleService: articleService,
-	}
+	return &ArticleHandler{articleService: articleService}
 }
 
 func toArticleListResponse(article *model.Article) ArticleListResponse {

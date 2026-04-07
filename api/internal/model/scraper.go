@@ -14,7 +14,6 @@ type ScrapedArticle struct {
 	PublishedAt time.Time
 }
 
-// Article represents a news article stored in the database
 type Article struct {
 	ID          int64     `json:"id" db:"id"`
 	SourceName  string    `json:"source_name" db:"source_name"`
@@ -29,7 +28,6 @@ type Article struct {
 	UpdatedAt   time.Time `json:"updated_at" db:"updated_at"`
 }
 
-// ArticleFilter represents filters for querying articles
 type ArticleFilter struct {
 	Languages   []string   `json:"languages,omitempty"`
 	SourceNames []string   `json:"source_names,omitempty"`
@@ -40,7 +38,6 @@ type ArticleFilter struct {
 	IncludeText bool       `json:"include_text,omitempty"`
 }
 
-// SearchFilter represents filters for searching articles
 type SearchFilter struct {
 	Query       string     `json:"query"`
 	Languages   []string   `json:"languages,omitempty"`
@@ -51,7 +48,6 @@ type SearchFilter struct {
 	Offset      int        `json:"offset"`
 }
 
-// SearchResult represents a search result with relevance score
 type SearchResult struct {
 	Article
 	RelevanceScore float64 `json:"relevance_score" db:"rank"`

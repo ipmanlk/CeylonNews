@@ -3,26 +3,27 @@ package scraper
 import (
 	"context"
 	"fmt"
-	"ipmanlk/cnapi/internal/fetcher"
-	"ipmanlk/cnapi/internal/model"
 	"log/slog"
 	"strings"
+
+	"ipmanlk/cnapi/internal/fetcher"
+	"ipmanlk/cnapi/internal/model"
 
 	"github.com/mmcdole/gofeed"
 )
 
-type GenericScraper struct {
-	config  SourceConfig
+type Source struct {
+	config  Config
 	fetcher *fetcher.Fetcher
 }
 
-func NewGenericScraper(cfg SourceConfig, f *fetcher.Fetcher) *GenericScraper {
-	return &GenericScraper{config: cfg, fetcher: f}
+func NewSource(cfg Config, f *fetcher.Fetcher) *Source {
+	return &Source{config: cfg, fetcher: f}
 }
 
-func (s *GenericScraper) Name() string { return s.config.Name }
+func (s *Source) Name() string { return s.config.Name }
 
-func (s *GenericScraper) Languages() []model.Language {
+func (s *Source) Languages() []model.Language {
 	langs := make([]model.Language, 0, len(s.config.Languages))
 	for _, lc := range s.config.Languages {
 		langs = append(langs, model.Language(lc.Language))
@@ -30,7 +31,7 @@ func (s *GenericScraper) Languages() []model.Language {
 	return langs
 }
 
-func (s *GenericScraper) Scrape(ctx context.Context, language model.Language) ([]model.ScrapedArticle, error) {
+func (s *Source) Scrape(ctx context.Context, language model.Language) ([]model.ScrapedArticle, error) {
 	for _, lc := range s.config.Languages {
 		if model.Language(lc.Language) == language {
 			return s.scrapeLanguage(ctx, lc)
@@ -39,16 +40,16 @@ func (s *GenericScraper) Scrape(ctx context.Context, language model.Language) ([
 	return nil, nil
 }
 
-func (s *GenericScraper) UsesBrowser(language model.Language) bool {
+func (s *Source) UsesBrowser(language model.Language) bool {
 	for _, lc := range s.config.Languages {
 		if model.Language(lc.Language) == language {
-			return lc.Listing.Browser || lc.Article.Browser || lc.Article.Selector != ""
+			return lc.Listing.Browser || lc.Article.NeedsBrowser()
 		}
 	}
 	return false
 }
 
-func (s *GenericScraper) scrapeLanguage(ctx context.Context, lc LangConfig) ([]model.ScrapedArticle, error) {
+func (s *Source) scrapeLanguage(ctx context.Context, lc LanguageConfig) ([]model.ScrapedArticle, error) {
 	switch lc.Listing.Type {
 	case "rss":
 		return s.scrapeRSSListing(ctx, lc)
@@ -59,7 +60,7 @@ func (s *GenericScraper) scrapeLanguage(ctx context.Context, lc LangConfig) ([]m
 	}
 }
 
-func (s *GenericScraper) scrapeRSSListing(ctx context.Context, lc LangConfig) ([]model.ScrapedArticle, error) {
+func (s *Source) scrapeRSSListing(ctx context.Context, lc LanguageConfig) ([]model.ScrapedArticle, error) {
 	var items []*gofeed.Item
 	var err error
 
@@ -75,7 +76,7 @@ func (s *GenericScraper) scrapeRSSListing(ctx context.Context, lc LangConfig) ([
 	return s.extractFromRSSItems(ctx, lc, items)
 }
 
-func (s *GenericScraper) scrapeHTMLListing(ctx context.Context, lc LangConfig) ([]model.ScrapedArticle, error) {
+func (s *Source) scrapeHTMLListing(ctx context.Context, lc LanguageConfig) ([]model.ScrapedArticle, error) {
 	doc, err := s.fetcher.FetchHTMLDoc(ctx, lc.Listing.URL, lc.Listing.Browser)
 	if err != nil {
 		return nil, err
@@ -86,13 +87,7 @@ func (s *GenericScraper) scrapeHTMLListing(ctx context.Context, lc LangConfig) (
 		links = append(links, s.fetcher.ExtractLinks(doc, sel, lc.Listing.URLPrefix)...)
 	}
 
-	if lc.Listing.BaseURL != "" {
-		for i, link := range links {
-			if strings.HasPrefix(link, "/") {
-				links[i] = lc.Listing.BaseURL + link
-			}
-		}
-	}
+	links = lc.Listing.ResolveLinks(links)
 
 	if lc.MaxItems > 0 && len(links) > lc.MaxItems {
 		links = links[:lc.MaxItems]
@@ -101,7 +96,7 @@ func (s *GenericScraper) scrapeHTMLListing(ctx context.Context, lc LangConfig) (
 	return s.extractFromLinks(ctx, lc, links)
 }
 
-func (s *GenericScraper) extractFromRSSItems(ctx context.Context, lc LangConfig, items []*gofeed.Item) ([]model.ScrapedArticle, error) {
+func (s *Source) extractFromRSSItems(ctx context.Context, lc LanguageConfig, items []*gofeed.Item) ([]model.ScrapedArticle, error) {
 	articles := make([]model.ScrapedArticle, 0, len(items))
 	seen := make(map[string]bool)
 
@@ -144,7 +139,7 @@ func (s *GenericScraper) extractFromRSSItems(ctx context.Context, lc LangConfig,
 	return articles, nil
 }
 
-func (s *GenericScraper) extractFromLinks(ctx context.Context, lc LangConfig, links []string) ([]model.ScrapedArticle, error) {
+func (s *Source) extractFromLinks(ctx context.Context, lc LanguageConfig, links []string) ([]model.ScrapedArticle, error) {
 	articles := make([]model.ScrapedArticle, 0, len(links))
 	seen := make(map[string]bool)
 
@@ -178,7 +173,7 @@ func (s *GenericScraper) extractFromLinks(ctx context.Context, lc LangConfig, li
 	return articles, nil
 }
 
-func (s *GenericScraper) shouldSkip(title string) bool {
+func (s *Source) shouldSkip(title string) bool {
 	for _, rule := range s.config.TitleTransform.Skip {
 		if rule.CaseSensitive {
 			if strings.Contains(title, rule.Contains) {
@@ -193,7 +188,7 @@ func (s *GenericScraper) shouldSkip(title string) bool {
 	return false
 }
 
-func (s *GenericScraper) applyTitleReplace(title string) string {
+func (s *Source) applyTitleReplace(title string) string {
 	for _, rule := range s.config.TitleTransform.Replace {
 		if rule.CaseSensitive {
 			title = strings.ReplaceAll(title, rule.Pattern, rule.With)

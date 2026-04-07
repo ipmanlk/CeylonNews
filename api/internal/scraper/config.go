@@ -1,13 +1,28 @@
 package scraper
 
+import "strings"
+
 type ListingConfig struct {
 	Type    string `toml:"type"`
 	URL     string `toml:"url"`
 	Browser bool   `toml:"browser"`
 
+	// HTML listing fields only
 	Selectors []string `toml:"selectors"`
 	URLPrefix string   `toml:"url_prefix"`
 	BaseURL   string   `toml:"base_url"`
+}
+
+func (lc ListingConfig) ResolveLinks(links []string) []string {
+	if lc.BaseURL == "" {
+		return links
+	}
+	for i, link := range links {
+		if strings.HasPrefix(link, "/") {
+			links[i] = lc.BaseURL + link
+		}
+	}
+	return links
 }
 
 type ArticleConfig struct {
@@ -15,7 +30,11 @@ type ArticleConfig struct {
 	Selector string `toml:"selector"`
 }
 
-type LangConfig struct {
+func (ac ArticleConfig) NeedsBrowser() bool {
+	return ac.Browser || ac.Selector != ""
+}
+
+type LanguageConfig struct {
 	Language string        `toml:"language"`
 	MaxItems int           `toml:"max_items"`
 	Listing  ListingConfig `toml:"listing"`
@@ -38,8 +57,8 @@ type TitleTransform struct {
 	Replace []ReplaceRule `toml:"replace"`
 }
 
-type SourceConfig struct {
-	Name           string         `toml:"name"`
-	Languages      []LangConfig   `toml:"languages"`
-	TitleTransform TitleTransform `toml:"title_transform"`
+type Config struct {
+	Name           string           `toml:"name"`
+	Languages      []LanguageConfig `toml:"languages"`
+	TitleTransform TitleTransform   `toml:"title_transform"`
 }

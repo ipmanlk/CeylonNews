@@ -11,15 +11,11 @@ import (
 )
 
 type SearchService interface {
-	Search(ctx context.Context, filter model.SearchFilter) (*model.PaginatedResult[*model.SearchResult], error)
+	Search(ctx context.Context, filter model.SearchFilter) (*model.Paginated[*model.SearchResult], error)
 	GetAvailableSources() ([]string, error)
 	GetAvailableLanguages() ([]string, error)
 	GetSourcesByLanguage(language string) ([]string, error)
 	GetRecentArticles(languages []string, sourceNames []string, limit int) ([]*model.Article, error)
-}
-
-type SearchHandler struct {
-	searchService SearchService
 }
 
 type SearchResultResponse struct {
@@ -33,10 +29,12 @@ type SearchResultResponse struct {
 	RelevanceScore float64 `json:"relevance_score"`
 }
 
+type SearchHandler struct {
+	searchService SearchService
+}
+
 func NewSearchHandler(searchService SearchService) *SearchHandler {
-	return &SearchHandler{
-		searchService: searchService,
-	}
+	return &SearchHandler{searchService: searchService}
 }
 
 func toSearchResultResponse(result *model.SearchResult) SearchResultResponse {
@@ -99,7 +97,7 @@ func (h *SearchHandler) GetAvailableSources(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	httpx.RespondJSON(w, http.StatusOK, map[string]interface{}{
+	httpx.RespondJSON(w, http.StatusOK, map[string]any{
 		"sources": sources,
 	})
 }
@@ -112,7 +110,7 @@ func (h *SearchHandler) GetAvailableLanguages(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	httpx.RespondJSON(w, http.StatusOK, map[string]interface{}{
+	httpx.RespondJSON(w, http.StatusOK, map[string]any{
 		"languages": languages,
 	})
 }
@@ -131,7 +129,7 @@ func (h *SearchHandler) GetSourcesByLanguage(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	httpx.RespondJSON(w, http.StatusOK, map[string]interface{}{
+	httpx.RespondJSON(w, http.StatusOK, map[string]any{
 		"language": language,
 		"sources":  sources,
 	})
@@ -168,7 +166,7 @@ func (h *SearchHandler) GetRecentArticles(w http.ResponseWriter, r *http.Request
 		}
 	}
 
-	httpx.RespondJSON(w, http.StatusOK, map[string]interface{}{
+	httpx.RespondJSON(w, http.StatusOK, map[string]any{
 		"articles": searchResponses,
 		"count":    len(searchResponses),
 	})

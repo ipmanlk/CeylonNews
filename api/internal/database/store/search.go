@@ -16,7 +16,7 @@ func NewSearchStore(db *sql.DB) *SearchStore {
 	return &SearchStore{db: db}
 }
 
-func (s *SearchStore) Search(filter model.SearchFilter) (*model.PaginatedResult[*model.SearchResult], error) {
+func (s *SearchStore) Search(filter model.SearchFilter) (*model.Paginated[*model.SearchResult], error) {
 	total, err := s.CountSearchResults(filter)
 	if err != nil {
 		return nil, err
@@ -60,7 +60,7 @@ func (s *SearchStore) Search(filter model.SearchFilter) (*model.PaginatedResult[
 		page = 1
 	}
 
-	return model.NewPaginatedResult(results, total, page, filter.Limit), nil
+	return model.NewPaginated(results, total, page, filter.Limit), nil
 }
 
 func (s *SearchStore) CountSearchResults(filter model.SearchFilter) (int64, error) {
@@ -272,9 +272,7 @@ func (s *SearchStore) buildSearchCountQuery(filter model.SearchFilter) (string, 
 }
 
 func (s *SearchStore) escapeFTSQuery(query string) string {
-	// FTS5 special characters that need to be escaped: " ' * + - : ^ ~ ( ) [ ] { } ,
-	// We'll wrap the entire query in quotes to treat it as a phrase search
-	// and escape any internal quotes
+	// Escape double quotes for FTS5 phrase search syntax
 	escaped := strings.ReplaceAll(query, `"`, `""`)
 	return `"` + escaped + `"`
 }

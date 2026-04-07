@@ -12,12 +12,10 @@ type searchService struct {
 }
 
 func NewSearchService(store database.SearchStore) *searchService {
-	return &searchService{
-		store: store,
-	}
+	return &searchService{store: store}
 }
 
-func (s *searchService) Search(ctx context.Context, filter model.SearchFilter) (*model.PaginatedResult[*model.SearchResult], error) {
+func (s *searchService) Search(ctx context.Context, filter model.SearchFilter) (*model.Paginated[*model.SearchResult], error) {
 	return s.store.Search(filter)
 }
 

@@ -22,7 +22,6 @@ type SearchFilterRequest struct {
 	EndDate     *time.Time
 }
 
-// Validate validates search filter parameters
 func (f *SearchFilterRequest) Validate() error {
 	if f.Query == "" {
 		return ErrQueryRequired

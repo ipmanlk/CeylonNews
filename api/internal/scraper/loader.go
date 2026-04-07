@@ -9,13 +9,13 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-func LoadSourceConfigs(sourcesPath string) ([]SourceConfig, error) {
+func LoadConfigs(sourcesPath string) ([]Config, error) {
 	entries, err := os.ReadDir(sourcesPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read sources directory: %w", err)
 	}
 
-	var configs []SourceConfig
+	var configs []Config
 	for _, entry := range entries {
 		if filepath.Ext(entry.Name()) != ".toml" {
 			continue
@@ -27,7 +27,7 @@ func LoadSourceConfigs(sourcesPath string) ([]SourceConfig, error) {
 			continue
 		}
 
-		var cfg SourceConfig
+		var cfg Config
 		if err := toml.Unmarshal(data, &cfg); err != nil {
 			slog.Warn("failed to parse source file", "file", entry.Name(), "error", err)
 			continue

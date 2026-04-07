@@ -390,7 +390,7 @@ func (s *ArticlesStore) Count(filter model.ArticleFilter) (int64, error) {
 	return count, nil
 }
 
-func (s *ArticlesStore) ListPaginated(filter model.ArticleFilter) (*model.PaginatedResult[*model.Article], error) {
+func (s *ArticlesStore) ListPaginated(filter model.ArticleFilter) (*model.Paginated[*model.Article], error) {
 	total, err := s.Count(filter)
 	if err != nil {
 		return nil, err
@@ -406,7 +406,7 @@ func (s *ArticlesStore) ListPaginated(filter model.ArticleFilter) (*model.Pagina
 		page = 1
 	}
 
-	return model.NewPaginatedResult(articles, total, page, filter.Limit), nil
+	return model.NewPaginated(articles, total, page, filter.Limit), nil
 }
 
 func (s *ArticlesStore) Update(article *model.Article) error {

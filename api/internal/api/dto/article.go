@@ -21,7 +21,6 @@ type ArticleFilterRequest struct {
 	EndDate     *time.Time
 }
 
-// Validate validates article filter parameters
 func (f *ArticleFilterRequest) Validate() error {
 	for _, lang := range f.Languages {
 		if !isValidLanguage(lang) {
