@@ -12,6 +12,12 @@ link_selectors = ["a.card-featured", "a.card-v1"]
 type = "filter_prefix"
 value = "https://hirunews.lk/"
 
+[shared.extraction.default]
+browser = false
+
+[shared.extraction.default.content]
+scope_selector = "div.article-content.col-lg-8"
+
 [[languages]]
 language = "si"
 max_items = 5
