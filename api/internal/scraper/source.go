@@ -134,7 +134,7 @@ func (s *Source) extractWithEarlyValidation(ctx context.Context, lc LanguageConf
 		}
 
 		// Extract full article
-		article, err := s.extractSingleArticle(ctx, lc, link)
+		article, err := s.extractArticle(ctx, lc, link)
 		if err != nil {
 			slog.Warn("failed to extract article", "source", s.Name(), "url", link, "error", err)
 			continue
@@ -234,7 +234,7 @@ func (s *Source) extractFromLinks(ctx context.Context, lc LanguageConfig, links 
 		seen[link] = true
 
 		// Extract article
-		article, err := s.extractSingleArticle(ctx, lc, link)
+		article, err := s.extractArticle(ctx, lc, link)
 		if err != nil {
 			slog.Warn("failed to extract article", "source", s.Name(), "url", link, "error", err)
 			continue
@@ -255,31 +255,12 @@ func (s *Source) extractFromLinks(ctx context.Context, lc LanguageConfig, links 
 	return articles, nil
 }
 
-// extractSingleArticle extracts a single article from a URL
-func (s *Source) extractSingleArticle(ctx context.Context, lc LanguageConfig, url string) (model.ScrapedArticle, error) {
-	// Use content-specific extraction if selectors are provided
-	if lc.Extraction.Content.TitleSelector != "" ||
-		lc.Extraction.Content.BodySelector != "" ||
-		lc.Extraction.Content.ScopeSelector != "" ||
-		lc.Extraction.Content.PruneSelector != "" {
-		contentConfig := fetcher.ContentConfig{
-			ScopeSelector: lc.Extraction.Content.ScopeSelector,
-			TitleSelector: lc.Extraction.Content.TitleSelector,
-			BodySelector:  lc.Extraction.Content.BodySelector,
-			ImageSelector: lc.Extraction.Content.ImageSelector,
-			DateSelector:  lc.Extraction.Content.DateSelector,
-			PruneSelector: lc.Extraction.Content.PruneSelector,
-		}
-		return s.fetcher.ExtractArticleWithContentConfig(ctx, url, contentConfig, lc.Extraction.Browser)
+func (s *Source) extractArticle(ctx context.Context, lc LanguageConfig, url string) (model.ScrapedArticle, error) {
+	if lc.Extraction.Content.HasSelectors() {
+		return s.fetcher.ExtractArticleWithContentConfig(ctx, url, s.Name(), lc.Extraction.Content, lc.Extraction.Browser)
 	}
 
-	// Use default trafilatura extraction
-	result, err := s.fetcher.ExtractArticle(ctx, url, lc.Extraction.Browser)
-	if err != nil {
-		return model.ScrapedArticle{}, err
-	}
-
-	return s.fetcher.CreateScrapedArticle(s.Name(), result, url, &result.Metadata.Image, result.Metadata.Date), nil
+	return s.fetcher.ExtractArticle(ctx, url, s.Name(), lc.Extraction.Browser)
 }
 
 // deduplicateStrings removes duplicates from a string slice

@@ -5,6 +5,8 @@ import (
 	"regexp"
 	"strings"
 
+	"ipmanlk/cnapi/internal/fetcher"
+
 	"github.com/BurntSushi/toml"
 )
 
@@ -46,8 +48,8 @@ type ContentConfig struct {
 
 // ExtractionConfig defines how to extract article content
 type ExtractionConfig struct {
-	Browser bool          `toml:"browser"`
-	Content ContentConfig `toml:"content"`
+	Browser bool                  `toml:"browser"`
+	Content fetcher.ContentConfig `toml:"content"`
 }
 
 // ValidationRule defines a single validation check
@@ -202,30 +204,25 @@ func mergeExtractionConfig(specific, shared ExtractionConfig) ExtractionConfig {
 	}
 
 	// Merge content config
-	specific.Content = mergeContentConfig(specific.Content, shared.Content)
+	if specific.Content.ScopeSelector == "" {
+		specific.Content.ScopeSelector = shared.Content.ScopeSelector
+	}
+	if specific.Content.TitleSelector == "" {
+		specific.Content.TitleSelector = shared.Content.TitleSelector
+	}
+	if specific.Content.BodySelector == "" {
+		specific.Content.BodySelector = shared.Content.BodySelector
+	}
+	if specific.Content.ImageSelector == "" {
+		specific.Content.ImageSelector = shared.Content.ImageSelector
+	}
+	if specific.Content.DateSelector == "" {
+		specific.Content.DateSelector = shared.Content.DateSelector
+	}
+	if specific.Content.PruneSelector == "" {
+		specific.Content.PruneSelector = shared.Content.PruneSelector
+	}
 
-	return specific
-}
-
-func mergeContentConfig(specific, shared ContentConfig) ContentConfig {
-	if specific.ScopeSelector == "" {
-		specific.ScopeSelector = shared.ScopeSelector
-	}
-	if specific.TitleSelector == "" {
-		specific.TitleSelector = shared.TitleSelector
-	}
-	if specific.BodySelector == "" {
-		specific.BodySelector = shared.BodySelector
-	}
-	if specific.ImageSelector == "" {
-		specific.ImageSelector = shared.ImageSelector
-	}
-	if specific.DateSelector == "" {
-		specific.DateSelector = shared.DateSelector
-	}
-	if specific.PruneSelector == "" {
-		specific.PruneSelector = shared.PruneSelector
-	}
 	return specific
 }
 

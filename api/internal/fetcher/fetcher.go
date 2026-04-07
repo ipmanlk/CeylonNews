@@ -42,7 +42,7 @@ func (f *Fetcher) FetchHTMLDoc(ctx context.Context, url string, useBrowser bool)
 	return f.httpClient.FetchHTMLDoc(ctx, url)
 }
 
-func (f *Fetcher) ExtractArticle(ctx context.Context, url string, useBrowser bool) (*trafilatura.ExtractResult, error) {
+func (f *Fetcher) extractRaw(ctx context.Context, url string, useBrowser bool) (*trafilatura.ExtractResult, error) {
 	html, err := f.FetchHTML(ctx, url, useBrowser)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch HTML from %s: %w", url, err)
@@ -62,6 +62,15 @@ func (f *Fetcher) ExtractArticle(ctx context.Context, url string, useBrowser boo
 	}
 
 	return result, nil
+}
+
+func (f *Fetcher) ExtractArticle(ctx context.Context, url, sourceName string, useBrowser bool) (model.ScrapedArticle, error) {
+	result, err := f.extractRaw(ctx, url, useBrowser)
+	if err != nil {
+		return model.ScrapedArticle{}, err
+	}
+
+	return f.buildScrapedArticle(sourceName, result, url, &result.Metadata.Image, result.Metadata.Date), nil
 }
 
 func (f *Fetcher) FetchRSS(ctx context.Context, url string, maxItems int) ([]*gofeed.Item, error) {
@@ -114,7 +123,7 @@ func deduplicateRSSItems(items []*gofeed.Item, maxItems int, feedURL string) []*
 }
 
 func (f *Fetcher) ExtractArticleFromRSSItem(ctx context.Context, item *gofeed.Item, useBrowser bool) (model.ScrapedArticle, error) {
-	result, err := f.ExtractArticle(ctx, item.Link, useBrowser)
+	result, err := f.extractRaw(ctx, item.Link, useBrowser)
 	if err != nil {
 		return model.ScrapedArticle{}, fmt.Errorf("failed to extract article: %w", err)
 	}
@@ -122,31 +131,7 @@ func (f *Fetcher) ExtractArticleFromRSSItem(ctx context.Context, item *gofeed.It
 	return f.buildArticleFromRSSItem(item, result), nil
 }
 
-func (f *Fetcher) ExtractArticleFromRSSItemWithSelector(ctx context.Context, item *gofeed.Item, contentSelector string, useBrowser bool) (model.ScrapedArticle, error) {
-	result, err := f.ExtractArticleWithSelector(ctx, item.Link, contentSelector, useBrowser)
-	if err != nil {
-		return model.ScrapedArticle{}, fmt.Errorf("failed to extract article: %w", err)
-	}
-
-	return f.buildArticleFromRSSItem(item, result), nil
-}
-
-func (f *Fetcher) buildArticleFromRSSItem(item *gofeed.Item, result *trafilatura.ExtractResult) model.ScrapedArticle {
-	doc := trafilatura.CreateReadableDocument(result)
-	htmlContent := dom.OuterHTML(doc)
-
-	return model.ScrapedArticle{
-		Title:       item.Title,
-		URL:         item.Link,
-		ContentText: result.ContentText,
-		ContentHTML: htmlContent,
-		ImageURL:    f.getImageURL(item),
-		Categories:  item.Categories,
-		PublishedAt: f.getPublishedAt(item),
-	}
-}
-
-func (f *Fetcher) ExtractArticleWithSelector(ctx context.Context, url string, contentSelector string, useBrowser bool) (*trafilatura.ExtractResult, error) {
+func (f *Fetcher) extractRawWithSelector(ctx context.Context, url, contentSelector string, useBrowser bool) (*trafilatura.ExtractResult, error) {
 	doc, err := f.FetchHTMLDoc(ctx, url, useBrowser)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch HTML doc from %s: %w", url, err)
@@ -173,6 +158,30 @@ func (f *Fetcher) ExtractArticleWithSelector(ctx context.Context, url string, co
 	return result, nil
 }
 
+func (f *Fetcher) ExtractArticleFromRSSItemWithSelector(ctx context.Context, item *gofeed.Item, contentSelector string, useBrowser bool) (model.ScrapedArticle, error) {
+	result, err := f.extractRawWithSelector(ctx, item.Link, contentSelector, useBrowser)
+	if err != nil {
+		return model.ScrapedArticle{}, fmt.Errorf("failed to extract article: %w", err)
+	}
+
+	return f.buildArticleFromRSSItem(item, result), nil
+}
+
+func (f *Fetcher) buildArticleFromRSSItem(item *gofeed.Item, result *trafilatura.ExtractResult) model.ScrapedArticle {
+	doc := trafilatura.CreateReadableDocument(result)
+	htmlContent := dom.OuterHTML(doc)
+
+	return model.ScrapedArticle{
+		Title:       item.Title,
+		URL:         item.Link,
+		ContentText: result.ContentText,
+		ContentHTML: htmlContent,
+		ImageURL:    f.getImageURL(item),
+		Categories:  item.Categories,
+		PublishedAt: f.getPublishedAt(item),
+	}
+}
+
 func (f *Fetcher) ExtractLinks(doc *goquery.Document, selector, urlPrefix string) []string {
 	var links []string
 	doc.Find(selector).Each(func(i int, selection *goquery.Selection) {
@@ -184,7 +193,7 @@ func (f *Fetcher) ExtractLinks(doc *goquery.Document, selector, urlPrefix string
 	return links
 }
 
-func (f *Fetcher) CreateScrapedArticle(sourceName string, result *trafilatura.ExtractResult, url string, imageURL *string, publishedAt time.Time) model.ScrapedArticle {
+func (f *Fetcher) buildScrapedArticle(sourceName string, result *trafilatura.ExtractResult, url string, imageURL *string, publishedAt time.Time) model.ScrapedArticle {
 	doc := trafilatura.CreateReadableDocument(result)
 	htmlContent := dom.OuterHTML(doc)
 
@@ -260,12 +269,17 @@ func (f *Fetcher) extractNodeWithSelector(doc *goquery.Document, selector string
 
 // ContentConfig defines field-specific extraction selectors
 type ContentConfig struct {
-	ScopeSelector string
-	TitleSelector string
-	BodySelector  string
-	ImageSelector string
-	DateSelector  string
-	PruneSelector string
+	ScopeSelector string `toml:"scope_selector"`
+	TitleSelector string `toml:"title_selector"`
+	BodySelector  string `toml:"body_selector"`
+	ImageSelector string `toml:"image_selector"`
+	DateSelector  string `toml:"date_selector"`
+	PruneSelector string `toml:"prune_selector"`
+}
+
+func (c ContentConfig) HasSelectors() bool {
+	return c.ScopeSelector != "" || c.TitleSelector != "" ||
+		c.BodySelector != "" || c.PruneSelector != ""
 }
 
 // ExtractFieldFromDoc extracts a field value from a document using a selector
@@ -283,7 +297,7 @@ func (f *Fetcher) ExtractFieldFromDoc(doc interface{}, selector string) string {
 }
 
 // ExtractArticleWithContentConfig extracts article using specific field selectors
-func (f *Fetcher) ExtractArticleWithContentConfig(ctx context.Context, url string, config ContentConfig, useBrowser bool) (model.ScrapedArticle, error) {
+func (f *Fetcher) ExtractArticleWithContentConfig(ctx context.Context, url, sourceName string, config ContentConfig, useBrowser bool) (model.ScrapedArticle, error) {
 	doc, err := f.FetchHTMLDoc(ctx, url, useBrowser)
 	if err != nil {
 		return model.ScrapedArticle{}, fmt.Errorf("failed to fetch HTML doc: %w", err)
