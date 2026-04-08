@@ -86,6 +86,12 @@ npm install
 cordova platform add android  # if needed
 ```
 
+### Dependencies
+
+- **Vanilla JavaScript** - No frontend framework
+- **Phosphor Icons** - Icon library via CDN (`https://unpkg.com/@phosphor-icons/web`)
+- `cordova-plugin-network-information` - Network state detection
+
 ### Release Builds
 
 Requires `mobile/build.json` (see `build.json.example`). Never commit keystore credentials.
