@@ -19,14 +19,14 @@ func NewArticlesStore(db *sql.DB) *ArticlesStore {
 
 func (s *ArticlesStore) Create(scrapedArticle model.ScrapedArticle) (int64, error) {
 	query := `
-		INSERT INTO articles (source_name, title, url, content_text, content_html, image_url, language, published_at, created_at, updated_at)
+		INSERT INTO articles (source_id, title, url, content_text, content_html, image_url, language, published_at, created_at, updated_at)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
 
 	now := time.Now()
 
 	result, err := s.db.Exec(query,
-		scrapedArticle.SourceName,
+		scrapedArticle.SourceID,
 		scrapedArticle.Title,
 		scrapedArticle.URL,
 		scrapedArticle.ContentText,
@@ -52,10 +52,10 @@ func (s *ArticlesStore) Create(scrapedArticle model.ScrapedArticle) (int64, erro
 
 func (s *ArticlesStore) Upsert(scrapedArticle model.ScrapedArticle) (int64, error) {
 	query := `
-		INSERT INTO articles (source_name, title, url, content_text, content_html, image_url, language, published_at, created_at, updated_at)
+		INSERT INTO articles (source_id, title, url, content_text, content_html, image_url, language, published_at, created_at, updated_at)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		ON CONFLICT(url) DO UPDATE SET
-			source_name = excluded.source_name,
+			source_id = excluded.source_id,
 			title = excluded.title,
 			content_text = excluded.content_text,
 			content_html = excluded.content_html,
@@ -68,7 +68,7 @@ func (s *ArticlesStore) Upsert(scrapedArticle model.ScrapedArticle) (int64, erro
 	now := time.Now()
 
 	result, err := s.db.Exec(query,
-		scrapedArticle.SourceName,
+		scrapedArticle.SourceID,
 		scrapedArticle.Title,
 		scrapedArticle.URL,
 		scrapedArticle.ContentText,
@@ -119,7 +119,7 @@ func (s *ArticlesStore) BulkCreate(scrapedArticles []model.ScrapedArticle) ([]in
 	defer tx.Rollback()
 
 	query := `
-		INSERT INTO articles (source_name, title, url, content_text, content_html, image_url, language, published_at, created_at, updated_at)
+		INSERT INTO articles (source_id, title, url, content_text, content_html, image_url, language, published_at, created_at, updated_at)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
 
@@ -134,7 +134,7 @@ func (s *ArticlesStore) BulkCreate(scrapedArticles []model.ScrapedArticle) ([]in
 
 	for _, sa := range scrapedArticles {
 		result, err := stmt.Exec(
-			sa.SourceName,
+			sa.SourceID,
 			sa.Title,
 			sa.URL,
 			sa.ContentText,
@@ -177,10 +177,10 @@ func (s *ArticlesStore) BulkUpsert(scrapedArticles []model.ScrapedArticle) ([]in
 	defer tx.Rollback()
 
 	query := `
-		INSERT INTO articles (source_name, title, url, content_text, content_html, image_url, language, published_at, created_at, updated_at)
+		INSERT INTO articles (source_id, title, url, content_text, content_html, image_url, language, published_at, created_at, updated_at)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		ON CONFLICT(url) DO UPDATE SET
-			source_name = excluded.source_name,
+			source_id = excluded.source_id,
 			title = excluded.title,
 			content_text = excluded.content_text,
 			content_html = excluded.content_html,
@@ -201,7 +201,7 @@ func (s *ArticlesStore) BulkUpsert(scrapedArticles []model.ScrapedArticle) ([]in
 
 	for _, sa := range scrapedArticles {
 		result, err := stmt.Exec(
-			sa.SourceName,
+			sa.SourceID,
 			sa.Title,
 			sa.URL,
 			sa.ContentText,
@@ -240,7 +240,7 @@ func (s *ArticlesStore) BulkUpsert(scrapedArticles []model.ScrapedArticle) ([]in
 
 func (s *ArticlesStore) GetByID(id int64) (*model.Article, error) {
 	query := `
-		SELECT id, source_name, title, url, content_text, content_html, image_url, language, published_at, created_at, updated_at
+		SELECT id, source_id, title, url, content_text, content_html, image_url, language, published_at, created_at, updated_at
 		FROM articles
 		WHERE id = ?
 	`
@@ -248,7 +248,7 @@ func (s *ArticlesStore) GetByID(id int64) (*model.Article, error) {
 	article := &model.Article{}
 	err := s.db.QueryRow(query, id).Scan(
 		&article.ID,
-		&article.SourceName,
+		&article.SourceID,
 		&article.Title,
 		&article.URL,
 		&article.ContentText,
@@ -271,7 +271,7 @@ func (s *ArticlesStore) GetByID(id int64) (*model.Article, error) {
 }
 
 func (s *ArticlesStore) GetByIDWithFilter(id int64, filter model.ArticleFilter) (*model.Article, error) {
-	selectFields := "id, source_name, title, url"
+	selectFields := "id, source_id, title, url"
 	if filter.IncludeText {
 		selectFields += ", content_text"
 	} else {
@@ -288,7 +288,7 @@ func (s *ArticlesStore) GetByIDWithFilter(id int64, filter model.ArticleFilter) 
 	article := &model.Article{}
 	err := s.db.QueryRow(query, id).Scan(
 		&article.ID,
-		&article.SourceName,
+		&article.SourceID,
 		&article.Title,
 		&article.URL,
 		&article.ContentText,
@@ -312,7 +312,7 @@ func (s *ArticlesStore) GetByIDWithFilter(id int64, filter model.ArticleFilter) 
 
 func (s *ArticlesStore) GetByURL(url string) (*model.Article, error) {
 	query := `
-		SELECT id, source_name, title, url, content_text, content_html, image_url, language, published_at, created_at, updated_at
+		SELECT id, source_id, title, url, content_text, content_html, image_url, language, published_at, created_at, updated_at
 		FROM articles
 		WHERE url = ?
 	`
@@ -320,7 +320,7 @@ func (s *ArticlesStore) GetByURL(url string) (*model.Article, error) {
 	article := &model.Article{}
 	err := s.db.QueryRow(query, url).Scan(
 		&article.ID,
-		&article.SourceName,
+		&article.SourceID,
 		&article.Title,
 		&article.URL,
 		&article.ContentText,
@@ -356,7 +356,7 @@ func (s *ArticlesStore) List(filter model.ArticleFilter) ([]*model.Article, erro
 		article := &model.Article{}
 		err := rows.Scan(
 			&article.ID,
-			&article.SourceName,
+			&article.SourceID,
 			&article.Title,
 			&article.URL,
 			&article.ImageURL,
@@ -412,7 +412,7 @@ func (s *ArticlesStore) ListPaginated(filter model.ArticleFilter) (*model.Pagina
 func (s *ArticlesStore) Update(article *model.Article) error {
 	query := `
 		UPDATE articles 
-		SET source_name = ?, title = ?, url = ?, content_text = ?, content_html = ?, image_url = ?, language = ?, 
+		SET source_id = ?, title = ?, url = ?, content_text = ?, content_html = ?, image_url = ?, language = ?, 
 		    published_at = ?, updated_at = ?
 		WHERE id = ?
 	`
@@ -420,7 +420,7 @@ func (s *ArticlesStore) Update(article *model.Article) error {
 	article.UpdatedAt = time.Now()
 
 	result, err := s.db.Exec(query,
-		article.SourceName,
+		article.SourceID,
 		article.Title,
 		article.URL,
 		article.ContentText,
@@ -496,13 +496,13 @@ func (s *ArticlesStore) buildListQuery(filter model.ArticleFilter) (string, []in
 		conditions = append(conditions, fmt.Sprintf("language IN (%s)", strings.Join(placeholders, ", ")))
 	}
 
-	if len(filter.SourceNames) > 0 {
-		placeholders := make([]string, len(filter.SourceNames))
-		for i, source := range filter.SourceNames {
+	if len(filter.SourceIDs) > 0 {
+		placeholders := make([]string, len(filter.SourceIDs))
+		for i, source := range filter.SourceIDs {
 			placeholders[i] = "?"
 			args = append(args, source)
 		}
-		conditions = append(conditions, fmt.Sprintf("source_name IN (%s)", strings.Join(placeholders, ", ")))
+		conditions = append(conditions, fmt.Sprintf("source_id IN (%s)", strings.Join(placeholders, ", ")))
 	}
 
 	if filter.StartDate != nil {
@@ -515,7 +515,7 @@ func (s *ArticlesStore) buildListQuery(filter model.ArticleFilter) (string, []in
 		args = append(args, *filter.EndDate)
 	}
 
-	selectFields := "id, source_name, title, url, image_url, language, published_at, created_at, updated_at"
+	selectFields := "id, source_id, title, url, image_url, language, published_at, created_at, updated_at"
 
 	query := `
 		SELECT ` + selectFields + `
@@ -552,13 +552,13 @@ func (s *ArticlesStore) buildCountQuery(filter model.ArticleFilter) (string, []i
 		conditions = append(conditions, fmt.Sprintf("language IN (%s)", strings.Join(placeholders, ", ")))
 	}
 
-	if len(filter.SourceNames) > 0 {
-		placeholders := make([]string, len(filter.SourceNames))
-		for i, source := range filter.SourceNames {
+	if len(filter.SourceIDs) > 0 {
+		placeholders := make([]string, len(filter.SourceIDs))
+		for i, source := range filter.SourceIDs {
 			placeholders[i] = "?"
 			args = append(args, source)
 		}
-		conditions = append(conditions, fmt.Sprintf("source_name IN (%s)", strings.Join(placeholders, ", ")))
+		conditions = append(conditions, fmt.Sprintf("source_id IN (%s)", strings.Join(placeholders, ", ")))
 	}
 
 	if filter.StartDate != nil {

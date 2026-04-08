@@ -31,7 +31,7 @@ func TestArticlesStore_Create(t *testing.T) {
 			name: "valid article in Sinhala",
 			article: newTestArticle(func(a *model.ScrapedArticle) {
 				a.Language = model.LangSi
-				a.SourceName = "Ada Derana"
+				a.SourceID = "Ada Derana"
 			}),
 			wantErr: false,
 		},
@@ -39,7 +39,7 @@ func TestArticlesStore_Create(t *testing.T) {
 			name: "valid article in Tamil",
 			article: newTestArticle(func(a *model.ScrapedArticle) {
 				a.Language = model.LangTa
-				a.SourceName = "BBC Tamil"
+				a.SourceID = "BBC Tamil"
 			}),
 			wantErr: false,
 		},

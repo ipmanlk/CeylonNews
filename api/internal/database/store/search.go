@@ -35,7 +35,7 @@ func (s *SearchStore) Search(filter model.SearchFilter) (*model.Paginated[*model
 		result := &model.SearchResult{}
 		err := rows.Scan(
 			&result.ID,
-			&result.SourceName,
+			&result.SourceID,
 			&result.Title,
 			&result.URL,
 			&result.ImageURL,
@@ -76,7 +76,7 @@ func (s *SearchStore) CountSearchResults(filter model.SearchFilter) (int64, erro
 }
 
 func (s *SearchStore) GetAvailableSources() ([]string, error) {
-	query := `SELECT DISTINCT source_name FROM articles ORDER BY source_name`
+	query := `SELECT DISTINCT source_id FROM articles ORDER BY source_id`
 
 	rows, err := s.db.Query(query)
 	if err != nil {
@@ -128,7 +128,7 @@ func (s *SearchStore) GetAvailableLanguages() ([]string, error) {
 }
 
 func (s *SearchStore) GetSourcesByLanguage(language string) ([]string, error) {
-	query := `SELECT DISTINCT source_name FROM articles WHERE language = ? ORDER BY source_name`
+	query := `SELECT DISTINCT source_id FROM articles WHERE language = ? ORDER BY source_id`
 
 	rows, err := s.db.Query(query, language)
 	if err != nil {
@@ -172,13 +172,13 @@ func (s *SearchStore) buildSearchQuery(filter model.SearchFilter) (string, []int
 		conditions = append(conditions, fmt.Sprintf("a.language IN (%s)", strings.Join(placeholders, ",")))
 	}
 
-	if len(filter.SourceNames) > 0 {
-		placeholders := make([]string, len(filter.SourceNames))
-		for i, source := range filter.SourceNames {
+	if len(filter.SourceIDs) > 0 {
+		placeholders := make([]string, len(filter.SourceIDs))
+		for i, source := range filter.SourceIDs {
 			placeholders[i] = "?"
 			args = append(args, source)
 		}
-		conditions = append(conditions, fmt.Sprintf("a.source_name IN (%s)", strings.Join(placeholders, ",")))
+		conditions = append(conditions, fmt.Sprintf("a.source_id IN (%s)", strings.Join(placeholders, ",")))
 	}
 
 	if filter.StartDate != nil {
@@ -191,7 +191,7 @@ func (s *SearchStore) buildSearchQuery(filter model.SearchFilter) (string, []int
 		args = append(args, *filter.EndDate)
 	}
 
-	selectFields := "a.id, a.source_name, a.title, a.url, a.image_url, a.language, a.published_at, a.created_at, a.updated_at, articles_fts.rank"
+	selectFields := "a.id, a.source_id, a.title, a.url, a.image_url, a.language, a.published_at, a.created_at, a.updated_at, articles_fts.rank"
 
 	query := `
 		SELECT ` + selectFields + `
@@ -239,13 +239,13 @@ func (s *SearchStore) buildSearchCountQuery(filter model.SearchFilter) (string, 
 		conditions = append(conditions, fmt.Sprintf("a.language IN (%s)", strings.Join(placeholders, ",")))
 	}
 
-	if len(filter.SourceNames) > 0 {
-		placeholders := make([]string, len(filter.SourceNames))
-		for i, source := range filter.SourceNames {
+	if len(filter.SourceIDs) > 0 {
+		placeholders := make([]string, len(filter.SourceIDs))
+		for i, source := range filter.SourceIDs {
 			placeholders[i] = "?"
 			args = append(args, source)
 		}
-		conditions = append(conditions, fmt.Sprintf("a.source_name IN (%s)", strings.Join(placeholders, ",")))
+		conditions = append(conditions, fmt.Sprintf("a.source_id IN (%s)", strings.Join(placeholders, ",")))
 	}
 
 	if filter.StartDate != nil {
@@ -277,7 +277,7 @@ func (s *SearchStore) escapeFTSQuery(query string) string {
 	return `"` + escaped + `"`
 }
 
-func (s *SearchStore) GetRecentArticles(languages []string, sourceNames []string, limit int) ([]*model.Article, error) {
+func (s *SearchStore) GetRecentArticles(languages []string, sourceIDs []string, limit int) ([]*model.Article, error) {
 	var conditions []string
 	var args []interface{}
 
@@ -290,16 +290,16 @@ func (s *SearchStore) GetRecentArticles(languages []string, sourceNames []string
 		conditions = append(conditions, fmt.Sprintf("language IN (%s)", strings.Join(placeholders, ",")))
 	}
 
-	if len(sourceNames) > 0 {
-		placeholders := make([]string, len(sourceNames))
-		for i, source := range sourceNames {
+	if len(sourceIDs) > 0 {
+		placeholders := make([]string, len(sourceIDs))
+		for i, source := range sourceIDs {
 			placeholders[i] = "?"
 			args = append(args, source)
 		}
-		conditions = append(conditions, fmt.Sprintf("source_name IN (%s)", strings.Join(placeholders, ",")))
+		conditions = append(conditions, fmt.Sprintf("source_id IN (%s)", strings.Join(placeholders, ",")))
 	}
 
-	selectFields := "id, source_name, title, url, image_url, language, published_at, created_at, updated_at"
+	selectFields := "id, source_id, title, url, image_url, language, published_at, created_at, updated_at"
 
 	query := `
 		SELECT ` + selectFields + `
@@ -327,7 +327,7 @@ func (s *SearchStore) GetRecentArticles(languages []string, sourceNames []string
 		article := &model.Article{}
 		err := rows.Scan(
 			&article.ID,
-			&article.SourceName,
+			&article.SourceID,
 			&article.Title,
 			&article.URL,
 			&article.ImageURL,

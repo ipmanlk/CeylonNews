@@ -15,11 +15,11 @@ var (
 
 // SearchFilterRequest represents search filtering parameters from HTTP request
 type SearchFilterRequest struct {
-	Query       string
-	Languages   []string
-	SourceNames []string
-	StartDate   *time.Time
-	EndDate     *time.Time
+	Query     string
+	Languages []string
+	SourceIDs []string
+	StartDate *time.Time
+	EndDate   *time.Time
 }
 
 func (f *SearchFilterRequest) Validate() error {
@@ -61,11 +61,11 @@ func ParseSearchFilterRequest(r *http.Request) (*SearchFilterRequest, error) {
 	}
 
 	req := &SearchFilterRequest{
-		Query:       query,
-		Languages:   httpx.ParseQueryStringsFromCSV(r, "languages"),
-		SourceNames: httpx.ParseQueryStrings(r, "source_names"),
-		StartDate:   startDate,
-		EndDate:     endDate,
+		Query:     query,
+		Languages: httpx.ParseQueryStringsFromCSV(r, "languages"),
+		SourceIDs: httpx.ParseQueryStrings(r, "source_ids"),
+		StartDate: startDate,
+		EndDate:   endDate,
 	}
 
 	if err := req.Validate(); err != nil {

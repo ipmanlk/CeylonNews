@@ -64,13 +64,13 @@ func (f *Fetcher) extractRaw(ctx context.Context, url string, useBrowser bool) (
 	return result, nil
 }
 
-func (f *Fetcher) ExtractArticle(ctx context.Context, url, sourceName string, useBrowser bool) (model.ScrapedArticle, error) {
+func (f *Fetcher) ExtractArticle(ctx context.Context, url, sourceID string, useBrowser bool) (model.ScrapedArticle, error) {
 	result, err := f.extractRaw(ctx, url, useBrowser)
 	if err != nil {
 		return model.ScrapedArticle{}, err
 	}
 
-	return f.buildScrapedArticle(sourceName, result, url, &result.Metadata.Image, result.Metadata.Date), nil
+	return f.buildScrapedArticle(sourceID, result, url, &result.Metadata.Image, result.Metadata.Date), nil
 }
 
 func (f *Fetcher) FetchRSS(ctx context.Context, url string, maxItems int) ([]*gofeed.Item, error) {
@@ -193,12 +193,12 @@ func (f *Fetcher) ExtractLinks(doc *goquery.Document, selector, urlPrefix string
 	return links
 }
 
-func (f *Fetcher) buildScrapedArticle(sourceName string, result *trafilatura.ExtractResult, url string, imageURL *string, publishedAt time.Time) model.ScrapedArticle {
+func (f *Fetcher) buildScrapedArticle(sourceID string, result *trafilatura.ExtractResult, url string, imageURL *string, publishedAt time.Time) model.ScrapedArticle {
 	doc := trafilatura.CreateReadableDocument(result)
 	htmlContent := dom.OuterHTML(doc)
 
 	return model.ScrapedArticle{
-		SourceName:  sourceName,
+		SourceID:    sourceID,
 		Title:       result.Metadata.Title,
 		URL:         url,
 		ContentText: result.ContentText,
@@ -297,7 +297,7 @@ func (f *Fetcher) ExtractFieldFromDoc(doc interface{}, selector string) string {
 }
 
 // ExtractArticleWithContentConfig extracts article using specific field selectors
-func (f *Fetcher) ExtractArticleWithContentConfig(ctx context.Context, url, sourceName string, config ContentConfig, useBrowser bool) (model.ScrapedArticle, error) {
+func (f *Fetcher) ExtractArticleWithContentConfig(ctx context.Context, url, sourceID string, config ContentConfig, useBrowser bool) (model.ScrapedArticle, error) {
 	doc, err := f.FetchHTMLDoc(ctx, url, useBrowser)
 	if err != nil {
 		return model.ScrapedArticle{}, fmt.Errorf("failed to fetch HTML doc: %w", err)

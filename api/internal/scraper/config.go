@@ -10,6 +10,23 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
+// Kebab-case validation regex: starts with letter, followed by letters/numbers/hyphens
+// No consecutive hyphens, no leading/trailing hyphens
+var kebabCaseRegex = regexp.MustCompile(`^[a-z][a-z0-9]*(-[a-z0-9]+)*$`)
+
+// ValidateSourceID checks if the source ID follows kebab-case format
+func ValidateSourceID(id string) error {
+	if id == "" {
+		return fmt.Errorf("source id is required")
+	}
+
+	if !kebabCaseRegex.MatchString(id) {
+		return fmt.Errorf("source id %q must be kebab-case: lowercase letters, numbers, and single hyphens only; must start with a letter", id)
+	}
+
+	return nil
+}
+
 // URLRule represents a single URL transformation rule
 type URLRule struct {
 	Type        string `toml:"type"`
@@ -109,16 +126,39 @@ type SharedConfig struct {
 
 // Config is the root configuration structure
 type Config struct {
+	ID        string           `toml:"id"`
 	Name      string           `toml:"name"`
 	Shared    SharedConfig     `toml:"shared"`
 	Languages []LanguageConfig `toml:"languages"`
 }
 
-// LoadConfig loads a Config from TOML file
+// Validate checks if the configuration is valid
+func (c *Config) Validate() error {
+	if err := ValidateSourceID(c.ID); err != nil {
+		return err
+	}
+
+	if c.Name == "" {
+		return fmt.Errorf("source name is required")
+	}
+
+	if len(c.Languages) == 0 {
+		return fmt.Errorf("at least one language configuration is required")
+	}
+
+	return nil
+}
+
+// LoadConfig loads a Config from TOML file and validates it
 func LoadConfig(path string) (*Config, error) {
 	var cfg Config
 	if _, err := toml.DecodeFile(path, &cfg); err != nil {
 		return nil, fmt.Errorf("failed to decode config: %w", err)
+	}
+
+	// Validate the configuration
+	if err := cfg.Validate(); err != nil {
+		return nil, err
 	}
 
 	// Apply shared config inheritance
@@ -286,7 +326,7 @@ func applyFilterRule(urls []string, rule URLRule) []string {
 	case "filter_not_prefix":
 		return filterNotByPrefix(urls, rule.Value)
 	case "filter_contains":
-		return filterByContains(urls, rule.Value, rule.Mode)
+		return filterByContains(urls, rule.Value)
 	case "filter_not_contains":
 		return filterNotByContains(urls, rule.Value)
 	case "filter_regex":
@@ -339,7 +379,7 @@ func filterNotByPrefix(urls []string, prefix string) []string {
 	return result
 }
 
-func filterByContains(urls []string, value string, mode string) []string {
+func filterByContains(urls []string, value string) []string {
 	if value == "" {
 		return urls
 	}

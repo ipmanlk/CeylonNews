@@ -17,6 +17,7 @@ type ArticleService interface {
 
 type ArticleListResponse struct {
 	ID          int64   `json:"id"`
+	SourceID    string  `json:"source_id"`
 	SourceName  string  `json:"source_name"`
 	Title       string  `json:"title"`
 	URL         string  `json:"url"`
@@ -27,6 +28,7 @@ type ArticleListResponse struct {
 
 type ArticleResponse struct {
 	ID          int64   `json:"id"`
+	SourceID    string  `json:"source_id"`
 	SourceName  string  `json:"source_name"`
 	Title       string  `json:"title"`
 	URL         string  `json:"url"`
@@ -39,16 +41,22 @@ type ArticleResponse struct {
 
 type ArticleHandler struct {
 	articleService ArticleService
+	sourceResolver SourceResolver
 }
 
-func NewArticleHandler(articleService ArticleService) *ArticleHandler {
-	return &ArticleHandler{articleService: articleService}
+func NewArticleHandler(articleService ArticleService, sourceResolver SourceResolver) *ArticleHandler {
+	return &ArticleHandler{
+		articleService: articleService,
+		sourceResolver: sourceResolver,
+	}
 }
 
-func toArticleListResponse(article *model.Article) ArticleListResponse {
+func (h *ArticleHandler) toArticleListResponse(article *model.Article) ArticleListResponse {
+	sourceName, _ := h.sourceResolver.GetSourceNameByID(article.SourceID)
 	return ArticleListResponse{
 		ID:          article.ID,
-		SourceName:  article.SourceName,
+		SourceID:    article.SourceID,
+		SourceName:  sourceName,
 		Title:       article.Title,
 		URL:         article.URL,
 		ImageURL:    article.ImageURL,
@@ -71,12 +79,12 @@ func (h *ArticleHandler) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	filter := model.ArticleFilter{
-		Languages:   filterParams.Languages,
-		SourceNames: filterParams.SourceNames,
-		StartDate:   filterParams.StartDate,
-		EndDate:     filterParams.EndDate,
-		Limit:       pagination.Limit,
-		Offset:      pagination.Offset,
+		Languages: filterParams.Languages,
+		SourceIDs: filterParams.SourceIDs,
+		StartDate: filterParams.StartDate,
+		EndDate:   filterParams.EndDate,
+		Limit:     pagination.Limit,
+		Offset:    pagination.Offset,
 	}
 
 	result, err := h.articleService.ListPaginated(r.Context(), filter)
@@ -86,7 +94,7 @@ func (h *ArticleHandler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := httpx.TransformPaginated(result, toArticleListResponse)
+	response := httpx.TransformPaginated(result, h.toArticleListResponse)
 	httpx.RespondPaginated(w, response)
 }
 
@@ -112,9 +120,11 @@ func (h *ArticleHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	sourceName, _ := h.sourceResolver.GetSourceNameByID(article.SourceID)
 	response := ArticleResponse{
 		ID:          article.ID,
-		SourceName:  article.SourceName,
+		SourceID:    article.SourceID,
+		SourceName:  sourceName,
 		Title:       article.Title,
 		URL:         article.URL,
 		ContentHTML: article.ContentHTML,

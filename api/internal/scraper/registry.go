@@ -9,7 +9,10 @@ import (
 )
 
 type Scraper interface {
-	// Name returns the human-readable source name (e.g. "BBC", "Daily Mirror").
+	// ID returns the unique source identifier (e.g. "bbc", "daily-mirror").
+	ID() string
+
+	// Name returns the human-readable source display name (e.g. "BBC", "Daily Mirror").
 	Name() string
 
 	// Languages returns the language codes this scraper can produce articles for.
@@ -25,6 +28,7 @@ type Scraper interface {
 
 type Registry struct {
 	scrapers []Scraper
+	idToName map[string]string // Maps source ID to display name
 }
 
 func NewRegistry(f *fetcher.Fetcher, sourcesPath string) (*Registry, error) {
@@ -34,15 +38,26 @@ func NewRegistry(f *fetcher.Fetcher, sourcesPath string) (*Registry, error) {
 	}
 
 	scrapers := make([]Scraper, 0, len(configs))
+	idToName := make(map[string]string, len(configs))
 	for _, cfg := range configs {
 		scrapers = append(scrapers, NewSource(cfg, f))
+		idToName[cfg.ID] = cfg.Name
 	}
 
-	return &Registry{scrapers: scrapers}, nil
+	return &Registry{scrapers: scrapers, idToName: idToName}, nil
 }
 
 func (r *Registry) GetScrapers() []Scraper {
 	return r.scrapers
+}
+
+func (r *Registry) GetScraperByID(id string) Scraper {
+	for _, s := range r.scrapers {
+		if s.ID() == id {
+			return s
+		}
+	}
+	return nil
 }
 
 func (r *Registry) GetScraperByName(name string) Scraper {
@@ -52,6 +67,20 @@ func (r *Registry) GetScraperByName(name string) Scraper {
 		}
 	}
 	return nil
+}
+
+func (r *Registry) GetSourceNameByID(id string) (string, bool) {
+	name, exists := r.idToName[id]
+	return name, exists
+}
+
+func (r *Registry) GetIDToNameMap() map[string]string {
+	// Return a copy to prevent external modification
+	result := make(map[string]string, len(r.idToName))
+	for k, v := range r.idToName {
+		result[k] = v
+	}
+	return result
 }
 
 func (r *Registry) GetScrapersByLanguage(language string) []Scraper {

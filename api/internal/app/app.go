@@ -81,7 +81,7 @@ func New(ctx context.Context) (*App, error) {
 		IdleTimeout:     cfg.HTTP.IdleTimeout,
 		ShutdownTimeout: cfg.HTTP.ShutdownTimeout,
 	}
-	httpServer := api.NewServer(articleService, searchService, httpConfig)
+	httpServer := api.NewServer(articleService, searchService, scraperRegistry, httpConfig)
 
 	app := &App{
 		Config:     cfg,

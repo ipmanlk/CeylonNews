@@ -164,10 +164,10 @@ func (s *scrapeService) worker(ctx context.Context, tasks <-chan scrapeTask, res
 	}
 }
 
-func (s *scrapeService) ScrapeBySource(ctx context.Context, sourceName string) ([]model.ScrapedArticle, error) {
-	sc := s.registry.GetScraperByName(sourceName)
+func (s *scrapeService) ScrapeBySource(ctx context.Context, sourceID string) ([]model.ScrapedArticle, error) {
+	sc := s.registry.GetScraperByID(sourceID)
 	if sc == nil {
-		return nil, fmt.Errorf("scraper not found: %s", sourceName)
+		return nil, fmt.Errorf("scraper not found: %s", sourceID)
 	}
 
 	var allArticles []model.ScrapedArticle
@@ -175,7 +175,7 @@ func (s *scrapeService) ScrapeBySource(ctx context.Context, sourceName string) (
 		articles, err := sc.Scrape(ctx, lang)
 		if err != nil {
 			slog.Warn("failed to scrape from source",
-				"source", sourceName,
+				"source", sourceID,
 				"language", lang,
 				"error", err,
 			)
@@ -210,7 +210,7 @@ func (s *scrapeService) GetAvailableSources() []string {
 	scrapers := s.registry.GetScrapers()
 	sources := make([]string, len(scrapers))
 	for i, sc := range scrapers {
-		sources[i] = sc.Name()
+		sources[i] = sc.ID()
 	}
 	return sources
 }

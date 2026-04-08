@@ -2,6 +2,58 @@
 
 Each source is defined in a `.toml` file that describes a **pipeline** for discovering, extracting, validating, and transforming news articles.
 
+## Source Identification
+
+Each source **must** have a unique, stable identifier (`id`) that never changes, separate from the human-readable display name (`name`).
+
+```toml
+id = "daily-mirror"    # Stable identifier (kebab-case, never changes)
+name = "Daily Mirror"  # Display name (can change anytime)
+```
+
+### ID Format (Kebab-Case)
+
+The `id` field **must** follow these rules:
+
+- **Required**: Must be present and non-empty
+- **Start with letter**: Must begin with a lowercase letter (`a-z`)
+- **Allowed characters**: Only lowercase letters (`a-z`), numbers (`0-9`), and hyphens (`-`)
+- **No consecutive hyphens**: `--` is not allowed
+- **No leading/trailing hyphens**: Cannot start or end with a hyphen
+- **Format regex**: `^[a-z][a-z0-9]*(-[a-z0-9]+)*$`
+
+**Valid examples:**
+- `bbc`
+- `daily-mirror`
+- `hiru-news`
+- `news-lk`
+- `lanka-deepa-123`
+
+**Invalid examples:**
+- `BBC` (uppercase not allowed)
+- `daily_mirror` (underscore not allowed)
+- `hiru--news` (consecutive hyphens)
+- `-hiru` (leading hyphen)
+- `hiru-` (trailing hyphen)
+- `123-news` (must start with letter)
+- `hiru news` (spaces not allowed)
+
+### Validation Behavior
+
+At startup, the system validates all source configurations:
+- Sources with **invalid or missing IDs** are **skipped** with an error log
+- Sources with **duplicate IDs** cause the application to fail startup
+- The `id` is used for all internal references (database, API filters)
+- The `name` is only used for display purposes in API responses
+
+### Migration Notes
+
+When changing a source's display name:
+- **Safe**: Update the `name` field - existing articles will show the new name immediately
+- **Never change**: The `id` field - this would break all existing article references
+
+If you must change an ID, treat it as creating a new source and deprecating the old one.
+
 ## Pipeline Stages
 
 ```

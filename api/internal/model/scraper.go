@@ -3,7 +3,7 @@ package model
 import "time"
 
 type ScrapedArticle struct {
-	SourceName  string
+	SourceID    string
 	Title       string
 	URL         string
 	ContentText string
@@ -16,7 +16,7 @@ type ScrapedArticle struct {
 
 type Article struct {
 	ID          int64     `json:"id" db:"id"`
-	SourceName  string    `json:"source_name" db:"source_name"`
+	SourceID    string    `json:"source_id" db:"source_id"`
 	Title       string    `json:"title" db:"title"`
 	URL         string    `json:"url" db:"url"`
 	ContentText string    `json:"content_text" db:"content_text"`
@@ -30,7 +30,7 @@ type Article struct {
 
 type ArticleFilter struct {
 	Languages   []string   `json:"languages,omitempty"`
-	SourceNames []string   `json:"source_names,omitempty"`
+	SourceIDs   []string   `json:"source_ids,omitempty"`
 	StartDate   *time.Time `json:"start_date,omitempty"`
 	EndDate     *time.Time `json:"end_date,omitempty"`
 	Limit       int        `json:"limit"`
@@ -39,13 +39,13 @@ type ArticleFilter struct {
 }
 
 type SearchFilter struct {
-	Query       string     `json:"query"`
-	Languages   []string   `json:"languages,omitempty"`
-	SourceNames []string   `json:"source_names,omitempty"`
-	StartDate   *time.Time `json:"start_date,omitempty"`
-	EndDate     *time.Time `json:"end_date,omitempty"`
-	Limit       int        `json:"limit"`
-	Offset      int        `json:"offset"`
+	Query     string     `json:"query"`
+	Languages []string   `json:"languages,omitempty"`
+	SourceIDs []string   `json:"source_ids,omitempty"`
+	StartDate *time.Time `json:"start_date,omitempty"`
+	EndDate   *time.Time `json:"end_date,omitempty"`
+	Limit     int        `json:"limit"`
+	Offset    int        `json:"offset"`
 }
 
 type SearchResult struct {

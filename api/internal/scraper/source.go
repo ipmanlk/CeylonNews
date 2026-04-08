@@ -22,8 +22,11 @@ func NewSource(cfg Config, f *fetcher.Fetcher) *Source {
 	return &Source{config: cfg, fetcher: f}
 }
 
-// Name returns the source name
+// Name returns the source display name
 func (s *Source) Name() string { return s.config.Name }
+
+// ID returns the source unique identifier
+func (s *Source) ID() string { return s.config.ID }
 
 // Languages returns the list of supported languages
 func (s *Source) Languages() []model.Language {
@@ -212,7 +215,7 @@ func (s *Source) extractFromRSSItems(ctx context.Context, lc LanguageConfig, ite
 		// Apply transformations
 		transformationEngine.Transform(&article)
 
-		article.SourceName = s.Name()
+		article.SourceID = s.ID()
 		article.Language = model.Language(lc.Language)
 		articles = append(articles, article)
 	}
@@ -257,10 +260,10 @@ func (s *Source) extractFromLinks(ctx context.Context, lc LanguageConfig, links 
 
 func (s *Source) extractArticle(ctx context.Context, lc LanguageConfig, url string) (model.ScrapedArticle, error) {
 	if lc.Extraction.Content.HasSelectors() {
-		return s.fetcher.ExtractArticleWithContentConfig(ctx, url, s.Name(), lc.Extraction.Content, lc.Extraction.Browser)
+		return s.fetcher.ExtractArticleWithContentConfig(ctx, url, s.ID(), lc.Extraction.Content, lc.Extraction.Browser)
 	}
 
-	return s.fetcher.ExtractArticle(ctx, url, s.Name(), lc.Extraction.Browser)
+	return s.fetcher.ExtractArticle(ctx, url, s.ID(), lc.Extraction.Browser)
 }
 
 // deduplicateStrings removes duplicates from a string slice
