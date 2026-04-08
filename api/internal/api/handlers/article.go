@@ -78,9 +78,22 @@ func (h *ArticleHandler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// TODO: Remove this compatibility layer when mobile app is updated to use source_ids
+	sourceIDs := filterParams.SourceIDs
+	if len(sourceIDs) == 0 {
+		sourceNames := r.URL.Query()["source_names"]
+		if len(sourceNames) > 0 {
+			for _, name := range sourceNames {
+				if id, ok := h.sourceResolver.GetSourceIDByName(name); ok {
+					sourceIDs = append(sourceIDs, id)
+				}
+			}
+		}
+	}
+
 	filter := model.ArticleFilter{
 		Languages: filterParams.Languages,
-		SourceIDs: filterParams.SourceIDs,
+		SourceIDs: sourceIDs,
 		StartDate: filterParams.StartDate,
 		EndDate:   filterParams.EndDate,
 		Limit:     pagination.Limit,

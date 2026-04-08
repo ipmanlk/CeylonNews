@@ -75,10 +75,23 @@ func (h *SearchHandler) Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// TODO: Remove this compatibility layer when mobile app is updated to use source_ids
+	sourceIDs := searchParams.SourceIDs
+	if len(sourceIDs) == 0 {
+		sourceNames := r.URL.Query()["source_names"]
+		if len(sourceNames) > 0 {
+			for _, name := range sourceNames {
+				if id, ok := h.sourceResolver.GetSourceIDByName(name); ok {
+					sourceIDs = append(sourceIDs, id)
+				}
+			}
+		}
+	}
+
 	filter := model.SearchFilter{
 		Query:     searchParams.Query,
 		Languages: searchParams.Languages,
-		SourceIDs: searchParams.SourceIDs,
+		SourceIDs: sourceIDs,
 		StartDate: searchParams.StartDate,
 		EndDate:   searchParams.EndDate,
 		Limit:     pagination.Limit,
@@ -145,6 +158,18 @@ func (h *SearchHandler) GetSourcesByLanguage(w http.ResponseWriter, r *http.Requ
 func (h *SearchHandler) GetRecentArticles(w http.ResponseWriter, r *http.Request) {
 	languages := httpx.ParseQueryStringsFromCSV(r, "languages")
 	sourceIDs := httpx.ParseQueryStrings(r, "source_ids")
+
+	// TODO: Remove this compatibility layer when mobile app is updated to use source_ids
+	if len(sourceIDs) == 0 {
+		sourceNames := r.URL.Query()["source_names"]
+		if len(sourceNames) > 0 {
+			for _, name := range sourceNames {
+				if id, ok := h.sourceResolver.GetSourceIDByName(name); ok {
+					sourceIDs = append(sourceIDs, id)
+				}
+			}
+		}
+	}
 
 	limit, err := httpx.ParseQueryInt(r, "limit", 20)
 	if err != nil {

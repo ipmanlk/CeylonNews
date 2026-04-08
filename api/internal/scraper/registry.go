@@ -29,6 +29,7 @@ type Scraper interface {
 type Registry struct {
 	scrapers []Scraper
 	idToName map[string]string // Maps source ID to display name
+	nameToID map[string]string // Maps display name to source ID
 }
 
 func NewRegistry(f *fetcher.Fetcher, sourcesPath string) (*Registry, error) {
@@ -39,12 +40,14 @@ func NewRegistry(f *fetcher.Fetcher, sourcesPath string) (*Registry, error) {
 
 	scrapers := make([]Scraper, 0, len(configs))
 	idToName := make(map[string]string, len(configs))
+	nameToID := make(map[string]string, len(configs))
 	for _, cfg := range configs {
 		scrapers = append(scrapers, NewSource(cfg, f))
 		idToName[cfg.ID] = cfg.Name
+		nameToID[cfg.Name] = cfg.ID
 	}
 
-	return &Registry{scrapers: scrapers, idToName: idToName}, nil
+	return &Registry{scrapers: scrapers, idToName: idToName, nameToID: nameToID}, nil
 }
 
 func (r *Registry) GetScrapers() []Scraper {
@@ -72,6 +75,11 @@ func (r *Registry) GetScraperByName(name string) Scraper {
 func (r *Registry) GetSourceNameByID(id string) (string, bool) {
 	name, exists := r.idToName[id]
 	return name, exists
+}
+
+func (r *Registry) GetSourceIDByName(name string) (string, bool) {
+	id, exists := r.nameToID[name]
+	return id, exists
 }
 
 func (r *Registry) GetIDToNameMap() map[string]string {
