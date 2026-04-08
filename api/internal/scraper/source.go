@@ -252,6 +252,8 @@ func (s *Source) extractFromLinks(ctx context.Context, lc LanguageConfig, links 
 		// Apply transformations
 		transformationEngine.Transform(&article)
 
+		article.SourceID = s.ID()
+		article.Language = model.Language(lc.Language)
 		articles = append(articles, article)
 	}
 

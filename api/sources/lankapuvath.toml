@@ -9,6 +9,13 @@ max_items = 5
 type = "rss"
 url = "https://english.lankapuvath.lk/feed/"
 
+[languages.transformation]
+[[languages.transformation.replace]]
+field = "body"
+pattern = "^\\(LANKAPUVATH \\| COLOMBO\\) – "
+replacement = ""
+regex = true
+
 [[languages]]
 language = "si"
 max_items = 5
@@ -16,3 +23,10 @@ max_items = 5
 [languages.discovery]
 type = "rss"
 url = "https://sinhala.lankapuvath.lk/feed/"
+
+[languages.transformation]
+[[languages.transformation.replace]]
+field = "body"
+pattern = "^\\(කොළඹ \\| ලංකාපුවත්\\) – "
+replacement = ""
+regex = true

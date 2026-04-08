@@ -18,6 +18,8 @@ browser = false
 
 [shared.extraction.default.content]
 scope_selector = "div.article-content.col-lg-8"
+title_selector = "h1.head-title"
+prune_selector = ".social-links"
 
 [[languages]]
 language = "si"

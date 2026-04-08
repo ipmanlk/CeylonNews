@@ -8,3 +8,10 @@ max_items = 5
 [languages.discovery]
 type = "rss"
 url = "https://www.nethnews.lk/feed/"
+
+[languages.transformation]
+[[languages.transformation.replace]]
+field = "body"
+pattern = "^Published "
+replacement = ""
+regex = true
