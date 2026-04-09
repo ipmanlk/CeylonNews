@@ -63,7 +63,7 @@ func New(ctx context.Context) (*App, error) {
 
 	scrapeService := service.NewScrapeService(scraperRegistry)
 	articleService := service.NewArticleService(store.Articles)
-	searchService := service.NewSearchService(store.Search)
+	searchService := service.NewSearchService(store.Search, scraperRegistry)
 
 	sched := scheduler.New(
 		scrapeService,

@@ -8,6 +8,11 @@ import (
 	"ipmanlk/cnapi/internal/model"
 )
 
+type SourceInfo struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
 type SearchStore struct {
 	db *sql.DB
 }
@@ -127,7 +132,7 @@ func (s *SearchStore) GetAvailableLanguages() ([]string, error) {
 	return languages, nil
 }
 
-func (s *SearchStore) GetSourcesByLanguage(language string) ([]string, error) {
+func (s *SearchStore) GetSourcesByLanguage(language string) ([]SourceInfo, error) {
 	query := `SELECT DISTINCT source_id FROM articles WHERE language = ? ORDER BY source_id`
 
 	rows, err := s.db.Query(query, language)
@@ -136,14 +141,14 @@ func (s *SearchStore) GetSourcesByLanguage(language string) ([]string, error) {
 	}
 	defer rows.Close()
 
-	var sources []string
+	var sources []SourceInfo
 	for rows.Next() {
-		var source string
-		err := rows.Scan(&source)
+		var sourceID string
+		err := rows.Scan(&sourceID)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan source: %w", err)
 		}
-		sources = append(sources, source)
+		sources = append(sources, SourceInfo{ID: sourceID})
 	}
 
 	if err = rows.Err(); err != nil {

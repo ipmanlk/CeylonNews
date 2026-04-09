@@ -217,13 +217,26 @@ function loadSources() {
   getSourcesByLanguage(homeState.currentLanguage)
     .then(sourcesByLang => {
       const sourceFilters = document.getElementById("source-filters");
-      sourcesByLang.sources.forEach(sourceId => {
+      sourcesByLang.sources.forEach(source => {
         const pill = document.createElement("div");
         pill.className = "source-pill";
+
+        // TODO: Remove compatibility code once new API is live
+        // Handle both old format (string) and new format (object with id/name)
+        let sourceId, sourceName;
+        if (typeof source === 'string') {
+          // Old API format: source is just the ID
+          sourceId = source;
+          sourceName = homeState.sourceMap.get(sourceId) || formatSourceId(sourceId);
+        } else {
+          // New API format: source is an object with id and name
+          sourceId = source.id;
+          sourceName = source.name;
+          homeState.sourceMap.set(sourceId, sourceName);
+        }
+
         pill.dataset.sourceId = sourceId;
-        // Get display name from map or format the ID
-        const displayName = homeState.sourceMap.get(sourceId) || formatSourceId(sourceId);
-        pill.textContent = displayName;
+        pill.textContent = sourceName;
         sourceFilters.appendChild(pill);
       });
       applySavedSourceSelection();

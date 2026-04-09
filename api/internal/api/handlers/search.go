@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"ipmanlk/cnapi/internal/api/dto"
+	"ipmanlk/cnapi/internal/database/store"
 	"ipmanlk/cnapi/internal/model"
 	"ipmanlk/cnapi/pkg/httpx"
 )
@@ -14,7 +15,7 @@ type SearchService interface {
 	Search(ctx context.Context, filter model.SearchFilter) (*model.Paginated[*model.SearchResult], error)
 	GetAvailableSources() ([]string, error)
 	GetAvailableLanguages() ([]string, error)
-	GetSourcesByLanguage(language string) ([]string, error)
+	GetSourcesByLanguage(language string) ([]store.SourceInfo, error)
 	GetRecentArticles(languages []string, sourceIDs []string, limit int) ([]*model.Article, error)
 }
 

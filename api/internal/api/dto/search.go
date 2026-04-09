@@ -74,3 +74,8 @@ func ParseSearchFilterRequest(r *http.Request) (*SearchFilterRequest, error) {
 
 	return req, nil
 }
+
+type SourceResponse struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}

@@ -29,7 +29,7 @@ type SearchStore interface {
 	CountSearchResults(filter model.SearchFilter) (int64, error)
 	GetAvailableSources() ([]string, error)
 	GetAvailableLanguages() ([]string, error)
-	GetSourcesByLanguage(language string) ([]string, error)
+	GetSourcesByLanguage(language string) ([]store.SourceInfo, error)
 	GetRecentArticles(languages []string, sourceNames []string, limit int) ([]*model.Article, error)
 }
 
