@@ -2,7 +2,7 @@ const STORAGE_KEYS = {
   THEME: "app_theme",
   LANG: "ceylon_news_lang",
   CUSTOM_FONT: "use_custom_font",
-  SELECTED_SOURCES: "selected_sources",
+  SELECTED_SOURCE_IDS: "selected_source_ids",
   RECENT_SEARCHES: "recent_searches",
 };
 
@@ -45,13 +45,21 @@ function toggleSavedArticle(article) {
   return savedArticles.toggle(article);
 }
 
-function getSelectedSources() {
-  const sources = localStorage.getItem(STORAGE_KEYS.SELECTED_SOURCES);
-  return sources ? JSON.parse(sources) : [];
+function getSelectedSourceIds() {
+  // TODO: Remove this backward compatibility code once all users are on the new API version
+  // This migration code can be removed after 30 days or next major release
+  const oldSources = localStorage.getItem("selected_sources");
+  if (oldSources) {
+    localStorage.setItem(STORAGE_KEYS.SELECTED_SOURCE_IDS, oldSources);
+    localStorage.removeItem("selected_sources");
+    return JSON.parse(oldSources);
+  }
+  const sourceIds = localStorage.getItem(STORAGE_KEYS.SELECTED_SOURCE_IDS);
+  return sourceIds ? JSON.parse(sourceIds) : [];
 }
 
-function setSelectedSources(sources) {
-  localStorage.setItem(STORAGE_KEYS.SELECTED_SOURCES, JSON.stringify(sources));
+function setSelectedSourceIds(sourceIds) {
+  localStorage.setItem(STORAGE_KEYS.SELECTED_SOURCE_IDS, JSON.stringify(sourceIds));
 }
 
 function getRecentSearches() {

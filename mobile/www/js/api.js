@@ -27,8 +27,8 @@ function getArticles(params = {}) {
       Array.isArray(params.languages) ? params.languages.join(",") : params.languages
     );
   }
-  if (params.sourceNames && Array.isArray(params.sourceNames)) {
-    params.sourceNames.forEach(source => queryParams.append("source_names", source));
+  if (params.sourceIds && Array.isArray(params.sourceIds)) {
+    params.sourceIds.forEach(sourceId => queryParams.append("source_ids", sourceId));
   }
   if (params.startDate) queryParams.append("start_date", params.startDate);
   if (params.endDate) queryParams.append("end_date", params.endDate);
@@ -51,8 +51,8 @@ function searchArticles(params = {}) {
       Array.isArray(params.languages) ? params.languages.join(",") : params.languages
     );
   }
-  if (params.sourceNames) {
-    params.sourceNames.forEach(source => queryParams.append("source_names", source));
+  if (params.sourceIds) {
+    params.sourceIds.forEach(sourceId => queryParams.append("source_ids", sourceId));
   }
   if (params.startDate) queryParams.append("start_date", params.startDate);
   if (params.endDate) queryParams.append("end_date", params.endDate);
@@ -74,8 +74,8 @@ function getRecentArticlesFromApi(params = {}) {
       Array.isArray(params.languages) ? params.languages.join(",") : params.languages
     );
   }
-  if (params.sourceNames) {
-    params.sourceNames.forEach(source => queryParams.append("source_names", source));
+  if (params.sourceIds) {
+    params.sourceIds.forEach(sourceId => queryParams.append("source_ids", sourceId));
   }
   if (params.limit) queryParams.append("limit", params.limit);
 

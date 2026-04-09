@@ -58,7 +58,7 @@ async function loadArticle(id) {
 
     await updateBookmarkButton();
     addToReadHistory(article);
-    loadRelatedArticles(article.source_name, article.language);
+    loadRelatedArticles(article.source_id, article.language);
     applyArticleFont();
   } catch (error) {
     console.error("Failed to load article:", error);
@@ -95,9 +95,9 @@ async function handleBookmarkClick() {
   }
 }
 
-function loadRelatedArticles(source, language) {
+function loadRelatedArticles(sourceId, language) {
   getRecentArticlesFromApi({
-    sourceNames: [source],
+    sourceIds: [sourceId],
     languages: [language],
     limit: 3
   })
