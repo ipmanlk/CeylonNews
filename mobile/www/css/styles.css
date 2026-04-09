@@ -556,9 +556,11 @@ p {
   transition: all 0.2s ease;
 }
 
-.source-pill:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+@media (hover: hover) {
+  .source-pill:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
 }
 
 .source-pill.active {
