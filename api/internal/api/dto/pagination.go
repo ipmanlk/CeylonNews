@@ -27,7 +27,6 @@ type PaginationRequest struct {
 	Offset int
 }
 
-// Validate validates pagination parameters
 func (p *PaginationRequest) Validate() error {
 	if p.Limit < MinLimit {
 		return ErrLimitTooSmall

@@ -1,17 +1,32 @@
+id = "mawrata"
 name = "Mawrata"
 
 [[languages]]
 language = "en"
 max_items = 5
 
-[languages.listing]
+[languages.discovery]
 type = "rss"
 url = "https://mawratanews.lk/feed/"
+
+[languages.extraction]
+browser = false
+
+[languages.extraction.content]
+scope_selector = ".jeg_inner_content"
+prune_selector = ".jeg_sharelist"
 
 [[languages]]
 language = "si"
 max_items = 5
 
-[languages.listing]
+[languages.discovery]
 type = "rss"
 url = "https://sinhala.mawratanews.lk/feed/"
+
+[languages.extraction]
+browser = false
+
+[languages.extraction.content]
+scope_selector = ".jeg_inner_content"
+prune_selector = ".jeg_sharelist"

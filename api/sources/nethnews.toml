@@ -1,9 +1,17 @@
+id = "neth-news"
 name = "Neth News"
 
 [[languages]]
 language = "si"
 max_items = 5
 
-[languages.listing]
+[languages.discovery]
 type = "rss"
 url = "https://www.nethnews.lk/feed/"
+
+[languages.transformation]
+[[languages.transformation.replace]]
+field = "body"
+pattern = "^Published "
+replacement = ""
+regex = true

@@ -58,8 +58,8 @@ For release builds, create `mobile/build.json`:
 
 ## Technologies
 - Apache Cordova
-- Onsen UI
-- jQuery
+- Vanilla JavaScript
+- Phosphor Icons
 - Go
 - SQLite
 - Goose

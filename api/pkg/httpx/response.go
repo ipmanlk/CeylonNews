@@ -2,6 +2,7 @@ package httpx
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 )
 
@@ -11,13 +12,13 @@ type ErrorResponse struct {
 	Code    int    `json:"code"`
 }
 
-func RespondJSON(w http.ResponseWriter, status int, data interface{}) {
+func RespondJSON(w http.ResponseWriter, status int, data any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 
 	if data != nil {
 		if err := json.NewEncoder(w).Encode(data); err != nil {
-			http.Error(w, "failed to encode response", http.StatusInternalServerError)
+			slog.Error("failed to encode JSON response", "error", err)
 		}
 	}
 }

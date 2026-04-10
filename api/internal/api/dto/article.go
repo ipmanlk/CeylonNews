@@ -15,13 +15,12 @@ var (
 
 // ArticleFilterRequest represents article filtering parameters from HTTP request
 type ArticleFilterRequest struct {
-	Languages   []string
-	SourceNames []string
-	StartDate   *time.Time
-	EndDate     *time.Time
+	Languages []string
+	SourceIDs []string
+	StartDate *time.Time
+	EndDate   *time.Time
 }
 
-// Validate validates article filter parameters
 func (f *ArticleFilterRequest) Validate() error {
 	for _, lang := range f.Languages {
 		if !isValidLanguage(lang) {
@@ -51,10 +50,10 @@ func ParseArticleFilterRequest(r *http.Request) (*ArticleFilterRequest, error) {
 	}
 
 	req := &ArticleFilterRequest{
-		Languages:   httpx.ParseQueryStringsFromCSV(r, "languages"),
-		SourceNames: httpx.ParseQueryStrings(r, "source_names"),
-		StartDate:   startDate,
-		EndDate:     endDate,
+		Languages: httpx.ParseQueryStringsFromCSV(r, "languages"),
+		SourceIDs: httpx.ParseQueryStrings(r, "source_ids"),
+		StartDate: startDate,
+		EndDate:   endDate,
 	}
 
 	if err := req.Validate(); err != nil {

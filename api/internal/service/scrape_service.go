@@ -24,27 +24,28 @@ type scrapeService struct {
 }
 
 func NewScrapeService(registry *scraper.Registry) *scrapeService {
-	return &scrapeService{
-		registry: registry,
-	}
+	return &scrapeService{registry: registry}
 }
 
 type scrapeTask struct {
-	scraper  scraper.SourceScraper
+	scraper  scraper.Scraper
 	language model.Language
 }
 
-func (s *scrapeService) ScrapeAllConcurrent(ctx context.Context, httpWorkers int, browserWorkers int, batchSize int) <-chan ScrapeResult {
+// ScrapeAllConcurrent fans out scraping across all sources using separate HTTP
+// and browser worker pools. Results are streamed on the returned channel, which
+// is closed when all workers finish.
+func (s *scrapeService) ScrapeAllConcurrent(ctx context.Context, httpWorkers, browserWorkers, batchSize int) <-chan ScrapeResult {
 	resultChan := make(chan ScrapeResult, httpWorkers+browserWorkers)
 
 	var httpTasks []scrapeTask
 	var browserTasks []scrapeTask
 
 	scrapers := s.registry.GetScrapers()
-	for _, scraper := range scrapers {
-		for _, lang := range scraper.Languages() {
-			task := scrapeTask{scraper: scraper, language: lang}
-			if scraper.UsesBrowser(lang) {
+	for _, sc := range scrapers {
+		for _, lang := range sc.Languages() {
+			task := scrapeTask{scraper: sc, language: lang}
+			if sc.UsesBrowser(lang) {
 				browserTasks = append(browserTasks, task)
 			} else {
 				httpTasks = append(httpTasks, task)
@@ -150,7 +151,6 @@ func (s *scrapeService) worker(ctx context.Context, tasks <-chan scrapeTask, res
 						Articles:     articles[i:end],
 						ArticleCount: end - i,
 						Success:      true,
-						Error:        nil,
 					}
 
 					select {
@@ -164,24 +164,23 @@ func (s *scrapeService) worker(ctx context.Context, tasks <-chan scrapeTask, res
 	}
 }
 
-func (s *scrapeService) ScrapeBySource(ctx context.Context, sourceName string) ([]model.ScrapedArticle, error) {
-	scraper := s.registry.GetScraperByName(sourceName)
-	if scraper == nil {
-		return nil, fmt.Errorf("scraper not found: %s", sourceName)
+func (s *scrapeService) ScrapeBySource(ctx context.Context, sourceID string) ([]model.ScrapedArticle, error) {
+	sc := s.registry.GetScraperByID(sourceID)
+	if sc == nil {
+		return nil, fmt.Errorf("scraper not found: %s", sourceID)
 	}
 
 	var allArticles []model.ScrapedArticle
-	for _, lang := range scraper.Languages() {
-		articles, err := scraper.Scrape(ctx, lang)
+	for _, lang := range sc.Languages() {
+		articles, err := sc.Scrape(ctx, lang)
 		if err != nil {
 			slog.Warn("failed to scrape from source",
-				"source", sourceName,
+				"source", sourceID,
 				"language", lang,
 				"error", err,
 			)
 			continue
 		}
-
 		allArticles = append(allArticles, articles...)
 	}
 
@@ -190,19 +189,17 @@ func (s *scrapeService) ScrapeBySource(ctx context.Context, sourceName string) (
 
 func (s *scrapeService) ScrapeByLanguage(ctx context.Context, language model.Language) ([]model.ScrapedArticle, error) {
 	var allArticles []model.ScrapedArticle
-	scrapers := s.registry.GetScrapersByLanguage(string(language))
 
-	for _, scraper := range scrapers {
-		articles, err := scraper.Scrape(ctx, language)
+	for _, sc := range s.registry.GetScrapersByLanguage(string(language)) {
+		articles, err := sc.Scrape(ctx, language)
 		if err != nil {
 			slog.Warn("failed to scrape from source",
-				"source", scraper.Name(),
+				"source", sc.Name(),
 				"language", language,
 				"error", err,
 			)
 			continue
 		}
-
 		allArticles = append(allArticles, articles...)
 	}
 
@@ -212,26 +209,23 @@ func (s *scrapeService) ScrapeByLanguage(ctx context.Context, language model.Lan
 func (s *scrapeService) GetAvailableSources() []string {
 	scrapers := s.registry.GetScrapers()
 	sources := make([]string, len(scrapers))
-	for i, scraper := range scrapers {
-		sources[i] = scraper.Name()
+	for i, sc := range scrapers {
+		sources[i] = sc.ID()
 	}
 	return sources
 }
 
 func (s *scrapeService) GetAvailableLanguages() []model.Language {
-	scrapers := s.registry.GetScrapers()
-	languageMap := make(map[model.Language]bool)
-
-	for _, scraper := range scrapers {
-		for _, lang := range scraper.Languages() {
-			languageMap[lang] = true
+	seen := make(map[model.Language]bool)
+	for _, sc := range s.registry.GetScrapers() {
+		for _, lang := range sc.Languages() {
+			seen[lang] = true
 		}
 	}
 
-	languages := make([]model.Language, 0, len(languageMap))
-	for lang := range languageMap {
+	languages := make([]model.Language, 0, len(seen))
+	for lang := range seen {
 		languages = append(languages, lang)
 	}
-
 	return languages
 }

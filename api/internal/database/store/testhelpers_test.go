@@ -105,7 +105,7 @@ func newTestArticle(overrides ...func(*model.ScrapedArticle)) model.ScrapedArtic
 	imageURL := "https://example.com/image.jpg"
 
 	article := model.ScrapedArticle{
-		SourceName:  "TestSource",
+		SourceID:    "TestSource",
 		Title:       "Test Article Title",
 		URL:         fmt.Sprintf("https://example.com/article-%d", now.UnixNano()),
 		ContentText: "This is test article content with some text to make it realistic.",
@@ -143,8 +143,8 @@ func newTestArticles(count int, overrides ...func(int, *model.ScrapedArticle)) [
 func assertArticleEqual(t *testing.T, stored *model.Article, scraped model.ScrapedArticle) {
 	t.Helper()
 
-	if stored.SourceName != scraped.SourceName {
-		t.Errorf("SourceName mismatch: got %s, want %s", stored.SourceName, scraped.SourceName)
+	if stored.SourceID != scraped.SourceID {
+		t.Errorf("SourceID mismatch: got %s, want %s", stored.SourceID, scraped.SourceID)
 	}
 	if stored.Title != scraped.Title {
 		t.Errorf("Title mismatch: got %s, want %s", stored.Title, scraped.Title)

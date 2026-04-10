@@ -1,32 +1,52 @@
+id = "bbc"
 name = "BBC"
 
 [[languages]]
 language = "en"
 max_items = 5
 
-[languages.listing]
+[languages.discovery]
 type = "html"
 url = "https://www.bbc.com/news/topics/cywd23g0gxgt"
-selectors = ["a"]
-url_prefix = "/news/articles/"
-base_url = "https://www.bbc.com"
+
+[languages.discovery.html]
+link_selectors = ["a"]
+
+[[languages.discovery.html.url_rules]]
+type = "filter_prefix"
+value = "/news/articles/"
+
+[[languages.discovery.html.url_rules]]
+type = "prepend"
+value = "https://www.bbc.com"
+condition = "if_relative"
 
 [[languages]]
 language = "si"
 max_items = 5
 
-[languages.listing]
+[languages.discovery]
 type = "html"
 url = "https://www.bbc.com/sinhala/topics/cg7267dz901t"
-selectors = ["a"]
-url_prefix = "https://www.bbc.com/sinhala/articles/"
+
+[languages.discovery.html]
+link_selectors = ["a"]
+
+[[languages.discovery.html.url_rules]]
+type = "filter_prefix"
+value = "https://www.bbc.com/sinhala/articles/"
 
 [[languages]]
 language = "ta"
 max_items = 5
 
-[languages.listing]
+[languages.discovery]
 type = "html"
 url = "https://www.bbc.com/tamil/topics/cz74k7p3qw7t"
-selectors = ["a"]
-url_prefix = "https://www.bbc.com/tamil/articles/"
+
+[languages.discovery.html]
+link_selectors = ["a"]
+
+[[languages.discovery.html.url_rules]]
+type = "filter_prefix"
+value = "https://www.bbc.com/tamil/articles/"

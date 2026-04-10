@@ -100,7 +100,6 @@ func (s *Scheduler) Stop() error {
 	slog.Info("stopping scheduler")
 
 	close(s.stopCh)
-
 	<-s.doneCh
 
 	s.mu.Lock()
@@ -116,13 +115,9 @@ func (s *Scheduler) scrapeAndStoreAll(ctx context.Context) {
 	startTime := time.Now()
 	slog.Info("starting scheduled scrape job")
 
-	// Create a context with timeout for this job
 	jobCtx, cancel := context.WithTimeout(ctx, 30*time.Minute)
 	defer cancel()
 
-	// Use concurrent scraping with streaming
-	// 4 workers = 4 concurrent scrapers at a time
-	// 100 batch size = insert every 100 articles
 	resultChan := s.scrapeService.ScrapeAllConcurrent(jobCtx, s.httpWorkers, s.browserWorkers, 100)
 
 	totalScraped := 0
@@ -131,7 +126,6 @@ func (s *Scheduler) scrapeAndStoreAll(ctx context.Context) {
 	failureCount := 0
 	storeStartTime := time.Now()
 
-	// Process results as they come in
 	for result := range resultChan {
 		if !result.Success {
 			failureCount++
@@ -146,7 +140,6 @@ func (s *Scheduler) scrapeAndStoreAll(ctx context.Context) {
 
 		totalScraped += len(result.Articles)
 
-		// Store this batch immediately
 		ids, err := s.articleService.BulkUpsert(jobCtx, result.Articles)
 		if err != nil {
 			slog.Error("failed to store articles batch",

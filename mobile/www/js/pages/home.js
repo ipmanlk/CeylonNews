@@ -3,11 +3,12 @@ const homeState = {
   currentPage: 0,
   perPage: 10,
   hasMore: true,
-  currentSources: getSelectedSources(),
+  currentSourceIds: getSelectedSourceIds(),
   currentLanguage: getLanguage(),
   moreStoriesAdded: false,
   articlesData: [],
-  scrollPosition: 0
+  scrollPosition: 0,
+  sourceMap: new Map()
 };
 
 const SESSION_STORAGE_KEY = 'home_page_state';
@@ -33,8 +34,8 @@ function loadArticles(loadMore) {
     languages: homeState.currentLanguage
   };
 
-  if (homeState.currentSources.length > 0) {
-    params.sourceNames = homeState.currentSources;
+  if (homeState.currentSourceIds.length > 0) {
+    params.sourceIds = homeState.currentSourceIds;
   }
 
   getArticles(params)
@@ -83,7 +84,7 @@ function saveHomeState() {
     scrollPosition: window.scrollY,
     currentPage: homeState.currentPage,
     hasMore: homeState.hasMore,
-    currentSources: homeState.currentSources,
+    currentSourceIds: homeState.currentSourceIds,
     timestamp: Date.now()
   };
   sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(state));
@@ -118,6 +119,13 @@ function navigateToArticle(articleId) {
 function renderArticles(articles, append) {
   const newsContent = document.getElementById("news-content");
   const fontClass = getFontClass();
+
+  // Build source map from articles for display names
+  articles.forEach(article => {
+    if (article.source_id && article.source_name) {
+      homeState.sourceMap.set(article.source_id, article.source_name);
+    }
+  });
 
   if (!append) {
     homeState.articlesData = articles;
@@ -171,6 +179,27 @@ function renderArticles(articles, append) {
       articlesList.insertAdjacentHTML("beforeend", renderCompactCard(article, fontClass));
     });
   }
+
+  // Update source filter display names if we have them in the map
+  updateSourceFilterDisplayNames();
+}
+
+function updateSourceFilterDisplayNames() {
+  // TODO: Remove this function once API provides source names directly
+  // Currently needed because /api/v1/search/sources/by-language only returns IDs
+  const sourceFilters = document.getElementById("source-filters");
+  if (!sourceFilters) return;
+
+  const pills = sourceFilters.querySelectorAll(".source-pill[data-source-id]");
+  pills.forEach(pill => {
+    const sourceId = pill.dataset.sourceId;
+    if (sourceId && sourceId !== "all") {
+      const displayName = homeState.sourceMap.get(sourceId);
+      if (displayName) {
+        pill.textContent = displayName;
+      }
+    }
+  });
 }
 
 function renderCompactCard(article, fontClass) {
@@ -191,8 +220,23 @@ function loadSources() {
       sourcesByLang.sources.forEach(source => {
         const pill = document.createElement("div");
         pill.className = "source-pill";
-        pill.dataset.source = source;
-        pill.textContent = source;
+
+        // TODO: Remove compatibility code once new API is live
+        // Handle both old format (string) and new format (object with id/name)
+        let sourceId, sourceName;
+        if (typeof source === 'string') {
+          // Old API format: source is just the ID
+          sourceId = source;
+          sourceName = homeState.sourceMap.get(sourceId) || formatSourceId(sourceId);
+        } else {
+          // New API format: source is an object with id and name
+          sourceId = source.id;
+          sourceName = source.name;
+          homeState.sourceMap.set(sourceId, sourceName);
+        }
+
+        pill.dataset.sourceId = sourceId;
+        pill.textContent = sourceName;
         sourceFilters.appendChild(pill);
       });
       applySavedSourceSelection();
@@ -200,16 +244,25 @@ function loadSources() {
     .catch(error => console.error("Failed to load sources:", error));
 }
 
+function formatSourceId(sourceId) {
+  // TODO: Remove this fallback function once API provides source names directly
+  // or when all source IDs have proper display names in the sourceMap
+  return sourceId
+    .split("-")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
 function applySavedSourceSelection() {
   const sourceFilters = document.getElementById("source-filters");
-  const allPill = sourceFilters.querySelector('[data-source="all"]');
+  const allPill = sourceFilters.querySelector('[data-source-id="all"]');
 
-  if (homeState.currentSources.length === 0) {
+  if (homeState.currentSourceIds.length === 0) {
     allPill.classList.add("active");
   } else {
     allPill.classList.remove("active");
-    homeState.currentSources.forEach(source => {
-      const pill = sourceFilters.querySelector(`[data-source="${source}"]`);
+    homeState.currentSourceIds.forEach(sourceId => {
+      const pill = sourceFilters.querySelector(`[data-source-id="${sourceId}"]`);
       if (pill) pill.classList.add("active");
     });
   }
@@ -219,30 +272,30 @@ function handleSourceClick(e) {
   if (!e.target.classList.contains("source-pill")) return;
   
   const sourceFilters = document.getElementById("source-filters");
-  const clickedSource = e.target.dataset.source;
-  const allPill = sourceFilters.querySelector('[data-source="all"]');
+  const clickedSourceId = e.target.dataset.sourceId;
+  const allPill = sourceFilters.querySelector('[data-source-id="all"]');
 
-  if (clickedSource === "all") {
+  if (clickedSourceId === "all") {
     const pills = sourceFilters.querySelectorAll(".source-pill");
     pills.forEach(p => p.classList.remove("active"));
     e.target.classList.add("active");
-    homeState.currentSources = [];
+    homeState.currentSourceIds = [];
   } else {
     allPill.classList.remove("active");
 
     if (e.target.classList.contains("active")) {
       e.target.classList.remove("active");
-      homeState.currentSources = homeState.currentSources.filter(s => s !== clickedSource);
-      if (homeState.currentSources.length === 0) allPill.classList.add("active");
+      homeState.currentSourceIds = homeState.currentSourceIds.filter(id => id !== clickedSourceId);
+      if (homeState.currentSourceIds.length === 0) allPill.classList.add("active");
     } else {
       e.target.classList.add("active");
-      if (!homeState.currentSources.includes(clickedSource)) {
-        homeState.currentSources.push(clickedSource);
+      if (!homeState.currentSourceIds.includes(clickedSourceId)) {
+        homeState.currentSourceIds.push(clickedSourceId);
       }
     }
   }
 
-  setSelectedSources(homeState.currentSources);
+  setSelectedSourceIds(homeState.currentSourceIds);
   loadArticles(false);
 }
 
@@ -272,7 +325,8 @@ function restoreHomeState() {
   homeState.articlesData = savedState.articles || [];
   homeState.currentPage = savedState.currentPage || 0;
   homeState.hasMore = savedState.hasMore !== undefined ? savedState.hasMore : true;
-  homeState.currentSources = savedState.currentSources || [];
+  // TODO: Remove backward compatibility for old currentSources format once all users are migrated
+  homeState.currentSourceIds = savedState.currentSourceIds || savedState.currentSources || [];
 
   // Hide skeleton and show content
   const skeleton = document.getElementById("loading-skeleton");

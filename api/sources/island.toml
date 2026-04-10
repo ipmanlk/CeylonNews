@@ -1,13 +1,16 @@
+id = "the-island"
 name = "The Island"
 
 [[languages]]
 language = "en"
 max_items = 5
 
-[languages.listing]
+[languages.discovery]
 type = "rss"
 url = "https://island.lk/feed/"
 
-[languages.article]
+[languages.extraction]
 browser = true
-selector = ".mvp-post-soc-out.right.relative"
+
+[languages.extraction.content]
+scope_selector = ".mvp-post-soc-out.right.relative"

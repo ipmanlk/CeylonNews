@@ -2,7 +2,7 @@
 -- +goose StatementBegin
 CREATE TABLE articles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    source_name TEXT NOT NULL,
+    source_id TEXT NOT NULL,
     title TEXT NOT NULL,
     url TEXT NOT NULL UNIQUE,
     content_text TEXT NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE articles (
 -- +goose StatementEnd
 
 -- +goose StatementBegin
-CREATE INDEX idx_articles_source_name ON articles(source_name);
+CREATE INDEX idx_articles_source_id ON articles(source_id);
 CREATE INDEX idx_articles_language ON articles(language);
 CREATE INDEX idx_articles_published_at ON articles(published_at);
 CREATE INDEX idx_articles_url ON articles(url);
@@ -71,7 +71,7 @@ DROP TABLE IF EXISTS articles_fts;
 DROP INDEX IF EXISTS idx_articles_url;
 DROP INDEX IF EXISTS idx_articles_published_at;
 DROP INDEX IF EXISTS idx_articles_language;
-DROP INDEX IF EXISTS idx_articles_source_name;
+DROP INDEX IF EXISTS idx_articles_source_id;
 -- +goose StatementEnd
 
 -- +goose StatementBegin

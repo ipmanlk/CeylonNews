@@ -1,21 +1,30 @@
+id = "daily-mirror"
 name = "Daily Mirror"
-
-[title_transform]
-skip = [
-    { contains = "An Error Was", case_sensitive = false }
-]
-
-replace = [
-    { pattern = " - Breaking News | Daily Mirror", with = "", case_sensitive = false }
-]
 
 [[languages]]
 language = "en"
 max_items = 5
 
-[languages.listing]
+[languages.discovery]
 type = "rss"
 url = "https://www.dailymirror.lk/rss/todays_headlines/419"
 
-[languages.article]
+[languages.extraction]
 browser = true
+
+[languages.validation]
+[[languages.validation.skip]]
+field = "title"
+type = "contains"
+value = "An Error Was"
+case_sensitive = false
+
+[languages.transformation]
+[[languages.transformation.replace]]
+field = "title"
+pattern = " - Breaking News | Daily Mirror"
+replacement = ""
+case_sensitive = false
+
+[languages.transformation.normalize]
+title = ["trim", "collapse_spaces"]

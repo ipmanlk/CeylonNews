@@ -6,24 +6,22 @@ import (
 	"net/http"
 
 	"ipmanlk/cnapi/internal/api/dto"
+	"ipmanlk/cnapi/internal/database/store"
 	"ipmanlk/cnapi/internal/model"
 	"ipmanlk/cnapi/pkg/httpx"
 )
 
 type SearchService interface {
-	Search(ctx context.Context, filter model.SearchFilter) (*model.PaginatedResult[*model.SearchResult], error)
+	Search(ctx context.Context, filter model.SearchFilter) (*model.Paginated[*model.SearchResult], error)
 	GetAvailableSources() ([]string, error)
 	GetAvailableLanguages() ([]string, error)
-	GetSourcesByLanguage(language string) ([]string, error)
-	GetRecentArticles(languages []string, sourceNames []string, limit int) ([]*model.Article, error)
-}
-
-type SearchHandler struct {
-	searchService SearchService
+	GetSourcesByLanguage(language string) ([]store.SourceInfo, error)
+	GetRecentArticles(languages []string, sourceIDs []string, limit int) ([]*model.Article, error)
 }
 
 type SearchResultResponse struct {
 	ID             int64   `json:"id"`
+	SourceID       string  `json:"source_id"`
 	SourceName     string  `json:"source_name"`
 	Title          string  `json:"title"`
 	URL            string  `json:"url"`
@@ -33,16 +31,24 @@ type SearchResultResponse struct {
 	RelevanceScore float64 `json:"relevance_score"`
 }
 
-func NewSearchHandler(searchService SearchService) *SearchHandler {
+type SearchHandler struct {
+	searchService  SearchService
+	sourceResolver SourceResolver
+}
+
+func NewSearchHandler(searchService SearchService, sourceResolver SourceResolver) *SearchHandler {
 	return &SearchHandler{
-		searchService: searchService,
+		searchService:  searchService,
+		sourceResolver: sourceResolver,
 	}
 }
 
-func toSearchResultResponse(result *model.SearchResult) SearchResultResponse {
+func (h *SearchHandler) toSearchResultResponse(result *model.SearchResult) SearchResultResponse {
+	sourceName, _ := h.sourceResolver.GetSourceNameByID(result.SourceID)
 	return SearchResultResponse{
 		ID:             result.ID,
-		SourceName:     result.SourceName,
+		SourceID:       result.SourceID,
+		SourceName:     sourceName,
 		Title:          result.Title,
 		URL:            result.URL,
 		ImageURL:       result.ImageURL,
@@ -70,14 +76,27 @@ func (h *SearchHandler) Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// TODO: Remove this compatibility layer when mobile app is updated to use source_ids
+	sourceIDs := searchParams.SourceIDs
+	if len(sourceIDs) == 0 {
+		sourceNames := r.URL.Query()["source_names"]
+		if len(sourceNames) > 0 {
+			for _, name := range sourceNames {
+				if id, ok := h.sourceResolver.GetSourceIDByName(name); ok {
+					sourceIDs = append(sourceIDs, id)
+				}
+			}
+		}
+	}
+
 	filter := model.SearchFilter{
-		Query:       searchParams.Query,
-		Languages:   searchParams.Languages,
-		SourceNames: searchParams.SourceNames,
-		StartDate:   searchParams.StartDate,
-		EndDate:     searchParams.EndDate,
-		Limit:       pagination.Limit,
-		Offset:      pagination.Offset,
+		Query:     searchParams.Query,
+		Languages: searchParams.Languages,
+		SourceIDs: sourceIDs,
+		StartDate: searchParams.StartDate,
+		EndDate:   searchParams.EndDate,
+		Limit:     pagination.Limit,
+		Offset:    pagination.Offset,
 	}
 
 	paginatedResult, err := h.searchService.Search(r.Context(), filter)
@@ -87,7 +106,7 @@ func (h *SearchHandler) Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := httpx.TransformPaginated(paginatedResult, toSearchResultResponse)
+	response := httpx.TransformPaginated(paginatedResult, h.toSearchResultResponse)
 	httpx.RespondPaginated(w, response)
 }
 
@@ -99,7 +118,7 @@ func (h *SearchHandler) GetAvailableSources(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	httpx.RespondJSON(w, http.StatusOK, map[string]interface{}{
+	httpx.RespondJSON(w, http.StatusOK, map[string]any{
 		"sources": sources,
 	})
 }
@@ -112,7 +131,7 @@ func (h *SearchHandler) GetAvailableLanguages(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	httpx.RespondJSON(w, http.StatusOK, map[string]interface{}{
+	httpx.RespondJSON(w, http.StatusOK, map[string]any{
 		"languages": languages,
 	})
 }
@@ -131,7 +150,7 @@ func (h *SearchHandler) GetSourcesByLanguage(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	httpx.RespondJSON(w, http.StatusOK, map[string]interface{}{
+	httpx.RespondJSON(w, http.StatusOK, map[string]any{
 		"language": language,
 		"sources":  sources,
 	})
@@ -139,7 +158,19 @@ func (h *SearchHandler) GetSourcesByLanguage(w http.ResponseWriter, r *http.Requ
 
 func (h *SearchHandler) GetRecentArticles(w http.ResponseWriter, r *http.Request) {
 	languages := httpx.ParseQueryStringsFromCSV(r, "languages")
-	sourceNames := httpx.ParseQueryStrings(r, "source_names")
+	sourceIDs := httpx.ParseQueryStrings(r, "source_ids")
+
+	// TODO: Remove this compatibility layer when mobile app is updated to use source_ids
+	if len(sourceIDs) == 0 {
+		sourceNames := r.URL.Query()["source_names"]
+		if len(sourceNames) > 0 {
+			for _, name := range sourceNames {
+				if id, ok := h.sourceResolver.GetSourceIDByName(name); ok {
+					sourceIDs = append(sourceIDs, id)
+				}
+			}
+		}
+	}
 
 	limit, err := httpx.ParseQueryInt(r, "limit", 20)
 	if err != nil {
@@ -147,7 +178,7 @@ func (h *SearchHandler) GetRecentArticles(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	articles, err := h.searchService.GetRecentArticles(languages, sourceNames, limit)
+	articles, err := h.searchService.GetRecentArticles(languages, sourceIDs, limit)
 	if err != nil {
 		slog.Error("failed to get recent articles", "error", err)
 		httpx.RespondInternalError(w, "failed to retrieve recent articles")
@@ -156,9 +187,11 @@ func (h *SearchHandler) GetRecentArticles(w http.ResponseWriter, r *http.Request
 
 	searchResponses := make([]SearchResultResponse, len(articles))
 	for i, article := range articles {
+		sourceName, _ := h.sourceResolver.GetSourceNameByID(article.SourceID)
 		searchResponses[i] = SearchResultResponse{
 			ID:             article.ID,
-			SourceName:     article.SourceName,
+			SourceID:       article.SourceID,
+			SourceName:     sourceName,
 			Title:          article.Title,
 			URL:            article.URL,
 			ImageURL:       article.ImageURL,
@@ -168,7 +201,7 @@ func (h *SearchHandler) GetRecentArticles(w http.ResponseWriter, r *http.Request
 		}
 	}
 
-	httpx.RespondJSON(w, http.StatusOK, map[string]interface{}{
+	httpx.RespondJSON(w, http.StatusOK, map[string]any{
 		"articles": searchResponses,
 		"count":    len(searchResponses),
 	})

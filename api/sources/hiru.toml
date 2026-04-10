@@ -1,31 +1,46 @@
+id = "hiru-news"
 name = "Hiru News"
+
+# Shared configuration for all languages
+[shared.discovery.default]
+type = "html"
+browser = false
+
+[shared.discovery.default.html]
+link_selectors = ["a.card-featured", "a.card-v1"]
+
+[[shared.discovery.default.html.url_rules]]
+type = "filter_prefix"
+value = "https://hirunews.lk/"
+
+[shared.extraction.default]
+browser = false
+
+[shared.extraction.default.content]
+scope_selector = "div.article-content.col-lg-8"
+title_selector = "h1.head-title"
+prune_selector = ".social-links"
 
 [[languages]]
 language = "si"
 max_items = 5
+shared = "default"
 
-[languages.listing]
-type = "html"
+[languages.discovery]
 url = "https://www.hirunews.lk"
-selectors = ["a.card-featured", "a.card-v1"]
-url_prefix = "https://hirunews.lk/"
 
 [[languages]]
 language = "en"
 max_items = 5
+shared = "default"
 
-[languages.listing]
-type = "html"
+[languages.discovery]
 url = "https://www.hirunews.lk/en/"
-selectors = ["a.card-featured", "a.card-v1"]
-url_prefix = "https://hirunews.lk/"
 
 [[languages]]
 language = "ta"
 max_items = 5
+shared = "default"
 
-[languages.listing]
-type = "html"
+[languages.discovery]
 url = "https://www.hirunews.lk/tm/"
-selectors = ["a.card-featured", "a.card-v1"]
-url_prefix = "https://hirunews.lk/"

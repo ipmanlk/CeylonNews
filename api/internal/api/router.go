@@ -25,11 +25,11 @@ type Config struct {
 	ShutdownTimeout time.Duration
 }
 
-func NewServer(articleService handlers.ArticleService, searchService handlers.SearchService, config Config) *Server {
+func NewServer(articleService handlers.ArticleService, searchService handlers.SearchService, sourceResolver handlers.SourceResolver, config Config) *Server {
 	mux := http.NewServeMux()
 
-	articleHandler := handlers.NewArticleHandler(articleService)
-	searchHandler := handlers.NewSearchHandler(searchService)
+	articleHandler := handlers.NewArticleHandler(articleService, sourceResolver)
+	searchHandler := handlers.NewSearchHandler(searchService, sourceResolver)
 
 	mux.HandleFunc("GET /health", handlers.Health)
 

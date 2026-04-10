@@ -1,46 +1,92 @@
+id = "news-lk"
 name = "News.lk"
 
 [[languages]]
 language = "en"
 max_items = 2
 
-[languages.listing]
+[languages.discovery]
 type = "html"
 url = "https://news.lk/news/"
-selectors = ["article.item h2 a"]
-url_prefix = "/news/"
-base_url = "https://news.lk"
 browser = true
 
-[languages.article]
+[languages.discovery.html]
+link_selectors = ["article.item h2 a"]
+
+[[languages.discovery.html.url_rules]]
+type = "filter_prefix"
+value = "/news/"
+
+[[languages.discovery.html.url_rules]]
+type = "prepend"
+value = "https://news.lk"
+condition = "if_relative"
+
+[languages.extraction]
 browser = true
+
+[languages.validation]
+[[languages.validation.require]]
+field = "body"
+type = "min_length"
+value = "200"
 
 [[languages]]
 language = "si"
 max_items = 2
 
-[languages.listing]
+[languages.discovery]
 type = "html"
 url = "https://sinhala.news.lk/news/"
-selectors = ["article.item h2 a"]
-url_prefix = "/news/"
-base_url = "https://sinhala.news.lk"
 browser = true
 
-[languages.article]
+[languages.discovery.html]
+link_selectors = ["article.item h2 a"]
+
+[[languages.discovery.html.url_rules]]
+type = "filter_prefix"
+value = "/news/"
+
+[[languages.discovery.html.url_rules]]
+type = "prepend"
+value = "https://sinhala.news.lk"
+condition = "if_relative"
+
+[languages.extraction]
 browser = true
+
+[languages.validation]
+[[languages.validation.require]]
+field = "body"
+type = "min_length"
+value = "200"
 
 [[languages]]
 language = "ta"
 max_items = 2
 
-[languages.listing]
+[languages.discovery]
 type = "html"
 url = "https://tamil.news.lk/news/"
-selectors = ["article.item h2 a"]
-url_prefix = "/news/"
-base_url = "https://tamil.news.lk"
 browser = true
 
-[languages.article]
+[languages.discovery.html]
+link_selectors = ["article.item h2 a"]
+
+[[languages.discovery.html.url_rules]]
+type = "filter_prefix"
+value = "/news/"
+
+[[languages.discovery.html.url_rules]]
+type = "prepend"
+value = "https://tamil.news.lk"
+condition = "if_relative"
+
+[languages.extraction]
 browser = true
+
+[languages.validation]
+[[languages.validation.require]]
+field = "body"
+type = "min_length"
+value = "200"

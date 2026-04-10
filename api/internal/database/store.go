@@ -17,7 +17,7 @@ type ArticlesStore interface {
 	GetByURL(url string) (*model.Article, error)
 	List(filter model.ArticleFilter) ([]*model.Article, error)
 	Count(filter model.ArticleFilter) (int64, error)
-	ListPaginated(filter model.ArticleFilter) (*model.PaginatedResult[*model.Article], error)
+	ListPaginated(filter model.ArticleFilter) (*model.Paginated[*model.Article], error)
 	Update(article *model.Article) error
 	Delete(id int64) error
 	ExistsByURL(url string) (bool, error)
@@ -25,11 +25,11 @@ type ArticlesStore interface {
 
 // SearchStore defines the interface for search operations
 type SearchStore interface {
-	Search(filter model.SearchFilter) (*model.PaginatedResult[*model.SearchResult], error)
+	Search(filter model.SearchFilter) (*model.Paginated[*model.SearchResult], error)
 	CountSearchResults(filter model.SearchFilter) (int64, error)
 	GetAvailableSources() ([]string, error)
 	GetAvailableLanguages() ([]string, error)
-	GetSourcesByLanguage(language string) ([]string, error)
+	GetSourcesByLanguage(language string) ([]store.SourceInfo, error)
 	GetRecentArticles(languages []string, sourceNames []string, limit int) ([]*model.Article, error)
 }
 
@@ -39,7 +39,6 @@ type Store struct {
 	Search   SearchStore
 }
 
-// NewStore creates a new database store with all required stores
 func NewStore(db *sql.DB) *Store {
 	return &Store{
 		Articles: store.NewArticlesStore(db),

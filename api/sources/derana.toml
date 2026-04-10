@@ -1,10 +1,11 @@
+id = "derana"
 name = "Derana"
 
 [[languages]]
 language = "en"
 max_items = 5
 
-[languages.listing]
+[languages.discovery]
 type = "rss"
 url = "https://www.adaderana.lk/rss.php"
 
@@ -12,7 +13,7 @@ url = "https://www.adaderana.lk/rss.php"
 language = "si"
 max_items = 5
 
-[languages.listing]
+[languages.discovery]
 type = "rss"
 url = "https://sinhala.adaderana.lk/rsshotnews.php"
 
@@ -20,7 +21,7 @@ url = "https://sinhala.adaderana.lk/rsshotnews.php"
 language = "ta"
 max_items = 5
 
-[languages.listing]
+[languages.discovery]
 type = "rss"
 url = "http://tamil.adaderana.lk/rss.php"
 browser = true

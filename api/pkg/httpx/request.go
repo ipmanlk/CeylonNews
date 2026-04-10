@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+const maxRequestBodyBytes = 1 << 20
+
 func ParseQueryInt(r *http.Request, key string, defaultValue int) (int, error) {
 	value := r.URL.Query().Get(key)
 	if value == "" {
@@ -47,6 +49,20 @@ func ParseQueryStrings(r *http.Request, key string) []string {
 	return values
 }
 
+func ParseQueryBool(r *http.Request, key string, defaultValue bool) (bool, error) {
+	value := r.URL.Query().Get(key)
+	if value == "" {
+		return defaultValue, nil
+	}
+
+	boolValue, err := strconv.ParseBool(value)
+	if err != nil {
+		return false, fmt.Errorf("invalid %s: must be a boolean (true/false/1/0)", key)
+	}
+
+	return boolValue, nil
+}
+
 func ParseQueryTime(r *http.Request, key string) (*time.Time, error) {
 	value := r.URL.Query().Get(key)
 	if value == "" {
@@ -75,11 +91,12 @@ func ParsePathInt64(r *http.Request, key string) (int64, error) {
 	return intValue, nil
 }
 
-func DecodeJSON(r *http.Request, v interface{}) error {
+func DecodeJSON(r *http.Request, v any) error {
 	if r.Body == nil {
 		return fmt.Errorf("request body is empty")
 	}
 
+	r.Body = http.MaxBytesReader(nil, r.Body, maxRequestBodyBytes)
 	defer r.Body.Close()
 
 	if err := json.NewDecoder(r.Body).Decode(v); err != nil {

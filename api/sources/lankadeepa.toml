@@ -1,9 +1,17 @@
+id = "lankadeepa"
 name = "Lankadeepa"
 
 [[languages]]
 language = "si"
 max_items = 5
 
-[languages.listing]
+[languages.discovery]
 type = "rss"
 url = "https://www.lankadeepa.lk/rss/latest_news/1"
+
+[languages.transformation]
+[[languages.transformation.replace]]
+field = "body"
+pattern = "^\\([^)]+\\) "
+replacement = ""
+regex = true
