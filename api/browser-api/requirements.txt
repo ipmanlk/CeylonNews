@@ -1,4 +1,4 @@
 flask==3.0.0
-gunicorn==21.2.0
+gunicorn==22.0.0
 undetected-chromedriver==3.5.4
 requests==2.31.0
