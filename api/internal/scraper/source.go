@@ -93,10 +93,29 @@ func (s *Source) scrapeHTML(ctx context.Context, lc LanguageConfig) ([]model.Scr
 		return nil, err
 	}
 
-	// Extract links from all selectors
-	var links []string
+	// Check if any selector has title extraction enabled
+	hasTitleExtraction := false
 	for _, sel := range lc.Discovery.HTML.LinkSelectors {
-		links = append(links, s.fetcher.ExtractLinks(doc, sel, "")...)
+		if sel.Title != "" {
+			hasTitleExtraction = true
+			break
+		}
+	}
+
+	// Extract links and optionally titles from all selectors
+	var links []string
+	var titles []string
+
+	for _, sel := range lc.Discovery.HTML.LinkSelectors {
+		if sel.Title != "" {
+			// Extract links with titles for early validation
+			l, t := s.fetcher.ExtractLinksWithTitle(doc, sel.Link, sel.Title)
+			links = append(links, l...)
+			titles = append(titles, t...)
+		} else {
+			// Extract just links
+			links = append(links, s.fetcher.ExtractLinks(doc, sel.Link, "")...)
+		}
 	}
 
 	// Apply URL transformation pipeline
@@ -110,23 +129,26 @@ func (s *Source) scrapeHTML(ctx context.Context, lc LanguageConfig) ([]model.Scr
 		links = links[:lc.MaxItems]
 	}
 
-	// Early validation: extract titles from listing if selector provided
-	if lc.Discovery.HTML.TitleSelector != "" {
-		return s.extractWithEarlyValidation(ctx, lc, doc, links)
+	// Early validation: if titles were extracted, validate before full fetch
+	if hasTitleExtraction && len(titles) > 0 {
+		return s.extractWithEarlyValidation(ctx, lc, links, titles)
 	}
 
 	// Standard extraction without early validation
 	return s.extractFromLinks(ctx, lc, links)
 }
 
-// extractWithEarlyValidation extracts titles from listing and validates before full fetch
-func (s *Source) extractWithEarlyValidation(ctx context.Context, lc LanguageConfig, doc interface{}, links []string) ([]model.ScrapedArticle, error) {
+// extractWithEarlyValidation validates titles before full article fetch
+func (s *Source) extractWithEarlyValidation(ctx context.Context, lc LanguageConfig, links []string, titles []string) ([]model.ScrapedArticle, error) {
 	articles := make([]model.ScrapedArticle, 0, len(links))
 	validationEngine := NewValidationEngine(lc.Validation)
 
-	for _, link := range links {
-		// Extract title from listing page
-		title := s.fetcher.ExtractFieldFromDoc(doc, lc.Discovery.HTML.TitleSelector)
+	for i, link := range links {
+		// Get title for this link (if available)
+		title := ""
+		if i < len(titles) {
+			title = titles[i]
+		}
 
 		// Early validation on title
 		if title != "" {

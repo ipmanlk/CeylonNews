@@ -9,8 +9,8 @@ max_items = 5
 type = "html"
 url = "https://www.divaina.lk/category/breaking-news"
 
-[languages.discovery.html]
-link_selectors = ["a.p-url"]
+[[languages.discovery.html.link_selectors]]
+link = "a.p-url"
 
 [[languages.discovery.html.url_rules]]
 type = "filter_prefix"

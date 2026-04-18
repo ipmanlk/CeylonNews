@@ -34,15 +34,19 @@ type URLRule struct {
 	Pattern     string `toml:"pattern"`
 	Replacement string `toml:"replacement"`
 	Condition   string `toml:"condition"`
-	Mode        string `toml:"mode"`
+	MatchPolicy string `toml:"match_policy"`
+}
+
+// LinkSelector represents a link selector with optional title extraction
+type LinkSelector struct {
+	Link  string `toml:"link"`
+	Title string `toml:"title"`
 }
 
 // HTMLDiscoveryConfig holds HTML-specific discovery settings
 type HTMLDiscoveryConfig struct {
-	LinkSelectors []string  `toml:"link_selectors"`
-	TitleSelector string    `toml:"title_selector"`
-	DateSelector  string    `toml:"date_selector"`
-	URLRules      []URLRule `toml:"url_rules"`
+	LinkSelectors []LinkSelector `toml:"link_selectors"`
+	URLRules      []URLRule      `toml:"url_rules"`
 }
 
 // DiscoveryConfig defines how to discover article URLs
@@ -221,12 +225,6 @@ func mergeHTMLDiscoveryConfig(specific, shared HTMLDiscoveryConfig) HTMLDiscover
 	if len(specific.LinkSelectors) == 0 {
 		specific.LinkSelectors = shared.LinkSelectors
 	}
-	if specific.TitleSelector == "" {
-		specific.TitleSelector = shared.TitleSelector
-	}
-	if specific.DateSelector == "" {
-		specific.DateSelector = shared.DateSelector
-	}
 
 	// URL rules: append specific rules after shared rules
 	if len(specific.URLRules) > 0 {
@@ -302,12 +300,10 @@ func ApplyURLRules(urls []string, rules []URLRule) []string {
 		}
 	}
 
-	// Apply filtering rules first
-	for _, rule := range filterRules {
-		result = applyFilterRule(result, rule)
-	}
+	// Apply filtering rules by type with match_policy support
+	result = applyFilterRulesByType(result, filterRules)
 
-	// Apply transformation rules
+	// Apply transformation rules sequentially
 	for _, rule := range transformRules {
 		result = applyTransformRule(result, rule)
 	}
@@ -315,14 +311,95 @@ func ApplyURLRules(urls []string, rules []URLRule) []string {
 	return result
 }
 
-func isFilterRule(ruleType string) bool {
-	return strings.HasPrefix(ruleType, "filter_")
+// applyFilterRulesByType groups filter rules by type and applies match_policy
+func applyFilterRulesByType(urls []string, rules []URLRule) []string {
+	if len(rules) == 0 {
+		return urls
+	}
+
+	// Group rules by type
+	rulesByType := make(map[string][]URLRule)
+	for _, rule := range rules {
+		rulesByType[rule.Type] = append(rulesByType[rule.Type], rule)
+	}
+
+	result := urls
+	for _, ruleGroup := range rulesByType {
+		result = applyFilterRuleGroup(result, ruleGroup)
+	}
+
+	return result
 }
 
-func applyFilterRule(urls []string, rule URLRule) []string {
+// applyFilterRuleGroup applies a group of filter rules with match_policy
+// match_policy = "any" (default): URL passes if it matches ANY rule in the group (OR logic)
+// match_policy = "all": URL passes only if it matches ALL rules in the group (AND logic)
+func applyFilterRuleGroup(urls []string, rules []URLRule) []string {
+	if len(rules) == 0 {
+		return urls
+	}
+
+	// Determine match policy - default to "any" if not specified or invalid
+	matchPolicy := "any"
+	if rules[0].MatchPolicy == "all" {
+		matchPolicy = "all"
+	}
+
+	if matchPolicy == "any" {
+		// OR logic: URL passes if it matches ANY rule
+		return applyFilterRulesAny(urls, rules)
+	}
+
+	// AND logic: URL passes only if it matches ALL rules
+	return applyFilterRulesAll(urls, rules)
+}
+
+// applyFilterRulesAny applies OR logic - URL passes if it matches ANY rule
+func applyFilterRulesAny(urls []string, rules []URLRule) []string {
+	if len(rules) == 0 {
+		return urls
+	}
+
+	// Collect all URLs that match at least one rule
+	matched := make(map[string]bool)
+	for _, rule := range rules {
+		matchingURLs := getMatchingURLs(urls, rule)
+		for _, url := range matchingURLs {
+			matched[url] = true
+		}
+	}
+
+	// Return only matched URLs, preserving original order
+	var result []string
+	for _, url := range urls {
+		if matched[url] {
+			result = append(result, url)
+		}
+	}
+	return result
+}
+
+// applyFilterRulesAll applies AND logic - URL passes only if it matches ALL rules
+func applyFilterRulesAll(urls []string, rules []URLRule) []string {
+	if len(rules) == 0 {
+		return urls
+	}
+
+	result := urls
+	for _, rule := range rules {
+		result = applySingleFilterRule(result, rule)
+		if len(result) == 0 {
+			break // Early exit if no URLs remain
+		}
+	}
+	return result
+}
+
+// getMatchingURLs returns URLs that match a filter rule
+func getMatchingURLs(urls []string, rule URLRule) []string {
 	switch rule.Type {
 	case "filter_prefix":
-		return filterByPrefix(urls, rule.Value, rule.Mode)
+		return filterByPrefix(urls, rule.Value, "")
 	case "filter_not_prefix":
 		return filterNotByPrefix(urls, rule.Value)
 	case "filter_contains":
@@ -334,6 +411,28 @@ func applyFilterRule(urls []string, rule URLRule) []string {
 	default:
 		return urls
 	}
+}
+
+// applySingleFilterRule applies a single filter rule
+func applySingleFilterRule(urls []string, rule URLRule) []string {
+	switch rule.Type {
+	case "filter_prefix":
+		return filterByPrefix(urls, rule.Value, "")
+	case "filter_not_prefix":
+		return filterNotByPrefix(urls, rule.Value)
+	case "filter_contains":
+		return filterByContains(urls, rule.Value)
+	case "filter_not_contains":
+		return filterNotByContains(urls, rule.Value)
+	case "filter_regex":
+		return filterByRegex(urls, rule.Value)
+	default:
+		return urls
+	}
+}
+
+func isFilterRule(ruleType string) bool {
+	return strings.HasPrefix(ruleType, "filter_")
 }
 
 func applyTransformRule(urls []string, rule URLRule) []string {
@@ -351,7 +450,7 @@ func applyTransformRule(urls []string, rule URLRule) []string {
 	}
 }
 
-func filterByPrefix(urls []string, prefix string, mode string) []string {
+func filterByPrefix(urls []string, prefix string, matchPolicy string) []string {
 	if prefix == "" {
 		return urls
 	}

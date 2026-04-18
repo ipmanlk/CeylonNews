@@ -6,8 +6,11 @@ name = "Hiru News"
 type = "html"
 browser = false
 
-[shared.discovery.default.html]
-link_selectors = ["a.card-featured", "a.card-v1"]
+[[shared.discovery.default.html.link_selectors]]
+link = "a.card-featured"
+
+[[shared.discovery.default.html.link_selectors]]
+link = "a.card-v1"
 
 [[shared.discovery.default.html.url_rules]]
 type = "filter_prefix"

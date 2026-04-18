@@ -9,8 +9,8 @@ max_items = 5
 type = "html"
 url = "https://gagana.lk/news/srilanka"
 
-[languages.discovery.html]
-link_selectors = ["div.a-item h4 a"]
+[[languages.discovery.html.link_selectors]]
+link = "div.a-item h4 a"
 
 [[languages.discovery.html.url_rules]]
 type = "filter_prefix"
@@ -20,3 +20,11 @@ value = "https://gagana.lk/article/"
 type = "prepend"
 value = "https://gagana.lk"
 condition = "if_relative"
+
+[languages.transformation]
+[[languages.transformation.replace]]
+field = "title"
+pattern = " - .*$"
+replacement = ""
+regex = true
+case_sensitive = false

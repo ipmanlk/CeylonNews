@@ -1,32 +1,34 @@
 id = "mawrata"
 name = "Mawrata"
 
+[shared.extraction.default]
+browser = false
+
+[shared.extraction.default.content]
+scope_selector = ".jeg_inner_content"
+prune_selector = ".jeg_sharelist"
+
+[shared.transformation.default]
+[[shared.transformation.default.replace]]
+field = "title"
+pattern = " | Sri Lanka Latest News"
+replacement = ""
+case_sensitive = false
+
 [[languages]]
 language = "en"
 max_items = 5
+shared = "default"
 
 [languages.discovery]
 type = "rss"
 url = "https://mawratanews.lk/feed/"
 
-[languages.extraction]
-browser = false
-
-[languages.extraction.content]
-scope_selector = ".jeg_inner_content"
-prune_selector = ".jeg_sharelist"
-
 [[languages]]
 language = "si"
 max_items = 5
+shared = "default"
 
 [languages.discovery]
 type = "rss"
 url = "https://sinhala.mawratanews.lk/feed/"
-
-[languages.extraction]
-browser = false
-
-[languages.extraction.content]
-scope_selector = ".jeg_inner_content"
-prune_selector = ".jeg_sharelist"

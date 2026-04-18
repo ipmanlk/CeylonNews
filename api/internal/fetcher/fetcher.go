@@ -193,6 +193,77 @@ func (f *Fetcher) ExtractLinks(doc *goquery.Document, selector, urlPrefix string
 	return links
 }
 
+// ExtractLinksWithTitle extracts links and their associated titles from the document
+// The titleSelector supports prefixes:
+//   - "self" or ".": Title is the link text itself
+//   - "parent:<selector>": Title is found in the parent element matching <selector>
+//   - "sibling:<selector>": Title is found in a sibling element matching <selector>
+//   - "<selector>" (no prefix): Title is found within the closest container (article, .item, .card, li) or parent
+func (f *Fetcher) ExtractLinksWithTitle(doc *goquery.Document, linkSelector, titleSelector string) ([]string, []string) {
+	var links, titles []string
+
+	doc.Find(linkSelector).Each(func(i int, linkSel *goquery.Selection) {
+		href, exists := linkSel.Attr("href")
+		if !exists || href == "" {
+			return
+		}
+
+		title := f.extractTitle(linkSel, titleSelector)
+
+		links = append(links, href)
+		titles = append(titles, title)
+	})
+
+	return links, titles
+}
+
+// extractTitle extracts the title based on the titleSelector pattern
+// Supported prefixes:
+//   - "self" or ".": Title is the link text itself
+//   - "parent:<selector>": Title is found in the parent element matching <selector>
+//   - "sibling:<selector>": Title is found in a sibling element matching <selector>
+//   - "container:<selector>": Title is found in the closest container matching <selector>
+//   - No prefix: Treated as "self"
+func (f *Fetcher) extractTitle(linkSel *goquery.Selection, titleSelector string) string {
+	if titleSelector == "" {
+		return ""
+	}
+
+	// Handle prefixes
+	if titleSelector == "self" || titleSelector == "." {
+		return strings.TrimSpace(linkSel.Text())
+	}
+
+	if strings.HasPrefix(titleSelector, "parent:") {
+		parentSelector := strings.TrimPrefix(titleSelector, "parent:")
+		parent := linkSel.Parent()
+		if parentSelector != "" {
+			parent = parent.Find(parentSelector).First()
+		}
+		return strings.TrimSpace(parent.Text())
+	}
+
+	if strings.HasPrefix(titleSelector, "sibling:") {
+		siblingSelector := strings.TrimPrefix(titleSelector, "sibling:")
+		parent := linkSel.Parent()
+		sibling := parent.Find(siblingSelector).First()
+		return strings.TrimSpace(sibling.Text())
+	}
+
+	if strings.HasPrefix(titleSelector, "container:") {
+		containerSelector := strings.TrimPrefix(titleSelector, "container:")
+		parts := strings.SplitN(containerSelector, " ", 2)
+		if len(parts) == 2 {
+			container := linkSel.Closest(parts[0])
+			return strings.TrimSpace(container.Find(parts[1]).First().Text())
+		}
+		return ""
+	}
+
+	// No prefix: treat as "self"
+	return strings.TrimSpace(linkSel.Text())
+}
+
 func (f *Fetcher) buildScrapedArticle(sourceID string, result *trafilatura.ExtractResult, url string, imageURL *string, publishedAt time.Time) model.ScrapedArticle {
 	doc := trafilatura.CreateReadableDocument(result)
 	htmlContent := dom.OuterHTML(doc)

@@ -1,9 +1,21 @@
 id = "derana"
 name = "Derana"
 
+[shared.validation.default]
+[[shared.validation.default.skip]]
+field = "title"
+type = "equals"
+value = "Z"
+
+[[shared.validation.default.require]]
+field = "body"
+type = "min_length"
+value = "50"
+
 [[languages]]
 language = "en"
 max_items = 5
+shared = "default"
 
 [languages.discovery]
 type = "rss"
@@ -12,6 +24,7 @@ url = "https://www.adaderana.lk/rss.php"
 [[languages]]
 language = "si"
 max_items = 5
+shared = "default"
 
 [languages.discovery]
 type = "rss"
@@ -20,6 +33,7 @@ url = "https://sinhala.adaderana.lk/rsshotnews.php"
 [[languages]]
 language = "ta"
 max_items = 5
+shared = "default"
 
 [languages.discovery]
 type = "rss"

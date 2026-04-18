@@ -1,16 +1,27 @@
 id = "bbc"
 name = "BBC"
 
+[shared.discovery.default]
+type = "html"
+
+[[shared.discovery.default.html.link_selectors]]
+link = "a"
+
+[shared.transformation.default]
+[[shared.transformation.default.replace]]
+field = "title"
+pattern = " - BBC News .*$"
+replacement = ""
+regex = true
+case_sensitive = false
+
 [[languages]]
 language = "en"
 max_items = 5
+shared = "default"
 
 [languages.discovery]
-type = "html"
 url = "https://www.bbc.com/news/topics/cywd23g0gxgt"
-
-[languages.discovery.html]
-link_selectors = ["a"]
 
 [[languages.discovery.html.url_rules]]
 type = "filter_prefix"
@@ -24,13 +35,10 @@ condition = "if_relative"
 [[languages]]
 language = "si"
 max_items = 5
+shared = "default"
 
 [languages.discovery]
-type = "html"
 url = "https://www.bbc.com/sinhala/topics/cg7267dz901t"
-
-[languages.discovery.html]
-link_selectors = ["a"]
 
 [[languages.discovery.html.url_rules]]
 type = "filter_prefix"
@@ -39,13 +47,10 @@ value = "https://www.bbc.com/sinhala/articles/"
 [[languages]]
 language = "ta"
 max_items = 5
+shared = "default"
 
 [languages.discovery]
-type = "html"
 url = "https://www.bbc.com/tamil/topics/cz74k7p3qw7t"
-
-[languages.discovery.html]
-link_selectors = ["a"]
 
 [[languages.discovery.html.url_rules]]
 type = "filter_prefix"
