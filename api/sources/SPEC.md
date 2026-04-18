@@ -130,26 +130,71 @@ type = "html"
 url = "https://example.com/news"
 browser = false
 
-[languages.discovery.html]
-# CSS selectors to extract links (evaluated in order, combined)
-link_selectors = ["a.article-link", "div.news a"]
+# Link selectors (object format - one per entry)
+[[languages.discovery.html.link_selectors]]
+link = "a.article-link"
 
-# Optional: Extract title from listing page (enables early validation)
-title_selector = "h2.article-title"
+[[languages.discovery.html.link_selectors]]
+link = "div.news a"
 
-# Optional: Extract publish date from listing
-date_selector = "time.published"
+# With title extraction for early validation:
+[[languages.discovery.html.link_selectors]]
+link = "h2 a"
+title = "parent:h2"  # Extract title from parent h2 element
+
+[[languages.discovery.html.link_selectors]]
+link = ".card a"
+title = "sibling:h3"  # Extract title from sibling h3 element
 
 # URL transformation pipeline (executed in order)
 [[languages.discovery.html.url_rules]]
 type = "filter_prefix"
 value = "/news/"
-mode = "any"  # "any" or "all" (default: "any")
+match_policy = "any"  # "any" or "all" (default: "any")
 
 [[languages.discovery.html.url_rules]]
 type = "prepend"
 value = "https://example.com"
 condition = "if_relative"  # "if_relative", "if_protocol_relative", "always"
+```
+
+#### Link Selectors
+
+All link selectors use the object format:
+
+```toml
+[[languages.discovery.html.link_selectors]]
+link = "h2 a"
+title = "parent:h2"  # Optional: enables early validation
+```
+
+**Title selector prefixes:**
+- `"self"` or `"."`: Title is the link text itself
+- `"parent:<selector>"`: Title is found in the parent element matching `<selector>`
+- `"sibling:<selector>"`: Title is found in a sibling element matching `<selector>`
+- `"container:<container_selector> <title_selector>"`: Title is found by `<title_selector>` within the closest `<container_selector>`
+
+**Examples:**
+```toml
+# Title is the link text itself
+[[languages.discovery.html.link_selectors]]
+link = "h2 a"
+title = "self"
+
+# Title is in the parent h2 element
+[[languages.discovery.html.link_selectors]]
+link = "h2 a"
+title = "parent:h2"
+
+# Title is in a sibling element
+[[languages.discovery.html.link_selectors]]
+link = ".card a.read-more"
+title = "sibling:h3"
+
+# Title is in a specific container (find closest article, then h2 within it)
+[[languages.discovery.html.link_selectors]]
+link = "article.item a"
+title = "container:article.item h2"
 ```
 
 #### URL Rule Types
@@ -161,9 +206,9 @@ condition = "if_relative"  # "if_relative", "if_protocol_relative", "always"
 - `filter_not_contains`: Remove URLs containing value
 - `filter_regex`: Keep URLs matching pattern
 
-**Filter Mode** (for multiple filters of same type):
-- `mode = "any"` (default): Keep URL if it matches ANY rule
-- `mode = "all"`: Keep URL only if it matches ALL rules
+**Filter Match Policy** (for multiple filters of same type):
+- `match_policy = "any"` (default): Keep URL if it matches ANY rule of this type (OR logic)
+- `match_policy = "all"`: Keep URL only if it matches ALL rules of this type (AND logic)
 
 **Transformation Rules** (modify URLs):
 - `prepend`: Add value to start
@@ -174,7 +219,11 @@ condition = "if_relative"  # "if_relative", "if_protocol_relative", "always"
 - `regex_replace`: Replace `pattern` with `replacement`
 - `normalize`: Standard cleanup (lowercase protocol, remove trailing slash, etc.)
 
-**Execution Order:** Rules execute sequentially as defined. Filtering happens first, then transformations.
+**Execution Order:** URL rules execute in two phases:
+1. **Filtering phase**: All filtering rules execute first, grouped by type with `match_policy` applied within each group
+2. **Transformation phase**: Transformation rules execute sequentially in definition order
+
+This means all filters run before any transformations, regardless of their order in the config file.
 
 ---
 
@@ -203,11 +252,18 @@ prune_selector = ".advertisement, .social-share, aside.related-articles"
 ```
 
 **Field Priority:**
-1. If field selector specified → use selector
-2. Else if scope_selector specified → trafilatura within scope
-3. Else → trafilatura on full page
-4. If prune_selector specified → remove matching elements before extraction
-5. For RSS: title/date from feed item takes precedence
+
+The extraction system uses the following approach:
+
+1. **Individual field selectors** (`title_selector`, `image_selector`, `date_selector`) extract those specific fields directly from the HTML using CSS selectors
+2. **Content extraction** uses either:
+   - `scope_selector`: Trafilatura extracts content within this element only
+   - `body_selector`: Direct extraction from this element
+   - Or full page extraction if neither is specified
+3. **Pruning**: If `prune_selector` is specified, matching elements are removed before content extraction
+4. **RSS precedence**: For RSS discovery, title and date from the feed item take precedence over extracted values
+
+These approaches can be combined. For example, you can use `title_selector` to extract the title directly while using `scope_selector` for the body content.
 
 ---
 
@@ -256,8 +312,8 @@ case_sensitive = false
 - `regex`: Field matches regex pattern
 - `equals`: Field exactly equals value
 - `not_equals`: Field does not equal value
-- `min_length`: Field shorter than value
-- `max_length`: Field longer than value
+- `min_length`: Field length must be at least value (≥)
+- `max_length`: Field length must be at most value (≤)
 
 **Require Rules** (all must pass → keep article):
 Same types as skip rules, but all must be true.
@@ -326,8 +382,8 @@ name = "Example Source"
 type = "html"
 browser = false
 
-[shared.discovery.default.html]
-link_selectors = ["a.article-link"]
+[[shared.discovery.default.html.link_selectors]]
+link = "a.article-link"
 
 [[shared.discovery.default.html.url_rules]]
 type = "filter_prefix"
@@ -353,7 +409,7 @@ url = "https://example.com/si/news"  # Only URL differs
 
 **Inheritance Rules:**
 - Fields in `[languages.*]` override shared config
-- Arrays are **replaced**, not merged
+- Arrays are **replaced**, not merged (except `url_rules` which is **appended** to shared rules)
 - Nested objects are **deep merged**
 
 ---
@@ -421,8 +477,8 @@ max_items = 5
 type = "html"
 url = "https://www.bbc.com/news/topics/cywd23g0gxgt"
 
-[languages.discovery.html]
-link_selectors = ["a"]
+[[languages.discovery.html.link_selectors]]
+link = "a"
 
 [[languages.discovery.html.url_rules]]
 type = "filter_prefix"
@@ -441,8 +497,8 @@ max_items = 5
 type = "html"
 url = "https://www.bbc.com/sinhala/topics/cg7267dz901t"
 
-[languages.discovery.html]
-link_selectors = ["a"]
+[[languages.discovery.html.link_selectors]]
+link = "a"
 
 # Different filter - absolute URL
 [[languages.discovery.html.url_rules]]
@@ -457,8 +513,8 @@ max_items = 5
 type = "html"
 url = "https://www.bbc.com/tamil/topics/cz74k7p3qw7t"
 
-[languages.discovery.html]
-link_selectors = ["a"]
+[[languages.discovery.html.link_selectors]]
+link = "a"
 
 [[languages.discovery.html.url_rules]]
 type = "filter_prefix"
@@ -475,8 +531,11 @@ name = "Hiru News"
 type = "html"
 browser = false
 
-[shared.discovery.default.html]
-link_selectors = ["a.card-featured", "a.card-v1"]
+[[shared.discovery.default.html.link_selectors]]
+link = "a.card-featured"
+
+[[shared.discovery.default.html.link_selectors]]
+link = "a.card-v1"
 
 [[shared.discovery.default.html.url_rules]]
 type = "filter_prefix"
@@ -507,7 +566,7 @@ shared = "default"
 url = "https://www.hirunews.lk/tm/"
 ```
 
-### Example 5: Different Extraction per Language
+### Example 5: Different Extraction per Language with Early Validation
 
 ```toml
 name = "News.lk"
@@ -521,9 +580,10 @@ type = "html"
 url = "https://news.lk/news/"
 browser = true
 
-[languages.discovery.html]
-link_selectors = ["article.item h2 a"]
-title_selector = "article.item h2"
+# Link selector with title extraction for early validation
+[[languages.discovery.html.link_selectors]]
+link = "article.item h2 a"
+title = "parent:h2"
 
 [[languages.discovery.html.url_rules]]
 type = "filter_prefix"
@@ -560,8 +620,9 @@ type = "html"
 url = "https://sinhala.news.lk/news/"
 browser = true
 
-[languages.discovery.html]
-link_selectors = ["article.item h2 a"]
+# No title extraction for this language
+[[languages.discovery.html.link_selectors]]
+link = "article.item h2 a"
 
 [[languages.discovery.html.url_rules]]
 type = "filter_prefix"
@@ -698,13 +759,19 @@ case_sensitive = false
 
 ### URL Rule Execution Order
 
-Rules execute sequentially in the order defined:
-1. All filtering rules execute first (removing URLs)
-2. Then transformation rules execute (modifying remaining URLs)
+URL rules execute in two phases:
+
+1. **Filtering phase**: All filtering rules execute first, grouped by type. Within each group, `match_policy` determines how multiple rules combine:
+   - `match_policy = "any"` (default): URL passes if it matches ANY rule in the group (OR logic)
+   - `match_policy = "all"`: URL passes only if it matches ALL rules in the group (AND logic)
+
+2. **Transformation phase**: Transformation rules execute sequentially in the order defined
+
+This two-phase approach means all filters run before any transformations, regardless of their order in the config file.
 
 ### Validation Timing
 
-1. **Early validation**: If `title_selector` is defined in `[languages.discovery.html]`, validation runs immediately after title extraction, before full article fetch
+1. **Early validation**: If any `link_selectors` entry has a `title` field, validation runs immediately after title extraction from the listing page, before full article fetch. The title is extracted based on the `title` selector pattern (parent:, sibling:, self, or container-based).
 2. **Late validation**: If no early title available, validation runs after full extraction
 
 ### Shared Config Inheritance
@@ -712,8 +779,22 @@ Rules execute sequentially in the order defined:
 When `shared = "name"` is specified:
 1. Start with shared config values
 2. Override with language-specific values
-3. Arrays are **replaced** (not merged)
+3. Arrays are **replaced** (not merged), except `url_rules` which is **appended**
 4. Nested tables are **deep merged**
+
+### Default Values
+
+Optional fields have the following defaults:
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `browser` | `false` | Use HTTP client, not headless browser |
+| `max_items` | `0` (unlimited) | No limit on articles if omitted or 0 |
+| `match_policy` | `"any"` | URL passes if it matches any filter of that type |
+| `condition` (prepend) | `"always"` | Always prepend the value |
+| `case_sensitive` | `false` | Case-insensitive matching |
+| `regex` | `false` | Treat pattern as literal string |
+| `shared` | `""` (none) | No shared config inheritance |
 
 Example:
 ```toml
